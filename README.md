@@ -39,18 +39,12 @@
 📝 Basically, I use:
 
 <details>
-  <summary>🪐 <a href="https://endeavouros.com/">EndeavourOS</a></summary>
+  <summary>🪐 <a href="https://endeavouros.com/">EndeavourOS</a> - An Arch-based Linux distribution.</summary>
 
-- Download [ISO file](https://endeavouros.com/#Download).
+- Download [ISO file](https://github.com/endeavouros-team/EndeavourOS-ISO).
 - Dual boots with [Ventoy](https://github.com/ventoy/Ventoy).
   ![Desktop screenshot](./images/ventoy-disk-screenshot.png)
 
-</details>
-
-<details>
-  <summary>
-    🤯 <a href="https://system76.com/cosmic/">Cosmic</a> - Desktop Environment.
-  </summary>
 </details>
 
 <details>
@@ -62,6 +56,18 @@
 - Here is an example when using _yay_ to install VS Code.
   ![Desktop screenshot](./images/yay-install-screenshot.png)
 
+</details>
+
+<details>
+  <summary>
+    🤯 <a href="https://github.com/niri-wm/niri">Niri</a> - A scrollable-tiling Wayland compositor.
+  </summary>
+</details>
+
+<details>
+  <summary>
+  🛠️ <a href="https://github.com/noctalia-dev/noctalia-shell">Noctalia Shell</a> - A sleek and minimal desktop shell thoughtfully crafted for Wayland.
+  </summary>
 </details>
 
 <br />
