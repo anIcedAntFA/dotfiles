@@ -88,7 +88,37 @@ Here is a list of packages:
 
 `extra/wezterm` `tmux` `extra/neofetch` `extra/brightnessctl` `picom-git` `polybar` `fish` `extra/fisher` `git` `peco` `neovim` `eza` `starship` `htop` `redshift` `ttf-jetbrains-mono-nerd` `extra/noto-fonts-emoji` `nitrogen` `betterlockscreen` `flameshot` `visual-studio-code-bin` `jetbrains-toolbox` `docker` `docker-compose` `go` `i3lock-color` `arttime-git` `rofi-bluetooth-git` `extra/blueman` `network-dmenu-git` `appimagelauncher` `postman-bin` `firefox-developer-edition` `google-chrome` `microsoft-edge-dev-bin` `teams` `slack-desktop` `aur/prospect-mail` `extra/discord` `extra/telegram-desktop` `obsidian` `extra/calc` `aur/networkmanager-dmenu-git`
 
+`rate-mirrors-bin` `ghostty` `ghq` `waterfox-bin` `wlsunset` `cliphist` `fish` `fisher` `peco`
+
 [`⬆ BACK TO TOP ⬆`](#table-of-contents)
+
+- ghostty, ghostty-cursor-shaders, visual-studio-code-bin
+- neovim, thunar
+  - tumbler, ffmpegthumbnailer
+  - nwg-look, papirus-icon-theme, bibata-cursor-bin, banana-cursor-bin
+- waterfox, google-chrome
+- rate-mirrors
+- ttf-jetbrains-mono-nerd, noto-fonts-emoji
+- greetd, tuigreetd
+  - /etc/greetd/config.toml
+  - /etc/default/grub
+- fastfetch, swaylock, wlsunset, cliphist, btop
+- ghq
+- ssh-keygen:
+  - add github, gitlab
+  - create config file for ssh
+- .gitconfig, .gitconfig-company
+- fcitx5, fcitx5-configtool, fcitx-bamboo
+- fish, fisher, z for fish, dracula/fish, catppuccin/fish
+- eza, starship, peco, neovim
+- discord, mpv
+- docker, docker-compose, docker-buildx
+- mise, node, yarn, pnpm, wrangler
+- go, rust
+- dot2unix, curlie, yazi, bat
+- satty
+  - .local/bin/dot-screenshot
+- gpu-screen-recorder
 
 ### i3 configs
 
