@@ -1,7 +1,0 @@
-[Desktop Entry]
-Name=Clipse Clipboard Listener
-Comment=Starts the clipse background clipboard listener
-Exec=/usr/bin/clipse -listen  # Adjust path if clipse binary is elsewhere
-Terminal=false
-Type=Application
-X-GNOME-Autostart-enabled=true

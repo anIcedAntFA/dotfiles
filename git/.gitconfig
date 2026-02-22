@@ -1,0 +1,49 @@
+[core]
+	excludesfile = ~/.gitignore
+	ignorecase = false
+  editor = nano
+
+[push]
+  default = simple
+
+[color]
+  status = auto
+  diff = auto
+  branch = auto
+  interactive = auto
+  grep = auto
+  ui = auto
+
+[alias]
+  g = git
+  a = add
+  co = checkout
+  ci = commit
+  ca = commit -a
+  pr = pull --rebase
+  st = status
+  br = branch
+  ba = branch -a
+  bm = branch --merged
+  bn = branch --no-merged
+  bda = git branch | grep -v "develop" | grep -v "master" | grep -v "main" | xargs git branch -D
+
+[filter "lfs"]
+	clean = git-lfs clean -- %f
+	smudge = git-lfs smudge -- %f
+	process = git-lfs filter-process
+	required = true
+
+[ghq "ssh://git@gitlab.company.com:8888/"]
+    root = ~/workspace/company
+ 
+[ghq]
+    root = ~/workspace
+ 
+[user]
+    email = anicedfaant@gmail.com
+    name = ngockhoi96
+ 
+[includeIf "gitdir:~/workspace/company/"]
+    path = ./.gitconfig-company
+

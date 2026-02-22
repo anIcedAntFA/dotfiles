@@ -9,19 +9,19 @@
 ## Table of Contents
 
 - [Linux Setup](#linux-setup)
-  - [Table of Contents](#table-of-contents)
-  - [Introduction](#introduction)
-  - [Contents](#contents)
-    - [Dependencies](#dependencies)
-    - [i3 configs](#i3-configs)
-    - [Shell configs](#shell-configs)
-    - [Applications](#applications)
-  - [User guide](#user-guide)
-    - [Setup Docker](#setup-docker)
-    - [Public Port](#public-port)
-      - [1. Find Your Local IP Address](#1-find-your-local-ip-address)
-      - [2. Configure firewalld to Allow Incoming Connections](#2-configure-firewalld-to-allow-incoming-connections)
-  - [Credits](#credits)
+	- [Table of Contents](#table-of-contents)
+	- [Introduction](#introduction)
+	- [Contents](#contents)
+		- [Dependencies](#dependencies)
+		- [i3 configs](#i3-configs)
+		- [Shell configs](#shell-configs)
+		- [Applications](#applications)
+	- [User guide](#user-guide)
+		- [Setup Docker](#setup-docker)
+		- [Public Port](#public-port)
+			- [1. Find Your Local IP Address](#1-find-your-local-ip-address)
+			- [2. Configure firewalld to Allow Incoming Connections](#2-configure-firewalld-to-allow-incoming-connections)
+	- [Credits](#credits)
 
 ## Introduction
 
@@ -96,7 +96,7 @@ Here is a list of packages:
 - neovim, thunar
   - tumbler, ffmpegthumbnailer
   - nwg-look, papirus-icon-theme, bibata-cursor-bin, banana-cursor-bin
-- waterfox, google-chrome
+- waterfox, google-chrome, teams-for-linux-bin, slack-desktop
 - rate-mirrors
 - ttf-jetbrains-mono-nerd, noto-fonts-emoji
 - greetd, tuigreetd
@@ -115,7 +115,7 @@ Here is a list of packages:
 - docker, docker-compose, docker-buildx
 - mise, node, yarn, pnpm, wrangler
 - go, rust
-- dot2unix, curlie, yazi, bat
+- dot2unix, curlie, yazi, bat, tree
 - satty
   - .local/bin/dot-screenshot
 - gpu-screen-recorder

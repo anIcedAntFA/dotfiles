@@ -1,0 +1,63 @@
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+*~
+
+# Editor and IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.*.sw[op]
+
+# Backup files
+*.bak
+*.backup
+*.old
+*.orig
+
+# Log files
+*.log
+
+# Temporary files
+tmp/
+temp/
+*.tmp
+
+# Cache directories
+__pycache__/
+*.pyc
+.cache/
+cache/
+
+# Fish shell history and private data
+.config/fish/fish_history
+.config/fish/fishd.*
+
+# System specific
+.directory
+.Xauthority
+
+# Private/sensitive files
+*_private
+*_secret
+*.key
+*.pem
+.env
+.env.local
+
+# Git specific
+.git/
+
+# Build outputs
+build/
+dist/
+*.o
+*.so
+*.a

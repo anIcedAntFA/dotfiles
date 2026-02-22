@@ -1,3 +1,3 @@
 function show_path
-  echo $PATH | tr ' ' '\n'
+	echo $PATH | tr ' ' '\n'
 end

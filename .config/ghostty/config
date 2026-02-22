@@ -1,8 +1,10 @@
-background-opacity = 0.8
-background-blur-radius = 20
+background-opacity = 1
+background-blur-radius = 12
 
-theme = dark:Dracula,light:catppuccin-latte
+theme = noctalia
+
 shell-integration = fish
+shell-integration-features = no-cursor
 
 font-family = JetBrainsMono Nerd Font
 font-family-bold = JetBrainsMono Nerd Font
@@ -12,19 +14,20 @@ font-style = Medium
 font-style-bold = SemiBold
 font-style-italic = Medium
 font-style-bold-italic = SemiBold
-font-size = 14
+font-size = 12
 
 cursor-style = bar
-cursor-opacity = 0.9
+cursor-opacity = 1
 adjust-cursor-thickness = 8
 cursor-invert-fg-bg = false
 cursor-click-to-move = true
 cursor-style-blink = true
+custom-shader = shaders/cursor_sweep.glsl
 
-gtk-titlebar = false
+gtk-titlebar = true
 gtk-tabs-location=bottom
 
-confirm-close-surface = false
+confirm-close-surface = true
 window-decoration = none
 window-padding-x = 8
 window-padding-y = 8
@@ -36,8 +39,8 @@ auto-update-channel = stable
 # copy-on-select = clipboard
 
 # splitting
-keybind = ctrl+shift+o=new_split:right
-keybind = ctrl+shift+e=new_split:down
+keybind = ctrl+alt+right=new_split:right
+keybind = ctrl+alt+down=new_split:down
 keybind = super+b>e=equalize_splits
 
 keybind = ctrl+shift+w=close_tab
@@ -45,6 +48,7 @@ keybind = ctrl+shift+left=previous_tab
 keybind = ctrl+shift+right=next_tab
 keybind = ctrl+tab=next_tab
 keybind = ctrl+shift+tab=previous_tab
+keybind = ctrl+shift+e=prompt_surface_title
 
 # tab nav
 keybind = super+b>1=goto_tab:1
