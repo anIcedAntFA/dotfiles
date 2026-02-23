@@ -1,0 +1,10 @@
+[Desktop Entry]
+Name=Slack
+Comment=Slack Desktop
+Exec=env XDG_CURRENT_DESKTOP=GNOME slack --enable-features=UseOzonePlatform --ozone-platform=wayland %U
+Terminal=false
+Type=Application
+Icon=slack
+StartupWMClass=Slack
+Categories=Network;InstantMessaging;
+MimeType=x-scheme-handler/slack;

@@ -92,33 +92,52 @@ Here is a list of packages:
 
 [`⬆ BACK TO TOP ⬆`](#table-of-contents)
 
+- niri xwayland-satellite xdg-desktop-portal-gnome xdg-desktop-portal-gtk alacritty
+  - dms-shell-bin matugen cava qt6-multimedia-ffmpeg
+  - noctalia-shell
+  - xdg-desktop-portal-wlr
 - ghostty, ghostty-cursor-shaders, visual-studio-code-bin
-- neovim, thunar
+- neovim, neovim
   - tumbler, ffmpegthumbnailer
-  - nwg-look, papirus-icon-theme, bibata-cursor-bin, banana-cursor-bin
-- waterfox, google-chrome, teams-for-linux-bin, slack-desktop
+  - nwg-look, papirus-icon-theme, bibata-cursor-theme-bin, banana-cursor-bin, papirus-folders-git
+    - `papirus-folders -C cat-latte-peach --theme Papirus-Light`
+    - `papirus-folders -C dracula-orange --theme Papirus-Dark`
+- waterfox, google-chrome, teams-for-linux-bin, slack-desktop-wayland
+  - `sudo ln -s /opt/teams-for-linux/teams-for-linux-bin /usr/local/bin/teams-for-linux`
 - rate-mirrors
 - ttf-jetbrains-mono-nerd, noto-fonts-emoji
-- greetd, tuigreetd
+- greetd, greetd-tuigreet
   - /etc/greetd/config.toml
   - /etc/default/grub
+    - `sudo nano /etc/default/grub`
+    - `GRUB_CMDLINE_LINUX_DEFAULT="console=tty1 loglevel=3 nowatchdog nvme_load=YES"`
+    - `sudo grub-mkconfig -o /boot/grub/grub.cfg`
+- /etc/hosts
+- /etc/ca-certificates/trust-source/anchors/cert_vn_ssl_cert.crt
 - fastfetch, swaylock, wlsunset, cliphist, btop
 - ghq
 - ssh-keygen:
   - add github, gitlab
   - create config file for ssh
 - .gitconfig, .gitconfig-company
-- fcitx5, fcitx5-configtool, fcitx-bamboo
+- fcitx5, fcitx5-configtool, fcitx5-bamboo
 - fish, fisher, z for fish, dracula/fish, catppuccin/fish
-- eza, starship, peco, neovim
+- eza, starship, peco
 - discord, mpv
-- docker, docker-compose, docker-buildx
+- docker, docker-compose, docker-buildx, lazydocker
 - mise, node, yarn, pnpm, wrangler
+  - turbo
+  - direnv
 - go, rust
-- dot2unix, curlie, yazi, bat, tree
+- dos2unix, curlie, yazi, bat, tree
 - satty
   - .local/bin/dot-screenshot
 - gpu-screen-recorder
+- zathura
+- postman-bin
+- globalprotect-openconnect-git
+- jetbrains-toolbox
+- jq
 
 ### i3 configs
 
@@ -148,6 +167,39 @@ Here is a list of packages:
 ## User guide
 
 ### Setup Docker
+
+```sh
+sudo systemctl status docker
+
+# Bật và khởi chạy docker service ngay lập tức
+sudo systemctl enable --now docker.service
+
+# Thêm user hiện tại ($USER) vào group docker
+sudo usermod -aG docker $USER
+
+# Cập nhật lại group cho session hiện tại (để không cần logout/login lại)
+newgrp docker
+```
+
+```sh
+sudo nvim /etc/docker/daemon.json
+
+{
+  "features": {
+    "buildkit": true
+  },
+  "log-driver": "json-file",
+  "log-opts": {
+    "max-size": "50m",
+    "max-file": "3"
+  },
+  "storage-driver": "overlay2"
+}
+```
+
+```sh
+sudo systemctl restart docker.service
+```
 
 ### Public Port
 

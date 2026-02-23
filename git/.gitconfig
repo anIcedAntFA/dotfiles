@@ -35,15 +35,15 @@
 	required = true
 
 [ghq "ssh://git@gitlab.company.com:8888/"]
-    root = ~/workspace/company
- 
+  root = ~/workspace/company
+
 [ghq]
-    root = ~/workspace
- 
+  root = ~/workspace
+
 [user]
-    email = anicedfaant@gmail.com
-    name = ngockhoi96
- 
+  email = anicedfaant@gmail.com
+  name = ngockhoi96
+
 [includeIf "gitdir:~/workspace/company/"]
-    path = ./.gitconfig-company
+  path = ./.gitconfig-company
 

@@ -1,0 +1,8 @@
+[Desktop Entry]
+Encoding=UTF-8
+Version=1.0
+Type=Application
+NoDisplay=true
+Exec=/opt/waterfox/waterfox %u
+Name=Waterfox
+Comment=Custom definition for Waterfox

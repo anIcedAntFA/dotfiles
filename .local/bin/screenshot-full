@@ -1,2 +1,0 @@
-#!/bin/bash
-grim -t ppm - | satty --filename - --fullscreen --output-filename "$HOME/Pictures/Screenshots/satty-$(date '+%Y%m%d-%H:%M:%S').png" --early-exit --copy-command "wl-copy"
