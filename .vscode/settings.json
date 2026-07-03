@@ -1,0 +1,20 @@
+{
+  // Format on save with oxfmt (oxc) for the languages it handles;
+  // shell and fish use their dedicated formatters. Whitespace comes from
+  // .editorconfig, so keep it installed.
+  "editor.formatOnSave": true,
+  "editor.defaultFormatter": "oxc.oxc-vscode",
+  "[shellscript]": {
+    "editor.defaultFormatter": "foxundermoon.shell-format"
+  },
+  "[fish]": {
+    "editor.defaultFormatter": "bmalehorn.vscode-fish"
+  },
+  // shfmt: -i 0 = indent with tabs, matching .editorconfig for shell.
+  "shellformat.flag": "-i 0",
+  "files.insertFinalNewline": true,
+  "files.trimTrailingWhitespace": true,
+  "[markdown]": {
+    "files.trimTrailingWhitespace": false
+  }
+}

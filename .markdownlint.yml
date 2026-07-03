@@ -12,12 +12,12 @@ MD001: true
 # MD003/heading-style : Heading style : https://github.com/DavidAnson/markdownlint/blob/v0.33.0/doc/md003.md
 MD003:
   # Heading style
-  style: 'consistent'
+  style: "consistent"
 
 # MD004/ul-style : Unordered list style : https://github.com/DavidAnson/markdownlint/blob/v0.33.0/doc/md004.md
 MD004:
   # List style
-  style: 'consistent'
+  style: "consistent"
 
 # MD005/list-indent : Inconsistent indentation for list items at the same level : https://github.com/DavidAnson/markdownlint/blob/v0.33.0/doc/md005.md
 MD005: true
@@ -42,8 +42,9 @@ MD009:
 
 # MD010/no-hard-tabs : Hard tabs : https://github.com/DavidAnson/markdownlint/blob/v0.33.0/doc/md010.md
 MD010:
-  # Include code blocks
-  code_blocks: true
+  # Don't flag hard tabs inside fenced code blocks — the guides quote real config
+  # files (ssh_config, .gitconfig, fish) that legitimately use tabs.
+  code_blocks: false
   # Fenced code languages to ignore
   ignore_code_languages: []
   # Number of spaces for each hard tab
@@ -58,23 +59,9 @@ MD012:
   maximum: 1
 
 # MD013/line-length : Line length : https://github.com/DavidAnson/markdownlint/blob/v0.33.0/doc/md013.md
-MD013:
-  # Number of characters
-  line_length: 800
-  # Number of characters for headings
-  heading_line_length: 80
-  # Number of characters for code blocks
-  code_block_line_length: 80
-  # Include code blocks
-  code_blocks: true
-  # Include tables
-  tables: true
-  # Include headings
-  headings: true
-  # Strict length checking
-  strict: false
-  # Stern length checking
-  stern: false
+# Disabled: oxfmt owns formatting and uses proseWrap:preserve (no hard wrapping),
+# so line length is intentionally not enforced. Avoids oxfmt vs markdownlint fights.
+MD013: false
 
 # MD014/commands-show-output : Dollar signs used before commands without showing output : https://github.com/DavidAnson/markdownlint/blob/v0.33.0/doc/md014.md
 MD014: true
@@ -116,7 +103,7 @@ MD025:
 # MD026/no-trailing-punctuation : Trailing punctuation in heading : https://github.com/DavidAnson/markdownlint/blob/v0.33.0/doc/md026.md
 MD026:
   # Punctuation characters
-  punctuation: '.,;:!。，；：！'
+  punctuation: ".,;:!。，；：！"
 
 # MD027/no-multiple-space-blockquote : Multiple spaces after blockquote symbol : https://github.com/DavidAnson/markdownlint/blob/v0.33.0/doc/md027.md
 MD027: true
@@ -127,7 +114,7 @@ MD028: true
 # MD029/ol-prefix : Ordered list item prefix : https://github.com/DavidAnson/markdownlint/blob/v0.33.0/doc/md029.md
 MD029:
   # List style
-  style: 'one_or_ordered'
+  style: "one_or_ordered"
 
 # MD030/list-marker-space : Spaces after list markers : https://github.com/DavidAnson/markdownlint/blob/v0.33.0/doc/md030.md
 MD030:
@@ -151,7 +138,7 @@ MD032: true
 # MD033/no-inline-html : Inline HTML : https://github.com/DavidAnson/markdownlint/blob/v0.33.0/doc/md033.md
 MD033:
   # Allowed elements
-  allowed_elements: ['details', 'summary', 'ul', 'li', 'a', 'em', 'br']
+  allowed_elements: ["details", "summary", "ul", "li", "a", "em", "br"]
 
 # MD034/no-bare-urls : Bare URL used : https://github.com/DavidAnson/markdownlint/blob/v0.33.0/doc/md034.md
 MD034: true
@@ -159,12 +146,12 @@ MD034: true
 # MD035/hr-style : Horizontal rule style : https://github.com/DavidAnson/markdownlint/blob/v0.33.0/doc/md035.md
 MD035:
   # Horizontal rule style
-  style: 'consistent'
+  style: "consistent"
 
 # MD036/no-emphasis-as-heading : Emphasis used instead of a heading : https://github.com/DavidAnson/markdownlint/blob/v0.33.0/doc/md036.md
 MD036:
   # Punctuation characters
-  punctuation: '.,;:!?。，；：！？'
+  punctuation: ".,;:!?。，；：！？"
 
 # MD037/no-space-in-emphasis : Spaces inside emphasis markers : https://github.com/DavidAnson/markdownlint/blob/v0.33.0/doc/md037.md
 MD037: true
@@ -193,22 +180,9 @@ MD041:
 MD042: true
 
 # MD043/required-headings : Required heading structure : https://github.com/DavidAnson/markdownlint/blob/v0.33.0/doc/md043.md
-MD043:
-  # List of headings
-  headings:
-    [
-      '# Linux Setup',
-      '## Table of Contents',
-      '## Introduction',
-      '## Contents',
-      '### Dependencies',
-      '### i3 configs',
-      '### Shell configs',
-      '## User guides',
-      '## Credits',
-    ]
-  # Match case of headings
-  match_case: false
+# Disabled: this repo has many docs (README, ADRs, per-tool guides) with different
+# structures. Enforcing one fixed heading list across all of them is wrong.
+MD043: false
 
 # MD044/proper-names : Proper names should have the correct capitalization : https://github.com/DavidAnson/markdownlint/blob/v0.33.0/doc/md044.md
 MD044:
@@ -225,7 +199,7 @@ MD045: true
 # MD046/code-block-style : Code block style : https://github.com/DavidAnson/markdownlint/blob/v0.33.0/doc/md046.md
 MD046:
   # Block style
-  style: 'consistent'
+  style: "consistent"
 
 # MD047/single-trailing-newline : Files should end with a single newline character : https://github.com/DavidAnson/markdownlint/blob/v0.33.0/doc/md047.md
 MD047: true
@@ -233,17 +207,17 @@ MD047: true
 # MD048/code-fence-style : Code fence style : https://github.com/DavidAnson/markdownlint/blob/v0.33.0/doc/md048.md
 MD048:
   # Code fence style
-  style: 'consistent'
+  style: "consistent"
 
 # MD049/emphasis-style : Emphasis style : https://github.com/DavidAnson/markdownlint/blob/v0.33.0/doc/md049.md
 MD049:
   # Emphasis style
-  style: 'consistent'
+  style: "consistent"
 
 # MD050/strong-style : Strong style : https://github.com/DavidAnson/markdownlint/blob/v0.33.0/doc/md050.md
 MD050:
   # Strong style
-  style: 'consistent'
+  style: "consistent"
 
 # MD051/link-fragments : Link fragments should be valid : https://github.com/DavidAnson/markdownlint/blob/v0.33.0/doc/md051.md
 MD051: true
@@ -257,7 +231,7 @@ MD052:
 MD053:
   # Ignored definitions
   ignored_definitions:
-    - '//'
+    - "//"
 
 # MD054/link-image-style : Link and image style : https://github.com/DavidAnson/markdownlint/blob/v0.33.0/doc/md054.md
 MD054:
@@ -277,7 +251,7 @@ MD054:
 # MD055/table-pipe-style : Table pipe style : https://github.com/DavidAnson/markdownlint/blob/v0.33.0/doc/md055.md
 MD055:
   # Table pipe style
-  style: 'consistent'
+  style: "consistent"
 
 # MD056/table-column-count : Table column count : https://github.com/DavidAnson/markdownlint/blob/v0.33.0/doc/md056.md
 MD056: true

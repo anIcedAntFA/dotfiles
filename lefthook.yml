@@ -1,0 +1,25 @@
+# Git hooks manager — https://lefthook.dev
+# Enable with `lefthook install` (done for you by `just setup`).
+# Each command runs only on the staged files matching its glob.
+
+pre-commit:
+  parallel: true
+  commands:
+    oxfmt:
+      glob: "*.{md,json,jsonc,json5,yaml,yml,toml}"
+      run: pnpm exec oxfmt --check {staged_files}
+    markdownlint:
+      glob: "*.md"
+      run: pnpm exec markdownlint-cli2 {staged_files}
+    shellcheck:
+      glob: "*.{sh,bash}"
+      run: shellcheck {staged_files}
+    shfmt:
+      glob: "*.{sh,bash}"
+      run: shfmt -d {staged_files}
+    fish:
+      glob: "*.fish"
+      run: fish_indent --check {staged_files}
+    # Block commits that contain secrets (this is what would have caught the npm token).
+    gitleaks:
+      run: gitleaks git --staged --no-banner --redact

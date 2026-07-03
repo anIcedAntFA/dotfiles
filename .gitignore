@@ -8,8 +8,10 @@ ehthumbs.db
 Thumbs.db
 *~
 
-# Editor and IDE files
-.vscode/
+# Editor and IDE files — track shared VS Code settings, ignore the rest
+.vscode/*
+!.vscode/extensions.json
+!.vscode/settings.json
 .idea/
 *.swp
 *.swo
@@ -61,3 +63,17 @@ dist/
 *.o
 *.so
 *.a
+
+# Node tooling (oxfmt, markdownlint-cli2)
+node_modules/
+
+# chezmoi machine-local config — holds your prompted private values. NEVER commit.
+.config/chezmoi/
+
+# AI assistant / tool state — not part of the curated dotfiles.
+# Un-ignore a specific path if you decide to track it.
+.claude/
+.agents/
+.gemini/
+home/dot_config/rtk/
+**/.claude/settings.local.json

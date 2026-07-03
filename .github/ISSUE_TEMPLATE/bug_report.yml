@@ -1,0 +1,34 @@
+name: 🐛 Bug report
+description: Something in the configs or scripts doesn't work as documented.
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to report an issue. These are my personal
+        dotfiles, so please include enough detail for me to reproduce it.
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: What happened?
+      description: What did you expect, and what happened instead?
+    validations:
+      required: true
+  - type: textarea
+    id: repro
+    attributes:
+      label: Steps to reproduce
+      placeholder: |
+        1. Ran `...`
+        2. Applied config `...`
+        3. Saw error `...`
+    validations:
+      required: true
+  - type: textarea
+    id: env
+    attributes:
+      label: Environment
+      description: Distro, kernel, compositor (niri version), shell, and the affected tool/config.
+      placeholder: "EndeavourOS, Linux 6.x, niri 0.x, fish 4.x, ghostty ..."
+    validations:
+      required: true
