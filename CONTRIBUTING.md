@@ -1,81 +1,66 @@
-# 🤝 Contributing to Linux Setup
+# Contributing
 
-Thank you for your interest in contributing to this project! 🎉
+These are my personal dotfiles, but fixes, suggestions, and questions are
+welcome. 🎉
 
-## 📋 How to Contribute
+## Ground rules
 
-### 🐛 Reporting Issues
+- **Never commit private data** — emails, tokens, passwords, work hostnames, or
+  company names. Machine-specific values are handled by
+  [chezmoi templates](docs/adr/0002-private-data-via-templates.md); secrets go in
+  an untracked local file (see [docs/fish.md](docs/fish.md)).
+- **Keep changes focused.** One concern per pull request.
+- **Review before applying.** Understand what a config does before suggesting it.
 
-If you find a bug or have a suggestion:
+## Local setup
 
-1. 🔍 Check if the issue already exists
-2. ✍️ If not, create a new issue with a clear description
-3. 📊 Include relevant information (OS, version, steps to reproduce)
+```sh
+just setup     # installs shellcheck, shfmt, just, lefthook + node deps + git hooks
+```
 
-### 💡 Suggesting Enhancements
+This is a [chezmoi](https://www.chezmoi.io/) repo with `.chezmoiroot` pointing at
+[`home/`](home/). Edit the source files under `home/` — not your live `$HOME`.
+Files are named with chezmoi conventions (`dot_config/`, `private_dot_ssh/`,
+`*.tmpl`); see the [chezmoi docs](https://www.chezmoi.io/reference/source-state-attributes/).
 
-- 📝 Open an issue describing your enhancement
-- 🎯 Explain why this enhancement would be useful
-- 📚 Provide examples if possible
+## Before you open a PR
 
-### 🔀 Pull Requests
+```sh
+just check     # runs exactly what CI runs
+```
 
-1. 🍴 **Fork the repository**
-2. 🌿 **Create a branch** for your feature/fix
-   ```bash
-   git checkout -b feature/your-feature-name
-   ```
-3. ✏️ **Make your changes**
-   - 📏 Follow the existing code style
-   - ↹ Use tabs for indentation (size 2)
-   - 🧪 Test your changes thoroughly
-4. 💾 **Commit your changes**
-   ```bash
-   git commit -m "Add: description of your changes"
-   ```
-   Use conventional commit prefixes:
-   - ✨ `Add:` for new features
-   - 🐛 `Fix:` for bug fixes
-   - 🔄 `Update:` for changes to existing features
-   - 🗑️ `Remove:` for removed features
-   - 📝 `Docs:` for documentation changes
-5. 🚀 **Push to your fork**
-   ```bash
-   git push origin feature/your-feature-name
-   ```
-6. 📬 **Open a Pull Request** on the main repository
+`just check` must pass. It runs:
 
-## 🎨 Code Style
+- **oxfmt** — format check for Markdown, JSON/JSONC, YAML, TOML
+- **markdownlint** — Markdown rules (`.markdownlint.yml`)
+- **shellcheck** + **shfmt** — shell scripts
+- **fish_indent** — fish scripts
+- **gitleaks** — secret scan
 
-This project uses [EditorConfig](https://editorconfig.org/) to maintain consistent code style:
+Auto-fix formatting with `just fmt`. The pre-commit hook (lefthook) runs these on
+staged files automatically.
 
-- ↹ **Indentation**: Tabs (size 2)
-- 🔤 **Encoding**: UTF-8
-- 📄 **Line endings**: LF (Unix-style)
-- ✅ **Final newline**: Yes
-- ✂️ **Trim trailing whitespace**: Yes (except Markdown)
+## Code style
 
-Your editor should automatically apply these settings if it supports EditorConfig.
+Whitespace is governed by [`.editorconfig`](.editorconfig): **tabs** by default
+(width 2), **spaces** for JSON and YAML (where tabs are invalid), LF line endings,
+UTF-8, final newline. Your editor should apply this automatically.
 
-## 📁 File Organization
+## Commit messages
 
-- ⚙️ `.config/` - Application configurations
-- 💾 `.local/bin/` - Custom scripts
-- 🖥️ `etc/` - System-wide configurations
-- 🖼️ `images/` - Screenshots and wallpapers
+This repo uses [gitmoji](https://gitmoji.dev/) + a
+[Conventional Commits](https://www.conventionalcommits.org/) scope, e.g.:
 
-## 🧪 Testing
+```text
+✨ feat(niri): add scroll-to-workspace binding
+🐛 fix(fish): stop sourcing missing local.fish
+📝 docs(ssh): explain IdentitiesOnly
+```
 
-Before submitting a PR:
+## Questions
 
-- ✅ Test your changes in a safe environment
-- 🔍 Ensure no existing functionality is broken
-- 🆕 Verify that configs work on a fresh system
+Open a [discussion](https://github.com/anIcedAntFA/linux-setup/discussions) or an
+issue.
 
-## ❓ Questions?
-
-Feel free to open an issue if you have any questions!
-
-## 📜 License
-
-By contributing, you agree that your contributions will be licensed under the MIT License.
+By contributing, you agree your contributions are licensed under the
+[MIT License](LICENSE).

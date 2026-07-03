@@ -1,287 +1,158 @@
 # Linux Setup
 
-![desktop screenshot](./images/desktop-screenshot-01.png)
+[![CI](https://github.com/anIcedAntFA/linux-setup/actions/workflows/ci.yml/badge.svg)](https://github.com/anIcedAntFA/linux-setup/actions/workflows/ci.yml)
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+[![Managed with chezmoi](https://img.shields.io/badge/managed%20with-chezmoi-1673ff.svg)](https://www.chezmoi.io/)
 
-![desktop screenshot](./images/desktop-screenshot-02.png)
+My personal Linux dotfiles — an [EndeavourOS](https://endeavouros.com/) (Arch)
+desktop built on the [niri](https://github.com/YaLTeR/niri) scrollable-tiling
+Wayland compositor and the [Noctalia](https://github.com/noctalia-dev/noctalia-shell)
+shell, managed with [chezmoi](https://www.chezmoi.io/) so it's reproducible on a
+fresh machine and safe to share publicly.
 
-![desktop screenshot](./images/desktop-screenshot-03.png)
+<!-- TODO: replace with a current desktop screenshot (niri + Noctalia). -->
+<!-- ![desktop](images/screenshot/desktop-01.png) -->
 
-## Table of Contents
+![terminal](images/screenshot/terminal-desktop-light.png)
+
+> [!NOTE]
+> This is tuned for **my personal laptop**. Read each config before applying it —
+> don't copy blindly. Everything private (emails, work host, hostnames) is
+> templated, so you supply your own values on first run.
+
+## Table of contents
 
 - [Linux Setup](#linux-setup)
-	- [Table of Contents](#table-of-contents)
-	- [Introduction](#introduction)
-	- [Contents](#contents)
-		- [Dependencies](#dependencies)
-		- [i3 configs](#i3-configs)
-		- [Shell configs](#shell-configs)
-		- [Applications](#applications)
-	- [User guide](#user-guide)
-		- [Setup Docker](#setup-docker)
-		- [Public Port](#public-port)
-			- [1. Find Your Local IP Address](#1-find-your-local-ip-address)
-			- [2. Configure firewalld to Allow Incoming Connections](#2-configure-firewalld-to-allow-incoming-connections)
-	- [Credits](#credits)
+  - [Table of contents](#table-of-contents)
+  - [What I use](#what-i-use)
+  - [Quick start](#quick-start)
+  - [How it's organized](#how-its-organized)
+  - [Guides](#guides)
+  - [Packages](#packages)
+  - [Development](#development)
+  - [Credits](#credits)
+  - [License](#license)
 
-## Introduction
+## What I use
 
-✨ This is my Linux setup and _dotfiles_. **Feel free** to use it 🚀🚀🚀.
+| Layer               | Choice                                                                              |
+| ------------------- | ----------------------------------------------------------------------------------- |
+| **Distro**          | [EndeavourOS](https://endeavouros.com/) (Arch-based), "no desktop" base             |
+| **AUR helper**      | [yay](https://github.com/Jguer/yay)                                                 |
+| **Compositor**      | [niri](https://github.com/YaLTeR/niri) — scrollable tiling, Wayland                 |
+| **Shell (desktop)** | [Noctalia](https://github.com/noctalia-dev/noctalia-shell)                          |
+| **Login**           | [greetd](https://sr.ht/~kennylevinsen/greetd/) + tuigreet — [guide](docs/greetd.md) |
+| **Terminal**        | [Ghostty](https://ghostty.org/) — [guide](docs/ghostty.md)                          |
+| **Shell**           | [fish](https://fishshell.com/) — [guide](docs/fish.md)                              |
+| **Prompt**          | [starship](https://starship.rs/)                                                    |
+| **Dotfile manager** | [chezmoi](https://www.chezmoi.io/) — [why (ADR)](docs/adr/0001-adopt-chezmoi.md)    |
 
-<br>
+<details>
+<summary>A note on the base install</summary>
+
+I install EndeavourOS in **"no desktop"** mode (minimal Arch, no DE) and build the
+niri + Noctalia environment on top. See [docs/packages.md](docs/packages.md) for
+the full package story.
+
+</details>
+
+## Quick start
 
 > [!WARNING]
->
-> - This is the setting for my personal _laptop_. It may be different if used for a _PC_ or other devices.
-> - **Be careful** when copy all settings unless you know what that entails, just read information **in detail** for each repository.
-
-<br>
-
-📝 Basically, I use:
-
-<details>
-  <summary>🪐 <a href="https://endeavouros.com/">EndeavourOS</a> - An Arch-based Linux distribution.</summary>
-
-- Download [ISO file](https://github.com/endeavouros-team/EndeavourOS-ISO).
-- Dual boots with [Ventoy](https://github.com/ventoy/Ventoy).
-  ![Desktop screenshot](./images/ventoy-disk-screenshot.png)
-
-</details>
-
-<details>
-  <summary>
-  🛠️ <a href="https://github.com/Jguer/yay">yay</a> - Arch Linux AUR helper tool.
-  </summary>
-
-- With _yay_ you can easily install, update and manage your packages.
-- Here is an example when using _yay_ to install VS Code.
-  ![Desktop screenshot](./images/yay-install-screenshot.png)
-
-</details>
-
-<details>
-  <summary>
-    🤯 <a href="https://github.com/niri-wm/niri">Niri</a> - A scrollable-tiling Wayland compositor.
-  </summary>
-</details>
-
-<details>
-  <summary>
-  🛠️ <a href="https://github.com/noctalia-dev/noctalia-shell">Noctalia Shell</a> - A sleek and minimal desktop shell thoughtfully crafted for Wayland.
-  </summary>
-</details>
-
-<br />
-
-🥳 Many thanks to my colleagues at **NDVN** for inspiring me and guiding me towards _Linux_. You guys are amazing and kind.
-
-[`⬆ BACK TO TOP ⬆`](#table-of-contents)
-
-## Contents
-
-### Dependencies
+> Applying these dotfiles overwrites files in your `$HOME`. Review first, and
+> ideally test in a VM or a fresh user account.
 
 ```sh
-yay -S [package-name]
+# 1. Install chezmoi
+yay -S --needed chezmoi
+
+# 2. Pull this repo and apply it. You'll be prompted for your email, name,
+#    work git host/port, ghq roots, and whether to auto-install packages.
+chezmoi init --apply https://github.com/anIcedAntFA/linux-setup.git
 ```
 
-Here is a list of packages:
+Your answers are stored in `~/.config/chezmoi/chezmoi.toml` (never committed) and
+injected into templates like `~/.gitconfig` and `~/.ssh/config`. To preview
+changes before applying: `chezmoi diff`.
 
-`extra/wezterm` `tmux` `extra/neofetch` `extra/brightnessctl` `picom-git` `polybar` `fish` `extra/fisher` `git` `peco` `neovim` `eza` `starship` `htop` `redshift` `ttf-jetbrains-mono-nerd` `extra/noto-fonts-emoji` `nitrogen` `betterlockscreen` `flameshot` `visual-studio-code-bin` `jetbrains-toolbox` `docker` `docker-compose` `go` `i3lock-color` `arttime-git` `rofi-bluetooth-git` `extra/blueman` `network-dmenu-git` `appimagelauncher` `postman-bin` `firefox-developer-edition` `google-chrome` `microsoft-edge-dev-bin` `teams` `slack-desktop` `aur/prospect-mail` `extra/discord` `extra/telegram-desktop` `obsidian` `extra/calc` `aur/networkmanager-dmenu-git`
-
-`rate-mirrors-bin` `ghostty` `ghq` `waterfox-bin` `wlsunset` `cliphist` `fish` `fisher` `peco`
-
-[`⬆ BACK TO TOP ⬆`](#table-of-contents)
-
-- niri xwayland-satellite xdg-desktop-portal-gnome xdg-desktop-portal-gtk alacritty
-  - dms-shell-bin matugen cava qt6-multimedia-ffmpeg
-  - noctalia-shell
-  - xdg-desktop-portal-wlr
-- ghostty, ghostty-cursor-shaders, visual-studio-code-bin
-- neovim, neovim
-  - tumbler, ffmpegthumbnailer
-  - nwg-look, papirus-icon-theme, bibata-cursor-theme-bin, banana-cursor-bin, papirus-folders-git
-    - `papirus-folders -C cat-latte-peach --theme Papirus-Light`
-    - `papirus-folders -C dracula-orange --theme Papirus-Dark`
-- waterfox, google-chrome, teams-for-linux-bin, slack-desktop-wayland
-  - `sudo ln -s /opt/teams-for-linux/teams-for-linux-bin /usr/local/bin/teams-for-linux`
-- rate-mirrors
-- ttf-jetbrains-mono-nerd, noto-fonts-emoji
-- greetd, greetd-tuigreet
-  - /etc/greetd/config.toml
-  - /etc/default/grub
-    - `sudo nano /etc/default/grub`
-    - `GRUB_CMDLINE_LINUX_DEFAULT="console=tty1 loglevel=3 nowatchdog nvme_load=YES"`
-    - `sudo grub-mkconfig -o /boot/grub/grub.cfg`
-- /etc/hosts
-- /etc/ca-certificates/trust-source/anchors/cert_vn_ssl_cert.crt
-- fastfetch, swaylock, wlsunset, cliphist, btop
-- ghq
-- ssh-keygen:
-  - add github, gitlab
-  - create config file for ssh
-- .gitconfig, .gitconfig-company
-- fcitx5, fcitx5-configtool, fcitx5-bamboo
-- fish, fisher, z for fish, dracula/fish, catppuccin/fish
-- eza, starship, peco
-- discord, mpv
-- docker, docker-compose, docker-buildx, lazydocker
-- mise, node, yarn, pnpm, wrangler
-  - turbo
-  - direnv
-- go, rust
-- dos2unix, curlie, yazi, bat, tree
-- satty
-  - .local/bin/dot-screenshot
-- gpu-screen-recorder
-- zathura
-- postman-bin
-- globalprotect-openconnect-git
-- jetbrains-toolbox
-- jq
-
-### i3 configs
-
-- [weztem](https://wezfurlong.org/wezterm/index.html) - A cross-platform terminal emulator and multiplexer.
-- [betterlockscreen](https://github.com/betterlockscreen/betterlockscreen) - 🍀 sweet looking lockscreen for linux system
-
-[`⬆ BACK TO TOP ⬆`](#table-of-contents)
-
-### Shell configs
-
-- [fish](https://github.com/fish-shell/fish-shell) - The user-friendly command line shell.
-- [fisher](https://github.com/jorgebucaran/fisher) - A plugin manager for Fish.
-- [dracula-fish](https://github.com/dracula/fish) - Dark theme for fish.
-- [z for fish](https://github.com/jethrokuan/z) - Pure-fish z directory jumping.
-- [ghq](https://github.com/x-motemen/ghq) - Remote repository management made easy.
-- [peco](https://github.com/peco/peco) - Simplistic interactive filtering tool.
-- [volta](https://volta.sh/) - The Hassle-Free JavaScript Tool Manager.
-- [eza](https://github.com/eza-community/eza) - A modern, maintained replacement for ls.
-- [starship](https://starship.rs/) - The minimal, blazing-fast, and infinitely customizable prompt for any shell!
-- [go](https://go.dev/)
-- [rust](https://www.rust-lang.org/)
-
-[`⬆ BACK TO TOP ⬆`](#table-of-contents)
-
-### Applications
-
-## User guide
-
-### Setup Docker
+Then, if you didn't opt into package auto-install, install them manually:
 
 ```sh
-sudo systemctl status docker
-
-# Bật và khởi chạy docker service ngay lập tức
-sudo systemctl enable --now docker.service
-
-# Thêm user hiện tại ($USER) vào group docker
-sudo usermod -aG docker $USER
-
-# Cập nhật lại group cho session hiện tại (để không cần logout/login lại)
-newgrp docker
+yay -S --needed - < packages/pacman-explicit.txt
+yay -S --needed - < packages/aur.txt
 ```
+
+System files under [`etc/`](etc/) (hosts, greetd) are **not** managed by chezmoi —
+copy them by hand with `sudo` where noted in the guides.
+
+## How it's organized
+
+```text
+linux-setup/
+├── home/            ← chezmoi source (.chezmoiroot points here)
+│   ├── dot_config/          → ~/.config/*
+│   ├── dot_local/           → ~/.local/*
+│   ├── private_dot_ssh/     → ~/.ssh/*  (0600)
+│   ├── dot_gitconfig.tmpl   → ~/.gitconfig  (templated)
+│   └── .chezmoi.toml.tmpl   prompts for your private values
+├── docs/            per-tool guides + Architecture Decision Records (adr/)
+├── packages/        reproducible package snapshots
+├── etc/             system files (/etc/*) — applied manually
+├── images/          screenshots & wallpapers
+└── justfile, lefthook.yml, .oxfmtrc.json, .github/  tooling
+```
+
+## Guides
+
+Each tool has a focused guide covering **what it is, why, and how to set it up**:
+
+| Guide                             | About                                             |
+| --------------------------------- | ------------------------------------------------- |
+| [niri.md](docs/niri.md)           | The scrollable-tiling compositor + Noctalia shell |
+| [ghostty.md](docs/ghostty.md)     | Terminal, cursor shaders, theming                 |
+| [fish.md](docs/fish.md)           | Shell, plugins, keybindings, secrets pattern      |
+| [ghq.md](docs/ghq.md)             | Organized repo cloning + fuzzy jumping            |
+| [ssh.md](docs/ssh.md)             | Multiple git identities (personal + work)         |
+| [docker.md](docs/docker.md)       | Engine setup, rootless usage, daemon config       |
+| [firewalld.md](docs/firewalld.md) | Exposing a dev server to your LAN                 |
+| [greetd.md](docs/greetd.md)       | Login manager + tuigreet + quiet boot             |
+| [fcitx5.md](docs/fcitx5.md)       | Vietnamese input (Bamboo)                         |
+| [satty.md](docs/satty.md)         | Screenshot + annotation pipeline                  |
+| [mise.md](docs/mise.md)           | Runtime / dev-env version management              |
+
+Bigger design decisions are recorded as [ADRs](docs/adr/).
+
+## Packages
+
+The full, reproducible lists live in [`packages/`](packages/); a curated,
+grouped, and explained subset is in [docs/packages.md](docs/packages.md).
+
+## Development
+
+This repo lints and formats itself. See [CONTRIBUTING.md](CONTRIBUTING.md).
 
 ```sh
-sudo nvim /etc/docker/daemon.json
-
-{
-  "features": {
-    "buildkit": true
-  },
-  "log-driver": "json-file",
-  "log-opts": {
-    "max-size": "50m",
-    "max-file": "3"
-  },
-  "storage-driver": "overlay2"
-}
+just setup    # install tooling + git hooks
+just check    # format check + lint + secret scan (what CI runs)
+just fmt      # auto-format everything
 ```
 
-```sh
-sudo systemctl restart docker.service
-```
-
-### Public Port
-
-#### 1. Find Your Local IP Address
-
-Other devices on your network will need your computer's local IP address.
-Open your terminal and use either `ip a` or `ifconfig` (if you have `net-tools` installed):
-
-```sh
-ip a
-```
-
-Example output:
-
-```sh
-2: enp0s31f6: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc fq_codel state UP group default qlen 1000
-  link/ether aa:bb:cc:dd:ee:ff brd ff:ff:ff:ff:ff:ff
-  inet 192.168.1.100/24 brd 192.168.1.255 scope global dynamic noprefixroute enp0s31f6
-  valid_lft 86241sec preferred_lft 86241sec
-```
-
-In this example, your IP is `192.168.1.100`.
-
-#### 2. Configure firewalld to Allow Incoming Connections
-
-1. **Start and Enable `firewalld` service (if not already running):**
-   First, confirm the `firewalld` service is running and enabled to start on boot:
-
-   ```sh
-   sudo systemctl status firewalld
-   ```
-
-   If it's not running or not enabled, use:
-
-   ```sh
-   sudo systemctl enable firewalld --now
-   ```
-
-2. **Determine your active zone:**
-   `firewalld` uses zones to define trust levels. Common zones are `public`, `home`, `internal`.
-   To see which zone your `enp4s0` interface is assigned to:
-
-   ```sh
-   sudo firewall-cmd --get-active-zones
-   ```
-
-   You will likely see `public` or home associated with your `enp4s0` interface. Let's assume it's `public` for the next steps.
-
-3. **Add the port to your active zone:**
-   You need to permanently add the port `5173` (TCP) to the zone your `enp4s0` interface is in. Replace `your-active-zone` with the actual zone name (e.g., `public`, `home`).
-
-   ```sh
-   sudo firewall-cmd --permanent --zone=your-active-zone --add-port=5173/tcp
-   ```
-
-   For example, if your active zone is `public`:
-
-   ```sh
-   sudo firewall-cmd --permanent --zone=public --add-port=5173/tcp
-   ```
-
-4. **Reload `firewalld` to apply changes:**
-
-   ```sh
-   sudo firewall-cmd --reload
-   ```
-
-5. **Verify the rule:**
-   You can list the ports allowed in your zone to confirm the rule was added:
-
-   ```sh
-   sudo firewall-cmd --zone=your-active-zone --list-ports
-   ```
-
-   You should see `5173/tcp` in the output.
+- **Format:** [oxfmt](https://oxc.rs/docs/guide/usage/formatter.html) (md/json/yaml/toml),
+  `shfmt` (shell), `fish_indent` (fish)
+- **Lint:** [markdownlint](https://github.com/DavidAnson/markdownlint), `shellcheck`
+- **Secrets:** [gitleaks](https://github.com/gitleaks/gitleaks) in the pre-commit hook and CI
 
 ## Credits
 
-This config has heavy inspiration from:
+Heavy inspiration from:
 
-- [devaslife](https://github.com/craftzdog/dotfiles-public) - Takuya Matsuyama
-- [mantran1611](https://github.com/manhtran1611/dotfiles) - Manh Tran
-- [lazarus2019](https://github.com/lazarus2019) - Thai Son
+- [devaslife](https://github.com/craftzdog/dotfiles-public) — Takuya Matsuyama
+- [mantran1611](https://github.com/manhtran1611/dotfiles) — Manh Tran
+- [lazarus2019](https://github.com/lazarus2019) — Thai Son
 
-[`⬆ BACK TO TOP ⬆`](#table-of-contents)
+Many thanks to my colleagues at **NDVN** for introducing me to Linux and guiding
+me along the way. You're amazing and kind. 🙏
+
+## License
+
+[MIT](LICENSE) © ngockhoi96
