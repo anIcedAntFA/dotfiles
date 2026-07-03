@@ -1,0 +1,37 @@
+{{- /* Auto-install packages on `chezmoi apply`, but only if you opted in at
+       `chezmoi init` (installPackages prompt). This script re-runs whenever the
+       package lists change, thanks to the content hashes embedded below.
+       The lists live at the repo root (packages/), one level above the chezmoi
+       source dir (home/), so we reach them via the sourceDir. */ -}}
+{{- $repoRoot := joinPath .chezmoi.sourceDir ".." -}}
+{{- $pacList := joinPath $repoRoot "packages" "pacman-explicit.txt" -}}
+{{- $aurList := joinPath $repoRoot "packages" "aur.txt" -}}
+#!/usr/bin/env bash
+set -euo pipefail
+
+{{ if .installPackages -}}
+# Re-run triggers (do not edit — these change when the package lists change):
+#   pacman-explicit.txt: {{ output "sha256sum" $pacList | trim }}
+#   aur.txt:             {{ output "sha256sum" $aurList | trim }}
+
+pac_list="{{ $pacList }}"
+aur_list="{{ $aurList }}"
+
+if ! command -v yay >/dev/null 2>&1; then
+  echo "yay not found — install an AUR helper first (see docs/packages.md). Skipping."
+  exit 0
+fi
+
+echo "==> Installing native + AUR packages with yay (--needed skips what you have)…"
+# Both lists are fed to yay; --needed makes this idempotent.
+mapfile -t pkgs < <(cat "$pac_list" "$aur_list" 2>/dev/null | grep -vE '^\s*(#|$)')
+if [ "${#pkgs[@]}" -gt 0 ]; then
+  yay -S --needed --noconfirm "${pkgs[@]}"
+fi
+echo "==> Package install complete."
+{{- else -}}
+# Package auto-install is disabled (installPackages=false).
+# Re-run `chezmoi init` and answer "yes", or install manually:
+#   yay -S --needed - < packages/pacman-explicit.txt
+echo "Package auto-install disabled — see docs/packages.md to install manually."
+{{- end }}
