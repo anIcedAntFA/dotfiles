@@ -10,6 +10,7 @@ base
 base-devel
 bash-completion
 bat
+bc
 bibata-cursor-theme-bin
 bind
 blueman
@@ -24,6 +25,7 @@ curlie
 device-mapper
 diffutils
 direnv
+discord
 dmidecode
 dmraid
 dnsmasq
@@ -57,6 +59,7 @@ fastfetch
 fcitx5
 fcitx5-bamboo
 fcitx5-configtool
+fd
 ffmpegthumbnailer
 firefox
 firewalld
@@ -70,11 +73,14 @@ ghq
 git
 git-cliff
 git-filter-repo
+github-cli
 gitleaks
 glances
 globalprotect-openconnect
+gnupg
 go
 google-chrome
+gopass
 gpu-screen-recorder
 greetd
 greetd-tuigreet
@@ -153,6 +159,7 @@ pavucontrol
 peco
 perl
 pgadmin4-bin
+pinentry
 pipewire-alsa
 pipewire-jack
 pipewire-pulse
@@ -196,6 +203,7 @@ ttf-jetbrains-mono-nerd
 ttf-liberation
 ttf-opensans
 tumbler
+turbo
 unrar
 unzip
 upower
@@ -232,3 +240,4 @@ yay
 yazi
 zathura
 zen-browser-bin
+zip

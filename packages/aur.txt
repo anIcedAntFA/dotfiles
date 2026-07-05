@@ -1,5 +1,6 @@
 banana-cursor-bin
 bibata-cursor-theme-bin
+bruno-bin
 flyctl
 google-breakpad
 google-chrome

@@ -61,39 +61,45 @@ Or let chezmoi do it on `chezmoi apply` — answer **yes** to the
 
 ## Modern CLI tools
 
-| Package                                                                                            | Why                             |
-| -------------------------------------------------------------------------------------------------- | ------------------------------- |
-| [`bat`](https://github.com/sharkdp/bat)                                                            | `cat` with syntax highlighting. |
-| [`eza`](https://github.com/eza-community/eza)                                                      | Modern `ls`.                    |
-| [`fastfetch`](https://github.com/fastfetch-cli/fastfetch)                                          | System info readout.            |
-| [`btop`](https://github.com/aristocratos/btop) / [`glances`](https://github.com/nicolargo/glances) | Resource monitors.              |
-| [`duf`](https://github.com/muesli/duf)                                                             | Disk usage/free.                |
-| [`tree`](http://mama.indstate.edu/users/ice/tree/)                                                 | Directory tree view.            |
-| [`jq`](https://jqlang.github.io/jq/)                                                               | JSON processor.                 |
-| [`curlie`](https://github.com/rs/curlie)                                                           | `curl` with httpie ergonomics.  |
-| [`hyperfine`](https://github.com/sharkdp/hyperfine)                                                | Command benchmarking.           |
-| [`tldr`](https://tldr.sh/)                                                                         | Simplified man pages.           |
-| [`yazi`](https://github.com/sxyazi/yazi)                                                           | Terminal file manager.          |
-| [`dos2unix`](https://waterlan.home.xs4all.nl/dos2unix.html)                                        | Line-ending conversion.         |
-| [`plocate`](https://plocate.sesse.net/)                                                            | Fast `locate`.                  |
+| Package                                                                                            | Why                              |
+| -------------------------------------------------------------------------------------------------- | -------------------------------- |
+| [`bat`](https://github.com/sharkdp/bat)                                                            | `cat` with syntax highlighting.  |
+| [`eza`](https://github.com/eza-community/eza)                                                      | Modern `ls`.                     |
+| [`fd`](https://github.com/sharkdp/fd)                                                              | Modern `find` — fast, ergonomic. |
+| [`fastfetch`](https://github.com/fastfetch-cli/fastfetch)                                          | System info readout.             |
+| [`btop`](https://github.com/aristocratos/btop) / [`glances`](https://github.com/nicolargo/glances) | Resource monitors.               |
+| [`duf`](https://github.com/muesli/duf)                                                             | Disk usage/free.                 |
+| [`tree`](http://mama.indstate.edu/users/ice/tree/)                                                 | Directory tree view.             |
+| [`jq`](https://jqlang.github.io/jq/)                                                               | JSON processor.                  |
+| [`curlie`](https://github.com/rs/curlie)                                                           | `curl` with httpie ergonomics.   |
+| [`hyperfine`](https://github.com/sharkdp/hyperfine)                                                | Command benchmarking.            |
+| [`tldr`](https://tldr.sh/)                                                                         | Simplified man pages.            |
+| [`yazi`](https://github.com/sxyazi/yazi)                                                           | Terminal file manager.           |
+| [`dos2unix`](https://waterlan.home.xs4all.nl/dos2unix.html)                                        | Line-ending conversion.          |
+| [`plocate`](https://plocate.sesse.net/)                                                            | Fast `locate`.                   |
 
 ## Development
 
-| Package                                                                                                                                | Why                                                |
-| -------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------- |
-| [`git`](https://git-scm.com/) + [`git-cliff`](https://git-cliff.org/) + [`git-filter-repo`](https://github.com/newren/git-filter-repo) | VCS, changelog generation, history rewriting.      |
-| [`gitleaks`](https://github.com/gitleaks/gitleaks)                                                                                     | Secret scanning (wired into this repo's hooks/CI). |
-| [`mise`](https://mise.jdx.dev/)                                                                                                        | Runtime version manager (node, pnpm, bun, go…).    |
-| [`uv`](https://github.com/astral-sh/uv)                                                                                                | Fast Python package manager.                       |
-| [`docker`](https://www.docker.com/) + `docker-compose` + `docker-buildx` + [`lazydocker`](https://github.com/jesseduffield/lazydocker) | Containers + TUI. See [docker.md](docker.md).      |
-| [`neovim`](https://neovim.io/)                                                                                                         | Editor.                                            |
-| [`visual-studio-code-bin`](https://code.visualstudio.com/)                                                                             | Editor/IDE.                                        |
-| [`jetbrains-toolbox`](https://www.jetbrains.com/toolbox-app/)                                                                          | JetBrains IDE manager.                             |
-| [`go`](https://go.dev/)                                                                                                                | Go toolchain.                                      |
-| [`postman-bin`](https://www.postman.com/)                                                                                              | API client.                                        |
-| [`postgresql`](https://www.postgresql.org/) + [`pgadmin4-bin`](https://www.pgadmin.org/) + `navicat-premium-lite-en`                   | Database + GUIs.                                   |
-| [`flyctl`](https://fly.io/docs/flyctl/)                                                                                                | fly.io deployment CLI.                             |
-| [`gemini-cli`](https://github.com/google-gemini/gemini-cli)                                                                            | Terminal AI agent.                                 |
+| Package                                                                                                                                | Why                                                                                                                      |
+| -------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------ |
+| [`git`](https://git-scm.com/) + [`git-cliff`](https://git-cliff.org/) + [`git-filter-repo`](https://github.com/newren/git-filter-repo) | VCS, changelog generation, history rewriting.                                                                            |
+| [`gitleaks`](https://github.com/gitleaks/gitleaks)                                                                                     | Secret scanning (wired into this repo's hooks/CI).                                                                       |
+| [`github-cli`](https://cli.github.com/) (`gh`)                                                                                         | GitHub from the terminal — PRs, issues, releases. See [git.md](git.md).                                                  |
+| [`gopass`](https://www.gopass.pw/) + `gnupg`                                                                                           | Terminal password manager (GPG + git). See [gopass.md](gopass.md) · [ADR](adr/0004-terminal-password-manager-gopass.md). |
+| [`direnv`](https://direnv.net/)                                                                                                        | Per-directory env / auto-`.envrc`. See [direnv.md](direnv.md).                                                           |
+| [`turbo`](https://turborepo.com/)                                                                                                      | Monorepo build system / task runner.                                                                                     |
+| [`bruno-bin`](https://www.usebruno.com/)                                                                                               | Git-friendly, offline API client (Postman alternative).                                                                  |
+| [`mise`](https://mise.jdx.dev/)                                                                                                        | Runtime version manager (node, pnpm, bun, go…).                                                                          |
+| [`uv`](https://github.com/astral-sh/uv)                                                                                                | Fast Python package manager.                                                                                             |
+| [`docker`](https://www.docker.com/) + `docker-compose` + `docker-buildx` + [`lazydocker`](https://github.com/jesseduffield/lazydocker) | Containers + TUI. See [docker.md](docker.md).                                                                            |
+| [`neovim`](https://neovim.io/)                                                                                                         | Editor.                                                                                                                  |
+| [`visual-studio-code-bin`](https://code.visualstudio.com/)                                                                             | Editor/IDE.                                                                                                              |
+| [`jetbrains-toolbox`](https://www.jetbrains.com/toolbox-app/)                                                                          | JetBrains IDE manager.                                                                                                   |
+| [`go`](https://go.dev/)                                                                                                                | Go toolchain.                                                                                                            |
+| [`postman-bin`](https://www.postman.com/)                                                                                              | API client.                                                                                                              |
+| [`postgresql`](https://www.postgresql.org/) + [`pgadmin4-bin`](https://www.pgadmin.org/) + `navicat-premium-lite-en`                   | Database + GUIs.                                                                                                         |
+| [`flyctl`](https://fly.io/docs/flyctl/)                                                                                                | fly.io deployment CLI.                                                                                                   |
+| [`gemini-cli`](https://github.com/google-gemini/gemini-cli)                                                                            | Terminal AI agent.                                                                                                       |
 
 ## Browsers & communication
 
@@ -101,6 +107,7 @@ Or let chezmoi do it on `chezmoi apply` — answer **yes** to the
 | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------- |
 | [`firefox`](https://www.mozilla.org/firefox/) · [`google-chrome`](https://www.google.com/chrome/) · [`waterfox-bin`](https://www.waterfox.net/) · [`zen-browser-bin`](https://zen-browser.app/) | Browsers (testing + daily use). |
 | [`slack-desktop-wayland`](https://slack.com/) · [`teams-for-linux-bin`](https://github.com/IsmaelMartinez/teams-for-linux)                                                                      | Work chat.                      |
+| [`discord`](https://discord.com/)                                                                                                                                                               | Community chat.                 |
 
 ## Input method (Vietnamese)
 
