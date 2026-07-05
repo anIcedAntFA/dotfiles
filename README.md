@@ -106,19 +106,23 @@ linux-setup/
 
 Each tool has a focused guide covering **what it is, why, and how to set it up**:
 
-| Guide                             | About                                             |
-| --------------------------------- | ------------------------------------------------- |
-| [niri.md](docs/niri.md)           | The scrollable-tiling compositor + Noctalia shell |
-| [ghostty.md](docs/ghostty.md)     | Terminal, cursor shaders, theming                 |
-| [fish.md](docs/fish.md)           | Shell, plugins, keybindings, secrets pattern      |
-| [ghq.md](docs/ghq.md)             | Organized repo cloning + fuzzy jumping            |
-| [ssh.md](docs/ssh.md)             | Multiple git identities (personal + work)         |
-| [docker.md](docs/docker.md)       | Engine setup, rootless usage, daemon config       |
-| [firewalld.md](docs/firewalld.md) | Exposing a dev server to your LAN                 |
-| [greetd.md](docs/greetd.md)       | Login manager + tuigreet + quiet boot             |
-| [fcitx5.md](docs/fcitx5.md)       | Vietnamese input (Bamboo)                         |
-| [satty.md](docs/satty.md)         | Screenshot + annotation pipeline                  |
-| [mise.md](docs/mise.md)           | Runtime / dev-env version management              |
+| Guide                             | About                                              |
+| --------------------------------- | -------------------------------------------------- |
+| [chezmoi.md](docs/chezmoi.md)     | Dotfile manager — workflows, templates, add/re-add |
+| [niri.md](docs/niri.md)           | The scrollable-tiling compositor + Noctalia shell  |
+| [ghostty.md](docs/ghostty.md)     | Terminal, cursor shaders, theming                  |
+| [fish.md](docs/fish.md)           | Shell, plugins, keybindings, secrets pattern       |
+| [ghq.md](docs/ghq.md)             | Organized repo cloning + fuzzy jumping             |
+| [ssh.md](docs/ssh.md)             | SSH keys per host (personal + work auth)           |
+| [git.md](docs/git.md)             | Git identities, `includeIf`, SSH commit signing    |
+| [gopass.md](docs/gopass.md)       | Terminal password manager (GPG + git)              |
+| [docker.md](docs/docker.md)       | Engine setup, rootless usage, daemon config        |
+| [firewalld.md](docs/firewalld.md) | Exposing a dev server to your LAN                  |
+| [greetd.md](docs/greetd.md)       | Login manager + tuigreet + quiet boot              |
+| [fcitx5.md](docs/fcitx5.md)       | Vietnamese input (Bamboo)                          |
+| [satty.md](docs/satty.md)         | Screenshot + annotation pipeline                   |
+| [mise.md](docs/mise.md)           | Runtime / dev-env version management               |
+| [direnv.md](docs/direnv.md)       | Per-directory environments (`.envrc`)              |
 
 Bigger design decisions are recorded as [ADRs](docs/adr/).
 
@@ -149,6 +153,7 @@ Heavy inspiration from:
 - [devaslife](https://github.com/craftzdog/dotfiles-public) — Takuya Matsuyama
 - [mantran1611](https://github.com/manhtran1611/dotfiles) — Manh Tran
 - [lazarus2019](https://github.com/lazarus2019) — Thai Son
+- [nickjj](https://github.com/nickjj/dotfriedrice) — Nick Janetakis
 
 Many thanks to my colleagues at **NDVN** for introducing me to Linux and guiding
 me along the way. You're amazing and kind. 🙏
