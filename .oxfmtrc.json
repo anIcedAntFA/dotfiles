@@ -1,0 +1,23 @@
+{
+  "printWidth": 100,
+  "proseWrap": "preserve",
+  "endOfLine": "lf",
+  "insertFinalNewline": true,
+  "embeddedLanguageFormatting": "off",
+  "ignorePatterns": [
+    "**/node_modules/**",
+    "pnpm-lock.yaml",
+    "home/dot_config/noctalia/**",
+    "home/dot_config/rtk/**",
+    "images/**",
+    ".agents/**",
+    ".gemini/**",
+    ".claude/**"
+  ],
+  "overrides": [
+    {
+      "files": ["*.md"],
+      "options": { "useTabs": false, "tabWidth": 2 }
+    }
+  ]
+}

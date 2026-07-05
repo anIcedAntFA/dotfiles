@@ -1,0 +1,13 @@
+{
+  "recommendations": [
+    "oxc.oxc-vscode",
+    "editorconfig.editorconfig",
+    "davidanson.vscode-markdownlint",
+    "timonwong.shellcheck",
+    "foxundermoon.shell-format",
+    "bmalehorn.vscode-fish",
+    "tamasfe.even-better-toml",
+    "redhat.vscode-yaml",
+    "kokakiwi.vscode-just"
+  ]
+}

@@ -1,0 +1,94 @@
+# EditorConfig for Linux Setup Project
+# https://editorconfig.org
+
+root = true
+
+# Default settings for all files
+[*]
+charset = utf-8
+end_of_line = lf
+insert_final_newline = true
+trim_trailing_whitespace = true
+indent_style = tab
+indent_size = 2
+tab_width = 2
+
+# Markdown files
+[*.md]
+trim_trailing_whitespace = false
+
+# Shell scripts
+[*.{sh,bash}]
+indent_style = tab
+indent_size = 2
+
+# Fish shell — fish_indent is the canonical formatter and always uses 4 spaces
+# (it is not configurable), so we match it here.
+[*.fish]
+indent_style = space
+indent_size = 4
+
+# TOML configuration files
+[*.toml]
+indent_style = tab
+indent_size = 2
+
+# JSON files (spaces are standard for JSON)
+[*.{json,jsonc}]
+indent_style = space
+indent_size = 2
+
+# YAML files (spaces required for YAML)
+[*.{yml,yaml}]
+indent_style = space
+indent_size = 2
+
+# KDL files (Niri config)
+[*.kdl]
+indent_style = tab
+indent_size = 2
+
+# Configuration files
+[*.{conf,config}]
+indent_style = tab
+indent_size = 2
+
+# XML files
+[*.xml]
+indent_style = tab
+indent_size = 2
+
+# Scheme files
+[*.scm]
+indent_style = tab
+indent_size = 2
+
+# GLSL shader files
+[*.glsl]
+indent_style = tab
+indent_size = 2
+
+# Theme files
+[*.theme]
+indent_style = tab
+indent_size = 2
+
+# Git config files
+[.gitconfig*]
+indent_style = tab
+indent_size = 2
+
+# Specific config files without extensions
+[{config,profile}]
+indent_style = tab
+indent_size = 2
+
+# Makefiles (tabs required)
+[Makefile]
+indent_style = tab
+indent_size = 2
+
+# Binary files (no trailing whitespace/newline enforcement)
+[*.{jpg,jpeg,png,gif,ico,svg,pdf}]
+insert_final_newline = false
+trim_trailing_whitespace = false

@@ -1,0 +1,11 @@
+[Desktop Entry]
+Name=Teams for Linux
+#Exec=/opt/teams-for-linux/teams-for-linux --ozone-platform=x11 %U
+Exec=env XDG_CURRENT_DESKTOP=GNOME /opt/teams-for-linux/teams-for-linux --enable-features=UseOzonePlatform --ozone-platform=wayland %U
+Terminal=false
+Type=Application
+Icon=teams-for-linux
+StartupWMClass=teams-for-linux
+Comment=Unofficial Microsoft Teams client for Linux using Electron. It uses the Web App and wraps it as a standalone application using Electron.
+MimeType=x-scheme-handler/msteams;
+Categories=Chat;Network;Office;

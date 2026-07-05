@@ -1,0 +1,6 @@
+# Patterns here match TARGET paths under $HOME that chezmoi should NOT manage.
+# (The repo README, docs/, packages/, etc. live above the source root — set by
+# .chezmoiroot -> "home" — so they never reach $HOME and need no entry here.)
+#
+# Nothing is ignored yet. Add entries such as:
+#   .config/fish/fish_variables   # if its runtime churn becomes noisy

@@ -1,7 +1,0 @@
-[Desktop Entry]
-Name=Waterfox
-Comment=Launches the Waterfox web browser
-Exec=waterfox
-Terminal=false
-Type=Application
-X-GNOME-Autostart-enabled=true

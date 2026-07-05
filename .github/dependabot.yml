@@ -1,0 +1,16 @@
+# Keep tooling fresh — https://docs.github.com/code-security/dependabot
+version: 2
+updates:
+  # npm dev tooling (oxfmt, markdownlint-cli2)
+  - package-ecosystem: npm
+    directory: "/"
+    schedule:
+      interval: weekly
+    labels: ["dependencies"]
+
+  # GitHub Actions used by the CI workflow
+  - package-ecosystem: github-actions
+    directory: "/"
+    schedule:
+      interval: weekly
+    labels: ["dependencies", "ci"]

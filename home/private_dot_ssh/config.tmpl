@@ -1,0 +1,16 @@
+# Personal — GitHub
+Host github.com
+	HostName github.com
+	User git
+	PreferredAuthentications publickey
+	IdentityFile ~/.ssh/github
+	IdentitiesOnly yes
+
+# Work — templated host; real value comes from `chezmoi init` prompts
+Host {{ .workGitHost }}
+	HostName {{ .workGitHost }}
+	#Port {{ .workGitPort }}
+	User git
+	PreferredAuthentications publickey
+	IdentityFile ~/.ssh/gitlab
+	IdentitiesOnly yes

@@ -1,0 +1,21 @@
+{{/* chezmoi prompts for machine-specific values on `chezmoi init`.
+     Answers are stored in ~/.config/chezmoi/chezmoi.toml, which is NEVER
+     committed, so the public repo only ever contains the template variables. */}}
+{{- $email := promptStringOnce . "email" "Personal git email" "you@example.com" -}}
+{{- $name := promptStringOnce . "name" "Git author name" "your-name" -}}
+{{- $workEmail := promptStringOnce . "workEmail" "Work git email (leave default if none)" "you@company.example" -}}
+{{- $workGitHost := promptStringOnce . "workGitHost" "Work git host" "gitlab.example.com" -}}
+{{- $workGitPort := promptStringOnce . "workGitPort" "Work git SSH port" "22" -}}
+{{- $ghqRoot := promptStringOnce . "ghqRoot" "ghq root path" "~/workspace" -}}
+{{- $ghqCompanyRoot := promptStringOnce . "ghqCompanyRoot" "ghq company root path" "~/workspace/company" -}}
+{{- $installPackages := promptBoolOnce . "installPackages" "Install packages from packages/ on apply? (needs yay)" false -}}
+
+[data]
+    email = {{ $email | quote }}
+    name = {{ $name | quote }}
+    workEmail = {{ $workEmail | quote }}
+    workGitHost = {{ $workGitHost | quote }}
+    workGitPort = {{ $workGitPort | quote }}
+    ghqRoot = {{ $ghqRoot | quote }}
+    ghqCompanyRoot = {{ $ghqCompanyRoot | quote }}
+    installPackages = {{ $installPackages }}

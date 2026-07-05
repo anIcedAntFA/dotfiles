@@ -1,0 +1,62 @@
+background-opacity = 1
+background-blur-radius = 12
+
+theme = noctalia
+
+shell-integration = fish
+shell-integration-features = no-cursor
+
+font-family = JetBrainsMono Nerd Font
+font-family-bold = JetBrainsMono Nerd Font
+font-family-italic = JetBrainsMono Nerd Font
+font-family-bold-italic = JetBrainsMono Nerd Font
+font-style = Medium
+font-style-bold = SemiBold
+font-style-italic = Medium
+font-style-bold-italic = SemiBold
+font-size = 12
+
+cursor-style = bar
+cursor-opacity = 1
+adjust-cursor-thickness = 8
+cursor-invert-fg-bg = false
+cursor-click-to-move = true
+cursor-style-blink = true
+custom-shader = shaders/cursor_sweep.glsl
+
+gtk-titlebar = true
+gtk-tabs-location=bottom
+
+confirm-close-surface = true
+window-decoration = none
+window-padding-x = 8
+window-padding-y = 8
+window-save-state = always
+
+auto-update = check
+auto-update-channel = stable
+
+# copy-on-select = clipboard
+
+# splitting
+keybind = ctrl+alt+right=new_split:right
+keybind = ctrl+alt+down=new_split:down
+keybind = super+b>e=equalize_splits
+
+keybind = ctrl+shift+w=close_tab
+keybind = ctrl+shift+left=previous_tab
+keybind = ctrl+shift+right=next_tab
+keybind = ctrl+tab=next_tab
+keybind = ctrl+shift+tab=previous_tab
+keybind = ctrl+shift+e=prompt_surface_title
+
+# tab nav
+keybind = super+b>1=goto_tab:1
+keybind = super+b>2=goto_tab:2
+keybind = super+b>3=goto_tab:3
+keybind = super+b>4=goto_tab:4
+keybind = super+b>5=goto_tab:5
+keybind = super+b>6=goto_tab:6
+keybind = super+b>7=goto_tab:7
+keybind = super+b>8=goto_tab:8
+keybind = super+b>9=goto_tab:9

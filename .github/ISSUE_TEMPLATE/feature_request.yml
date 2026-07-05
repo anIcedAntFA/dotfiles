@@ -1,0 +1,18 @@
+name: 💡 Suggestion
+description: Suggest an improvement, a config tweak, or a tool worth adding.
+labels: ["enhancement"]
+body:
+  - type: textarea
+    id: idea
+    attributes:
+      label: The idea
+      description: What would you add or change, and why is it useful?
+    validations:
+      required: true
+  - type: textarea
+    id: references
+    attributes:
+      label: References
+      description: Links to docs, projects, or examples (optional).
+    validations:
+      required: false

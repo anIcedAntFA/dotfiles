@@ -1,7 +1,0 @@
-[Desktop Entry]
-Name=Google Chrome
-Comment=Launches the Google Chrome web browser
-Exec=google-chrome-stable
-Terminal=false
-Type=Application
-X-GNOME-Autostart-enabled=true
