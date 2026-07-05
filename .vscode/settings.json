@@ -4,6 +4,34 @@
   // .editorconfig, so keep it installed.
   "editor.formatOnSave": true,
   "editor.defaultFormatter": "oxc.oxc-vscode",
+  // Point the extension at the same config the `oxfmt` CLI uses, and at the
+  // locally-installed binary, so on-save output == `just fmt`.
+  "oxc.fmt.experimental": true,
+  "oxc.fmt.configPath": ".oxfmtrc.json",
+  "oxc.path.oxfmt": "./node_modules/.bin/oxfmt",
+  // Per-language pins are REQUIRED, not redundant: a language-specific default
+  // formatter in your *user* settings (e.g. "[yaml]": redhat.vscode-yaml)
+  // outranks a non-language default set at *workspace* scope. Without these
+  // blocks, oxfmt silently loses to your user settings on save. Set them per
+  // language so the repo owns formatting regardless of each machine's config.
+  "[markdown]": {
+    "editor.defaultFormatter": "oxc.oxc-vscode",
+    // oxfmt preserves prose wrapping; markdownlint (MD013) is off, so don't
+    // let the editor trim trailing whitespace (hard line breaks are two spaces).
+    "files.trimTrailingWhitespace": false
+  },
+  "[yaml]": {
+    "editor.defaultFormatter": "oxc.oxc-vscode"
+  },
+  "[json]": {
+    "editor.defaultFormatter": "oxc.oxc-vscode"
+  },
+  "[jsonc]": {
+    "editor.defaultFormatter": "oxc.oxc-vscode"
+  },
+  "[toml]": {
+    "editor.defaultFormatter": "oxc.oxc-vscode"
+  },
   "[shellscript]": {
     "editor.defaultFormatter": "foxundermoon.shell-format"
   },
@@ -13,8 +41,5 @@
   // shfmt: -i 0 = indent with tabs, matching .editorconfig for shell.
   "shellformat.flag": "-i 0",
   "files.insertFinalNewline": true,
-  "files.trimTrailingWhitespace": true,
-  "[markdown]": {
-    "files.trimTrailingWhitespace": false
-  }
+  "files.trimTrailingWhitespace": true
 }
