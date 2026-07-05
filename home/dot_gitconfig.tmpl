@@ -6,6 +6,15 @@
 [push]
 	default = simple
 
+# Sign commits & tags with an SSH key (reuses your existing SSH key — no GPG).
+# See docs/git.md. The work identity overrides signingkey in .gitconfig-company.
+[gpg]
+	format = ssh
+[commit]
+	gpgsign = true
+[tag]
+	gpgsign = true
+
 [color]
 	status = auto
 	diff = auto
@@ -43,6 +52,7 @@
 [user]
 	email = {{ .email }}
 	name = {{ .name }}
+	signingkey = ~/.ssh/github.pub
 
 [includeIf "gitdir:{{ .ghqCompanyRoot }}/"]
 	path = ./.gitconfig-company
