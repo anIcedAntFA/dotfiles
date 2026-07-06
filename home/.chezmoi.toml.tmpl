@@ -6,6 +6,7 @@
 {{- $workEmail := promptStringOnce . "workEmail" "Work git email (leave default if none)" "you@company.example" -}}
 {{- $workGitHost := promptStringOnce . "workGitHost" "Work git host" "gitlab.example.com" -}}
 {{- $workGitPort := promptStringOnce . "workGitPort" "Work git SSH port" "22" -}}
+{{- $workVpnPortal := promptStringOnce . "workVpnPortal" "Work VPN portal host (leave default if none)" "vpn.example.com" -}}
 {{- $ghqRoot := promptStringOnce . "ghqRoot" "ghq root path" "~/workspace" -}}
 {{- $ghqCompanyRoot := promptStringOnce . "ghqCompanyRoot" "ghq company root path" "~/workspace/company" -}}
 {{- $installPackages := promptBoolOnce . "installPackages" "Install packages from packages/ on apply? (needs yay)" false -}}
@@ -16,6 +17,7 @@
     workEmail = {{ $workEmail | quote }}
     workGitHost = {{ $workGitHost | quote }}
     workGitPort = {{ $workGitPort | quote }}
+    workVpnPortal = {{ $workVpnPortal | quote }}
     ghqRoot = {{ $ghqRoot | quote }}
     ghqCompanyRoot = {{ $ghqCompanyRoot | quote }}
     installPackages = {{ $installPackages }}

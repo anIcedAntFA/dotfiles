@@ -1,0 +1,7 @@
+function vpn-connect --description "Connect to the corporate GlobalProtect VPN"
+    # Wraps the long gpclient invocation. The company SSL cert must already be
+    # installed (see docs/certs.md); the portal host is a chezmoi template var so
+    # it never lands in the public repo. Disconnect with: sudo gpclient disconnect
+    sudo -E SSL_CERT_FILE=/etc/ssl/certs/vn_ssl_cert.pem SSL_CERT_DIR=/etc/ssl/certs \
+        gpclient --fix-openssl connect --browser chrome {{ .workVpnPortal }}
+end
