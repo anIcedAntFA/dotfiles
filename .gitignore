@@ -78,3 +78,5 @@ node_modules/
 # rtk: track filters.toml (shareable), but not config.toml (machine/telemetry state)
 home/dot_config/rtk/config.toml
 **/.claude/settings.local.json
+
+.docs
