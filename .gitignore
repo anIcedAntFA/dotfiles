@@ -75,5 +75,6 @@ node_modules/
 .claude/
 .agents/
 .gemini/
-home/dot_config/rtk/
+# rtk: track filters.toml (shareable), but not config.toml (machine/telemetry state)
+home/dot_config/rtk/config.toml
 **/.claude/settings.local.json
