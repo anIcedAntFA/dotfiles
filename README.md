@@ -1,6 +1,6 @@
 # Linux Setup
 
-[![CI](https://github.com/anIcedAntFA/linux-setup/actions/workflows/ci.yml/badge.svg)](https://github.com/anIcedAntFA/linux-setup/actions/workflows/ci.yml)
+[![CI](https://github.com/anIcedAntFA/dotfiles/actions/workflows/ci.yml/badge.svg)](https://github.com/anIcedAntFA/dotfiles/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![Managed with chezmoi](https://img.shields.io/badge/managed%20with-chezmoi-1673ff.svg)](https://www.chezmoi.io/)
 
@@ -68,7 +68,7 @@ yay -S --needed chezmoi
 
 # 2. Pull this repo and apply it. You'll be prompted for your email, name,
 #    work git host/port, ghq roots, and whether to auto-install packages.
-chezmoi init --apply https://github.com/anIcedAntFA/linux-setup.git
+chezmoi init --apply https://github.com/anIcedAntFA/dotfiles.git
 ```
 
 Your answers are stored in `~/.config/chezmoi/chezmoi.toml` (never committed) and
@@ -88,7 +88,7 @@ copy them by hand with `sudo` where noted in the guides.
 ## How it's organized
 
 ```text
-linux-setup/
+dotfiles/
 ├── home/            ← chezmoi source (.chezmoiroot points here)
 │   ├── dot_config/          → ~/.config/*
 │   ├── dot_local/           → ~/.local/*
@@ -116,6 +116,8 @@ Each tool has a focused guide covering **what it is, why, and how to set it up**
 | [ssh.md](docs/ssh.md)             | SSH keys per host (personal + work auth)           |
 | [git.md](docs/git.md)             | Git identities, `includeIf`, SSH commit signing    |
 | [gopass.md](docs/gopass.md)       | Terminal password manager (GPG + git)              |
+| [certs.md](docs/certs.md)         | Corporate CA certs — trust store restore           |
+| [vpn.md](docs/vpn.md)             | Corporate VPN (GlobalProtect / `gpclient`)         |
 | [docker.md](docs/docker.md)       | Engine setup, rootless usage, daemon config        |
 | [firewalld.md](docs/firewalld.md) | Exposing a dev server to your LAN                  |
 | [greetd.md](docs/greetd.md)       | Login manager + tuigreet + quiet boot              |
@@ -123,6 +125,7 @@ Each tool has a focused guide covering **what it is, why, and how to set it up**
 | [satty.md](docs/satty.md)         | Screenshot + annotation pipeline                   |
 | [mise.md](docs/mise.md)           | Runtime / dev-env version management               |
 | [direnv.md](docs/direnv.md)       | Per-directory environments (`.envrc`)              |
+| [tuxedo.md](docs/tuxedo.md)       | todo.txt task TUI + niri float keybind             |
 
 Bigger design decisions are recorded as [ADRs](docs/adr/).
 
