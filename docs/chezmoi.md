@@ -28,6 +28,40 @@ and expect the repo to notice.** The repo is the source; `$HOME` is a rendered
 _output_. To capture a change you made live, you pull it _back_ into the source
 (next section).
 
+## Setup: pointing chezmoi at this working copy (author flow)
+
+The README quick-start (`chezmoi init --apply <url>`) is the **consumer** path — it
+clones a _fresh_ copy into chezmoi's default source dir, `~/.local/share/chezmoi`.
+As the **author** you already have this repo checked out (e.g. via `ghq` at
+`~/workspace/github.com/<you>/dotfiles`) and want to edit it **in place** while
+chezmoi reads from it. Point chezmoi's source dir at your working copy with a symlink:
+
+```sh
+# The symlink must BE ~/.local/share/chezmoi and point at the repo ROOT.
+ln -s ~/workspace/github.com/<you>/dotfiles ~/.local/share/chezmoi
+```
+
+> [!WARNING]
+> **Gotcha:** if `~/.local/share/chezmoi` already exists _as a directory_, then
+> `ln -s <repo> ~/.local/share/chezmoi` silently drops the link **inside** it
+> (`~/.local/share/chezmoi/dotfiles`). chezmoi then sees `dotfiles` as an entry to
+> create at `~/dotfiles` — a nonsense diff. Fix: `rm -rf ~/.local/share/chezmoi`
+> **first**, then create the symlink so it _is_ the link.
+
+Then generate your machine data. `chezmoi init` **does not touch `$HOME`** — it only
+writes `~/.config/chezmoi/chezmoi.toml` (your prompt answers), so it's safe to run:
+
+```sh
+chezmoi init            # runs the prompts → writes ~/.config/chezmoi/chezmoi.toml
+chezmoi source-path     # sanity check: must resolve into the repo
+chezmoi execute-template '{{ .chezmoi.sourceDir }}'   # should end in …/dotfiles/home
+```
+
+`.chezmoiroot` is `home`, so the _effective_ source is `<repo>/home`. Because it's a
+symlink, `chezmoi git …` and edits under `home/` act directly on your working copy —
+one source of truth, no second clone. Only **after** this does `chezmoi diff/apply`
+work (templates need the data from `init`).
+
 ## "Do I back up files into `home/` by hand?" — no
 
 This is the question that trips everyone up. You do **not** hand-copy a file into
@@ -83,6 +117,33 @@ chezmoi destroy ~/.config/foo # stop managing AND delete the live file (careful)
 Rule of thumb: **`chezmoi diff` before every `chezmoi apply`.** Applying overwrites
 `$HOME`, so read the diff the way you'd read a `git diff` before committing.
 
+## Applying selectively (when a full apply scares you)
+
+The **first** apply on an already-configured machine shows changes to _everything_ —
+that's normal. chezmoi has never written these files, so every managed path looks
+new (much of it is just whitespace/permission normalisation, e.g. `mode 40700 →
+40755`). You don't have to take it all at once — scope apply to a path:
+
+```sh
+chezmoi diff  ~/.config/fish                       # preview one path
+chezmoi apply ~/.config/fish                        # apply just that dir
+chezmoi apply ~/.gitconfig ~/.gitconfig-company     # several explicit paths
+
+chezmoi apply -i                       # interactive: confirm each change (y/n/all/quit)
+chezmoi apply -n -v ~/.config/fish     # dry-run + verbose — writes nothing
+chezmoi apply --exclude=scripts <path> # skip run_ scripts (e.g. the package installer)
+chezmoi merge ~/.config/fish/config.fish   # 3-way merge instead of overwrite (keep live edits)
+```
+
+Go cluster by cluster, low-risk first (`~/.gitconfig*`, `~/.config/fish`): `diff` →
+`apply <path>` → verify → next.
+
+> [!NOTE]
+> **Orphans.** A path chezmoi _stops_ referencing — e.g. an old `~/.gitconfig-ndvn`
+> after the include switches to `~/.gitconfig-company` — is **not** deleted. chezmoi
+> never removes unmanaged files. Confirm the replacement works, then `rm` the orphan
+> yourself (or `chezmoi destroy` while it was still managed).
+
 ## Source-name conventions (attributes)
 
 The filename in `home/` _is_ the metadata. chezmoi decodes prefixes/suffixes:
@@ -105,6 +166,14 @@ Set attributes on an existing managed file without renaming by hand:
 ```sh
 chezmoi chattr +private,+template ~/.ssh/config
 ```
+
+> [!IMPORTANT]
+> **Only file _contents_ are templated, never the target _name_.** chezmoi does not
+> interpolate `.data` into a filename. So the work-identity file is always
+> `~/.gitconfig-company` (from `dot_gitconfig-company.tmpl`) — even though its
+> _contents_ and the `includeIf` directory _are_ templated from your answers. Seeing
+> `path = ./.gitconfig-company` while your company slug is `ndvn` is **correct**:
+> the `gitdir` uses your value, the filename is a fixed convention. See [git.md](git.md).
 
 ## Templates + your machine data
 

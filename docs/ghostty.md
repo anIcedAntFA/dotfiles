@@ -10,8 +10,11 @@ is kept as a fallback.
 ## Install
 
 ```sh
-yay -S --needed ghostty ghostty-cursor-shaders
+yay -S --needed ghostty
 ```
+
+The cursor shaders are **vendored** in this repo (see below), so there's no separate
+shader package to install — chezmoi lays them down with the rest of the config.
 
 ## Config highlights
 
@@ -23,7 +26,7 @@ From [`home/dot_config/ghostty/config`](../home/dot_config/ghostty/config):
 | `font-family = JetBrainsMono Nerd Font`     | Nerd Font for icons/glyphs in prompts and TUIs.               |
 | `shell-integration = fish`                  | Enables prompt marks, cwd tracking, etc. for [fish](fish.md). |
 | `window-decoration = none`                  | No CSD — niri manages window framing.                         |
-| `custom-shader = shaders/cursor_sweep.glsl` | Animated cursor (from `ghostty-cursor-shaders`).              |
+| `custom-shader = shaders/cursor_sweep.glsl` | Animated cursor (vendored `shaders/` — see below).            |
 | `window-padding-x/y = 8`                    | Breathing room around the grid.                               |
 
 ## Cursor shaders
@@ -32,6 +35,17 @@ The [`shaders/`](../home/dot_config/ghostty/shaders/) folder holds several curso
 effects (`cursor_sweep`, `cursor_tail`, `ripple_cursor`, `sonic_boom_cursor`…).
 Swap the effect by pointing `custom-shader` at a different `.glsl` file. These
 are GLSL, so they're excluded from formatting/linting.
+
+**Vendored, not cloned.** The `.glsl` files are committed here (with their upstream
+[`README`](../home/dot_config/ghostty/shaders/README.md)) rather than cloned at
+install time — so the setup is self-contained and works offline. They're **MIT**
+licensed, from [`sahaj-b/ghostty-cursor-shaders`](https://github.com/sahaj-b/ghostty-cursor-shaders)
+(the vendored README carries the attribution and license; keep it). To update, pull
+the upstream files over `shaders/` and re-check the license.
+
+> [!NOTE]
+> If you actually sourced these from a fork (e.g. `0xhckr/ghostty-shaders`), point
+> the attribution at the real upstream chain so credit/license stay accurate.
 
 ## Themes
 

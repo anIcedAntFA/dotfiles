@@ -1,7 +1,7 @@
 # gitleaks config — https://github.com/gitleaks/gitleaks
 # Used by the pre-commit hook, `just secrets`, and CI.
 
-title = "linux-setup gitleaks config"
+title = "dotfiles gitleaks config"
 
 # Start from gitleaks' built-in ruleset, then narrow with the allowlist below.
 [extend]

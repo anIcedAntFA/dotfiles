@@ -241,6 +241,15 @@ window-rule {
   open-maximized false
 }
 
+// tuxedo (todo.txt TUI) launched via Mod+Shift+T with a custom ghostty class,
+// so it floats instead of tiling. See docs/tuxedo.md.
+window-rule {
+  match app-id="com.tuxedo.todo"
+  open-floating true
+  default-column-width { fixed 1000; }
+  default-window-height { fixed 700; }
+}
+
 
 // Example: block out two password managers from screen capture.
 // (This example rule is commented out with a "/-" in front.)
@@ -276,6 +285,7 @@ binds {
 
     Mod+D { spawn-sh "qs -c noctalia-shell ipc call launcher toggle"; }
     Mod+T hotkey-overlay-title="Open a Terminal: ghostty" { spawn "ghostty"; }
+    Mod+Shift+T hotkey-overlay-title="Todo: tuxedo" { spawn-sh "ghostty --class=com.tuxedo.todo -e tuxedo ~/todo.txt"; }
 		Mod+B hotkey-overlay-title="Open a Browser: waterfox" { spawn "waterfox"; }
     Super+Alt+L hotkey-overlay-title="Lock the Screen: swaylock" { spawn "swaylock"; }
 

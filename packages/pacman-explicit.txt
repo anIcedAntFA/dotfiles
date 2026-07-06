@@ -179,6 +179,7 @@ rate-mirrors-bin
 rebuild-detector
 reflector
 reflector-simple
+ripgrep
 rsync
 rtkit
 satty

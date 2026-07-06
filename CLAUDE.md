@@ -49,6 +49,8 @@ images/      screenshots & wallpapers
 
 - Whitespace: `.editorconfig` (tabs default; spaces for JSON/YAML; 4-space fish).
 - Commits: gitmoji + Conventional Commits, e.g. `✨ feat(niri): …`, `🐛 fix(fish): …`.
+- Searching: prefer `rg` (ripgrep — installed) over `grep` in shell commands;
+  it's `.gitignore`-aware and faster. Don't alias `grep` itself.
 
 ## Adding a new config
 

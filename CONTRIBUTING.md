@@ -59,7 +59,7 @@ This repo uses [gitmoji](https://gitmoji.dev/) + a
 
 ## Questions
 
-Open a [discussion](https://github.com/anIcedAntFA/linux-setup/discussions) or an
+Open a [discussion](https://github.com/anIcedAntFA/dotfiles/discussions) or an
 issue.
 
 By contributing, you agree your contributions are licensed under the

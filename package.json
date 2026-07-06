@@ -1,5 +1,5 @@
 {
-  "name": "linux-setup",
+  "name": "dotfiles",
   "version": "1.0.0",
   "private": true,
   "description": "Dotfiles and Linux setup — dev tooling for formatting and linting docs and configs",

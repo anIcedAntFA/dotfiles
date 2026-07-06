@@ -61,22 +61,24 @@ Or let chezmoi do it on `chezmoi apply` — answer **yes** to the
 
 ## Modern CLI tools
 
-| Package                                                                                            | Why                              |
-| -------------------------------------------------------------------------------------------------- | -------------------------------- |
-| [`bat`](https://github.com/sharkdp/bat)                                                            | `cat` with syntax highlighting.  |
-| [`eza`](https://github.com/eza-community/eza)                                                      | Modern `ls`.                     |
-| [`fd`](https://github.com/sharkdp/fd)                                                              | Modern `find` — fast, ergonomic. |
-| [`fastfetch`](https://github.com/fastfetch-cli/fastfetch)                                          | System info readout.             |
-| [`btop`](https://github.com/aristocratos/btop) / [`glances`](https://github.com/nicolargo/glances) | Resource monitors.               |
-| [`duf`](https://github.com/muesli/duf)                                                             | Disk usage/free.                 |
-| [`tree`](http://mama.indstate.edu/users/ice/tree/)                                                 | Directory tree view.             |
-| [`jq`](https://jqlang.github.io/jq/)                                                               | JSON processor.                  |
-| [`curlie`](https://github.com/rs/curlie)                                                           | `curl` with httpie ergonomics.   |
-| [`hyperfine`](https://github.com/sharkdp/hyperfine)                                                | Command benchmarking.            |
-| [`tldr`](https://tldr.sh/)                                                                         | Simplified man pages.            |
-| [`yazi`](https://github.com/sxyazi/yazi)                                                           | Terminal file manager.           |
-| [`dos2unix`](https://waterlan.home.xs4all.nl/dos2unix.html)                                        | Line-ending conversion.          |
-| [`plocate`](https://plocate.sesse.net/)                                                            | Fast `locate`.                   |
+| Package                                                                                            | Why                                                       |
+| -------------------------------------------------------------------------------------------------- | --------------------------------------------------------- |
+| [`bat`](https://github.com/sharkdp/bat)                                                            | `cat` with syntax highlighting.                           |
+| [`eza`](https://github.com/eza-community/eza)                                                      | Modern `ls`.                                              |
+| [`fd`](https://github.com/sharkdp/fd)                                                              | Modern `find` — fast, ergonomic.                          |
+| [`ripgrep`](https://github.com/BurntSushi/ripgrep) (`rg`)                                          | Modern `grep` — `.gitignore`-aware, recursive, SIMD-fast. |
+| [`fastfetch`](https://github.com/fastfetch-cli/fastfetch)                                          | System info readout.                                      |
+| [`btop`](https://github.com/aristocratos/btop) / [`glances`](https://github.com/nicolargo/glances) | Resource monitors.                                        |
+| [`duf`](https://github.com/muesli/duf)                                                             | Disk usage/free.                                          |
+| [`tree`](http://mama.indstate.edu/users/ice/tree/)                                                 | Directory tree view.                                      |
+| [`jq`](https://jqlang.github.io/jq/)                                                               | JSON processor.                                           |
+| [`curlie`](https://github.com/rs/curlie)                                                           | `curl` with httpie ergonomics.                            |
+| [`hyperfine`](https://github.com/sharkdp/hyperfine)                                                | Command benchmarking.                                     |
+| [`tldr`](https://tldr.sh/)                                                                         | Simplified man pages.                                     |
+| [`yazi`](https://github.com/sxyazi/yazi)                                                           | Terminal file manager.                                    |
+| [`tuxedo`](https://github.com/webstonehq/tuxedo)                                                   | todo.txt task TUI — see [tuxedo.md](tuxedo.md).           |
+| [`dos2unix`](https://waterlan.home.xs4all.nl/dos2unix.html)                                        | Line-ending conversion.                                   |
+| [`plocate`](https://plocate.sesse.net/)                                                            | Fast `locate`.                                            |
 
 ## Development
 

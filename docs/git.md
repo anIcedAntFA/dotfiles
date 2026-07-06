@@ -60,6 +60,18 @@ cd ~/workspace/company/some-repo   && git config user.email  # work
 > The trailing slash in `gitdir:…/` matters, and `~` is expanded. Prefer
 > `gitdir:` (case-sensitive) unless you specifically need `gitdir/i`.
 
+One naming subtlety catches people out:
+
+> [!NOTE]
+> **`.gitconfig-company` is a fixed filename, not your company name.** In the
+> template, the `gitdir` path is a variable (`{{ .ghqCompanyRoot }}` → e.g.
+> `~/workspace/ndvn/`) but `path = ./.gitconfig-company` is a literal — chezmoi can't
+> template a target's _name_ ([chezmoi.md](chezmoi.md)). So the work file is always
+> `~/.gitconfig-company` regardless of the company slug; only its _directory match_
+> and _contents_ (email, signingkey) reflect your `chezmoi init` answers. If an older
+> setup left a `~/.gitconfig-ndvn`, applying repoints the include to
+> `.gitconfig-company` and the old file becomes an orphan you can `rm`.
+
 ## Signing commits with SSH (not GPG)
 
 Commits and tags are signed so GitHub/GitLab show a **Verified** badge. We sign
@@ -80,10 +92,14 @@ The config is already in the templates:
 
 Two one-time steps you still do by hand:
 
-1. **Tell the host it's a signing key.** In _GitHub → Settings → SSH and GPG keys_,
-   add `~/.ssh/github.pub` a **second** time with key type **Signing key** (an auth
-   key and a signing key are separate entries even if it's the same key). Do the
-   equivalent on GitLab for `~/.ssh/gitlab.pub`.
+1. **Tell the host it's a signing key** — the UX differs per host:
+   - **GitHub** (_Settings → SSH and GPG keys_): add `~/.ssh/github.pub` a **second**
+     time with key type **Signing key**. GitHub treats auth and signing as separate
+     entries, so the same key appears twice.
+   - **GitLab** (_Preferences → SSH Keys_): GitLab uses **one** entry per key with a
+     **Usage type**, and won't accept the same key twice (`Fingerprint … already
+been taken`). So **delete** the existing `gitlab.pub` (auth-only) entry and
+     **re-add it once** with Usage type **Authentication & Signing**.
 
 2. **(Optional) Verify signatures locally.** Point git at an allowed-signers file so
    `git log --show-signature` says _Good_:

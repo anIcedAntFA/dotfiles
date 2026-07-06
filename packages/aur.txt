@@ -14,6 +14,7 @@ postman-bin
 rate-mirrors-bin
 slack-desktop-wayland
 teams-for-linux-bin
+tuxedo
 visual-studio-code-bin
 waterfox-bin
 zen-browser-bin

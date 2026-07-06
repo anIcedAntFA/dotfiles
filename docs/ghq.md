@@ -7,7 +7,7 @@ clones everything into a predictable tree mirroring the remote URL:
 
 ```text
 ~/workspace/
-	github.com/anIcedAntFA/linux-setup/
+	github.com/anIcedAntFA/dotfiles/
 	github.com/<org>/<repo>/
 ~/workspace/company/
 	gitlab.example.com/<group>/<repo>/
@@ -43,7 +43,7 @@ commits are attributed to the right email without you thinking about it.
 ## Daily use
 
 ```sh
-ghq get github.com/anIcedAntFA/linux-setup   # clone into the tree
+ghq get github.com/anIcedAntFA/dotfiles      # clone into the tree
 ghq list                                      # list all managed repos
 ghq get -p <org>/<repo>                        # clone via SSH
 ```
