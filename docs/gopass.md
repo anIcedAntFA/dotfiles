@@ -77,6 +77,31 @@ gopass rm github.com/you                # delete an entry
 Organise with folders (`work/`, `personal/`, `servers/`) — they're just paths:
 `gopass insert work/gitlab/token`.
 
+## What to put in it (starter layout)
+
+Once the store is set up and pushed, seed it. A folder is just a path prefix, so a
+tidy convention pays off later:
+
+```text
+personal/
+  github.com          # or a PAT under github.com/token
+  google              # email + recovery codes in the body
+  ...bank, shopping, etc.
+work/
+  gitlab              # or work/gitlab/token
+  aws/console         # AWS console login
+  certs/vn-ca         # ← corporate CA cert bytes (see certs.md)
+  certs/aws-signin
+  certs/aws-apps
+servers/
+  vps-1               # ssh/root passwords, per host
+```
+
+A secret's **first line is the password**; everything after is free-form body
+(usernames, URLs, recovery codes, notes). For TOTP, store the `otpauth://` URI and
+use `gopass otp`. Non-password blobs (like the certs above) go in via `gopass cat`
+— see [certs.md](certs.md).
+
 > [!NOTE]
 > `gopass show -c` needs a clipboard tool. On Wayland (niri) that's
 > `wl-clipboard` (`wl-copy`); install it if copy does nothing.
@@ -100,6 +125,9 @@ gopass ships completions; enable them once:
 gopass completion fish > ~/.config/fish/completions/gopass.fish
 ```
 
+There's also a short alias `pw` (→ `gopass`) in
+[`config.fish`](../home/dot_config/fish/config.fish), so `pw ls`, `pw show -c …`.
+
 ## Security notes
 
 - The store is **private** and **external** to this repo — keep it that way.
@@ -111,4 +139,5 @@ gopass completion fish > ~/.config/fish/completions/gopass.fish
 
 - [gopass — documentation](https://github.com/gopasspw/gopass/tree/master/docs)
 - [gopass — getting started](https://www.gopass.pw/)
+- [certs.md](certs.md) — storing corporate CA certs in the store
 - [ADR 0004 — why gopass](adr/0004-terminal-password-manager-gopass.md)

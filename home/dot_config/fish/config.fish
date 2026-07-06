@@ -8,6 +8,7 @@ if status is-interactive
     alias zed=zeditor
     alias ff=fastfetch
     alias rf=refresh
+    alias pw=gopass
 
     # ls
     if type -q eza
