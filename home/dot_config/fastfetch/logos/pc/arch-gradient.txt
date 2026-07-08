@@ -1,0 +1,20 @@
+\e[38;5;111m                   -`
+\e[38;5;111m                  .o+`
+\e[38;5;75m                 `ooo/
+\e[38;5;75m                `+oooo:
+\e[38;5;75m               `+oooooo:
+\e[38;5;74m               -+oooooo+:
+\e[38;5;74m             `/:-:++oooo+:
+\e[38;5;38m            `/++++/+++++++:
+\e[38;5;38m           `/++++++++++++++:
+\e[38;5;44m          `/+++ooooooooooooo/`
+\e[38;5;44m         ./ooosssso++osssssso+`
+\e[38;5;44m        .oossssso-````/ossssss+`
+\e[38;5;43m       -osssssso.      :ssssssso.
+\e[38;5;43m      :osssssss/        osssso+++.
+\e[38;5;49m     /ossssssss/        +ssssooo/-
+\e[38;5;49m   `/ossssso+/:-        -:/+osssso+-
+\e[38;5;50m  `+sso+:-`                 `.-/+oso:
+\e[38;5;50m `++:.                           `-/+/
+\e[38;5;51m .`                                 `/
+\e[0m

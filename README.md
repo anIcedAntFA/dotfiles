@@ -34,6 +34,7 @@
 
 ## Table of contents
 
+- [Table of contents](#table-of-contents)
 - [What I use](#what-i-use)
 - [Quick start](#quick-start)
 - [How it's organized](#how-its-organized)
@@ -116,26 +117,31 @@ dotfiles/
 
 Each tool has a focused guide covering **what it is, why, and how to set it up**:
 
-| Guide                             | About                                              |
-| --------------------------------- | -------------------------------------------------- |
-| [chezmoi.md](docs/chezmoi.md)     | Dotfile manager — workflows, templates, add/re-add |
-| [niri.md](docs/niri.md)           | The scrollable-tiling compositor + Noctalia shell  |
-| [ghostty.md](docs/ghostty.md)     | Terminal, cursor shaders, theming                  |
-| [fish.md](docs/fish.md)           | Shell, plugins, keybindings, secrets pattern       |
-| [ghq.md](docs/ghq.md)             | Organized repo cloning + fuzzy jumping             |
-| [ssh.md](docs/ssh.md)             | SSH keys per host (personal + work auth)           |
-| [git.md](docs/git.md)             | Git identities, `includeIf`, SSH commit signing    |
-| [gopass.md](docs/gopass.md)       | Terminal password manager (GPG + git)              |
-| [certs.md](docs/certs.md)         | Corporate CA certs — trust store restore           |
-| [vpn.md](docs/vpn.md)             | Corporate VPN (GlobalProtect / `gpclient`)         |
-| [docker.md](docs/docker.md)       | Engine setup, rootless usage, daemon config        |
-| [firewalld.md](docs/firewalld.md) | Exposing a dev server to your LAN                  |
-| [greetd.md](docs/greetd.md)       | Login manager + tuigreet + quiet boot              |
-| [fcitx5.md](docs/fcitx5.md)       | Vietnamese input (Bamboo)                          |
-| [satty.md](docs/satty.md)         | Screenshot + annotation pipeline                   |
-| [mise.md](docs/mise.md)           | Runtime / dev-env version management               |
-| [direnv.md](docs/direnv.md)       | Per-directory environments (`.envrc`)              |
-| [tuxedo.md](docs/tuxedo.md)       | todo.txt task TUI + niri float keybind             |
+| Guide                                             | About                                                   |
+| ------------------------------------------------- | ------------------------------------------------------- |
+| [chezmoi.md](docs/chezmoi.md)                     | Dotfile manager — workflows, templates, add/re-add      |
+| [niri.md](docs/niri.md)                           | The scrollable-tiling compositor + Noctalia shell (hub) |
+| ⤷ [niri-concepts.md](docs/niri-concepts.md)       | niri's mental model — columns, workspaces, outputs      |
+| ⤷ [niri-config.md](docs/niri-config.md)           | Config walkthrough + one-file-three-machines template   |
+| ⤷ [niri-keybindings.md](docs/niri-keybindings.md) | Full Keybind ↔ Action tables                            |
+| [ghostty.md](docs/ghostty.md)                     | Terminal, cursor shaders, theming                       |
+| [fish.md](docs/fish.md)                           | Shell, plugins, keybindings, secrets pattern            |
+| [fastfetch.md](docs/fastfetch.md)                 | System-info banner — random Arch logo, per-machine      |
+| [ghq.md](docs/ghq.md)                             | Organized repo cloning + fuzzy jumping                  |
+| [ssh.md](docs/ssh.md)                             | SSH keys per host (personal + work auth)                |
+| [git.md](docs/git.md)                             | Git identities, `includeIf`, SSH commit signing         |
+| [gopass.md](docs/gopass.md)                       | Terminal password manager (GPG + git)                   |
+| [certs.md](docs/certs.md)                         | Corporate CA certs — trust store restore                |
+| [vpn.md](docs/vpn.md)                             | Corporate VPN (GlobalProtect / `gpclient`)              |
+| [docker.md](docs/docker.md)                       | Engine setup, rootless usage, daemon config             |
+| [firewalld.md](docs/firewalld.md)                 | Exposing a dev server to your LAN                       |
+| [greetd.md](docs/greetd.md)                       | Login manager + tuigreet + quiet boot                   |
+| [fcitx5.md](docs/fcitx5.md)                       | Vietnamese input (Bamboo)                               |
+| [screenshot.md](docs/screenshot.md)               | Screenshot pipeline (grim/slurp/satty)                  |
+| [screen-recording.md](docs/screen-recording.md)   | GPU screen recording (wl-screenrec)                     |
+| [mise.md](docs/mise.md)                           | Runtime / dev-env version management                    |
+| [direnv.md](docs/direnv.md)                       | Per-directory environments (`.envrc`)                   |
+| [tuxedo.md](docs/tuxedo.md)                       | todo.txt task TUI + niri float keybind                  |
 
 Bigger design decisions are recorded as [ADRs](docs/adr/).
 
@@ -174,3 +180,5 @@ me along the way. You're amazing and kind. 🙏
 ## License
 
 [MIT](LICENSE) © ngockhoi96
+
+Read /tmp/niri-fastfetch-handoff.md, and continue with:

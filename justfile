@@ -38,6 +38,19 @@ check:
 secrets:
     gitleaks git . --no-banner --redact
 
-# Validate the niri config — local only, needs niri installed
+# Validate the niri config — local only, needs niri + chezmoi installed.
+# config.kdl is a chezmoi template, so render it (next to noctalia.kdl, so the
+# `include "./noctalia.kdl"` resolves) before handing it to `niri validate`.
 validate-niri:
-    niri validate -c home/dot_config/niri/config.kdl
+    chezmoi execute-template < home/dot_config/niri/config.kdl.tmpl > home/dot_config/niri/.rendered.kdl
+    niri validate -c home/dot_config/niri/.rendered.kdl
+    rm -f home/dot_config/niri/.rendered.kdl
+
+# Validate the fastfetch config — local only, needs fastfetch + chezmoi.
+# config.jsonc is a chezmoi template; render it and let fastfetch parse it
+# (--logo none, since the logo script/files aren't applied into this checkout).
+validate-fastfetch:
+    chezmoi execute-template < home/dot_config/fastfetch/config.jsonc.tmpl > home/dot_config/fastfetch/.rendered.jsonc
+    fastfetch -c home/dot_config/fastfetch/.rendered.jsonc --logo none > /dev/null
+    rm -f home/dot_config/fastfetch/.rendered.jsonc
+    @echo "✅ fastfetch config is valid"

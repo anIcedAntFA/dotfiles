@@ -1,61 +1,73 @@
-# HANDOFF — work-access & tooling docs
+# HANDOFF — screen recording + bundled niri/fastfetch WIP
 
-> Transient continuation note (public-safe: no secrets/company data — all sensitive
-> specifics live in the private gopass store or in `docs/*` with placeholders).
-> Delete this file once the work below is picked up.
+> Transient continuation note (public-safe: no secrets/company data). Delete once
+> the work below is picked up.
 
 ## Where things stand
 
-- **Branch:** `feat/work-access-and-tooling-docs` (committed, **not pushed / no PR yet**).
-- **Verification:** `just check` green (oxfmt, markdownlint, shellcheck, shfmt, fish,
-  gitleaks), `just validate-niri` valid.
-- **GitHub repo renamed** `linux-setup` → `dotfiles` (done). Local ghq folder kept as
-  `linux-setup`; the `~/.local/share/chezmoi` symlink → that folder is intact and
-  resolves (`chezmoi managed` lists ~113 paths). Full local-folder rename deliberately
-  deferred (would need to fix the symlink + 8 hardcoded paths in
-  `home/dot_config/noctalia/settings.json`).
+- **Branch:** `feat/screen-recording-wl-screenrec` (committed, **not pushed / no PR
+  yet** — push it to continue on the other machine).
+- **Verification:** `just check` green (oxfmt, markdownlint, shellcheck, shfmt,
+  fish, gitleaks — no leaks); `just validate-niri` valid.
+- **Heads-up:** this branch bundles **two concerns** because they're entangled in
+  shared files (`config.kdl.tmpl`, `niri.md`, `README.md`, `niri-keybindings.md`
+  each carry both). Clean per-concern splitting wasn't possible without fragile
+  hunk-surgery. The two are described separately below.
 
-## What shipped this branch
+## What shipped — 1. Screen recording (this session's work)
 
-Docs/config for corporate access + tooling. Don't re-read the diffs — see:
+Wraps `wl-screenrec` (GPU h264) as a start/stop capture tool, mirroring
+`dot-screenshot`.
 
-- `docs/certs.md` + **ADR 0005** (`docs/adr/0005-system-certs-in-gopass.md`) — CA certs → gopass.
-- `docs/vpn.md` + `home/dot_config/fish/functions/vpn-connect.fish.tmpl` (host = `{{ .workVpnPortal }}`).
-- `docs/tuxedo.md` + niri `Mod+Shift+T` float keybind.
-- `docs/chezmoi.md` — new **author edit-in-place** (symlink), **selective apply**, and
-  **filename-not-templated** sections.
-- `docs/git.md` — GitHub-vs-GitLab signing UX + `.gitconfig-company` literal note.
-- `docs/gopass.md`, `docs/packages.md`, `docs/ghostty.md` (shaders vendored/MIT), rtk
-  `filters.toml` tracked, `pw` alias, README/metadata renamed to `dotfiles`.
+- **`home/dot_local/bin/executable_dot-screenrec`** — `region` (slurp `-g`),
+  `screen` (focused output `-o`), `stop` (SIGINT the tracked PID). Single instance
+  via `$XDG_RUNTIME_DIR/dot-screenrec.state`; start-while-recording refuses +
+  notifies. Silent by default, trailing `audio` arg → `--audio`. Output:
+  `.mp4`/`--codec avc` → `$XDG_VIDEOS_DIR/Screencast from <ts>.mp4`. `notify-send`
+  on start/stop.
+- **niri binds** (`config.kdl.tmpl`): `Mod+Print` region · `Mod+Shift+Print`
+  screen · `Mod+Ctrl+Print` stop. No collisions.
+- **Docs:** `docs/satty.md` → `docs/screenshot.md` (reframed around the task, satty
+  as annotator); new `docs/screen-recording.md`. Fixed all 3 stale `satty.md`
+  links (README, niri.md, niri-keybindings.md); added record rows to the keybind
+  table. `packages/aur.txt` gets `wl-screenrec-git`.
+- **Bug fix:** renamed `dot-screenshot` → `executable_dot-screenshot`. It had **no
+  `executable_` prefix**, so a fresh `chezmoi apply` wrote it non-executable and
+  `spawn "dot-screenshot"` would silently fail.
 
-## Pending — manual steps only YOU can do (not doable in-session)
+## What shipped — 2. Prior niri/fastfetch WIP (predates this session)
 
-1. **Mark ripgrep explicit:** `sudo pacman -D --asexplicit ripgrep` (it's already listed
-   in `packages/pacman-explicit.txt`; this makes reality match).
-2. **Store the 3 corporate CA certs in gopass** then `gopass sync` — exact commands in
-   `docs/certs.md` (`work/certs/vn-ca`, `aws-signin`, `aws-apps`).
-3. **GitLab signing key:** delete the existing SSH key, re-add **once** with Usage type
-   _Authentication & Signing_ (GitHub side already done). See `docs/git.md`.
-4. **chezmoi first apply:** run `chezmoi init` (writes config only, no `$HOME` change),
-   then apply **cluster by cluster** — `chezmoi diff ~/.gitconfig ~/.gitconfig-company`
-   → `apply`, then `~/.config/fish`, etc. After the gitconfig include switches, `rm` the
-   orphaned `~/.gitconfig-<old-slug>`. Full guide: `docs/chezmoi.md` (selective apply).
+Was already uncommitted in the tree; carried along, not authored this session — **eyeball before you trust it**:
 
-## Follow-ups / known issues (out of scope this branch)
+- **niri per-machine templating:** `config.kdl` → `config.kdl.tmpl` +
+  `docs/adr/0006-per-machine-niri-via-chezmoi-template.md`; `home/.chezmoi.toml.tmpl`
+  gained the machine prompt(s).
+- **niri docs split:** new `docs/niri-concepts.md`, `docs/niri-config.md`,
+  `docs/niri-keybindings.md`; `docs/niri.md` + `README.md` updated to link them.
+- **fastfetch:** `config.jsonc` → `config.jsonc.tmpl`,
+  `executable_random-logo` script, `logos/` (`laptop`, `pc`), `docs/fastfetch.md`.
+- `CONTEXT.md`, `justfile` touched by the above.
 
-- **Package snapshot drift** — `packages/pacman-explicit.txt` is out of sync with live
-  `pacman -Qqe`: several wanted pkgs (incl. `gnupg`, `fd`, `github-cli`) lost explicit
-  status; some tools (`just`, `lefthook`, `shellcheck`, `shfmt`) are explicit but
-  untracked. **Do NOT blindly regenerate** (would drop wanted pkgs). Mark-explicit the
-  wanted ones first, then regenerate. (Also saved in agent memory.)
-- **noctalia `settings.json`** hardcodes 8 absolute repo paths (avatar/wallpapers) — not
-  portable to a fresh machine/user. Worth templating or relativising.
-- Consider whether `HANDOFF.md` should stay in the public repo long-term, or move to a
-  private channel.
+## Pending — pick up here
 
-## Suggested skills for the next session
+1. **`git push -u origin feat/screen-recording-wl-screenrec`** then open the PR
+   (not done this session — user asked for commit only).
+2. **Live-test the recorder** (couldn't in-session — needs a display + interactive
+   slurp): `chezmoi apply` (deploys both scripts), then `Mod+Shift+Print` to start,
+   `Mod+Ctrl+Print` to stop, confirm a playable file lands in `~/Videos`. Also try
+   `dot-screenrec region audio`. Verify VA-API works or `--no-hw` is needed.
+3. **Review the bundled prior WIP** (§2) — decide if it's ready to ship on this PR
+   or should be split back out.
 
-- **git-workflow** — if anything is left uncommitted; also to push + open the PR.
-- **verify** — after `chezmoi apply`, confirm `pw`, `vpn-connect`, and work-repo signing
-  (`git config user.signingkey` under the company ghq root) actually resolve.
-- **grill-with-docs** — if picking up the follow-ups (package drift, noctalia paths).
+## Known issues (persistent, out of scope)
+
+- **Package snapshot drift** — `packages/pacman-explicit.txt` out of sync with live
+  `pacman -Qqe`. **Do NOT blindly regenerate** (drops wanted pkgs). (In agent memory.)
+- **noctalia `settings.json`** hardcodes absolute repo paths — not portable to a
+  fresh machine/user.
+
+## Suggested skills next session
+
+- **git-workflow** — push + open the PR.
+- **verify** — after `chezmoi apply`, drive a real recording start→stop.
+- **grill-with-docs** — if tackling the bundled niri/fastfetch WIP or the drift.

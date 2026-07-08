@@ -10,6 +10,10 @@
 {{- $ghqRoot := promptStringOnce . "ghqRoot" "ghq root path" "~/workspace" -}}
 {{- $ghqCompanyRoot := promptStringOnce . "ghqCompanyRoot" "ghq company root path" "~/workspace/company" -}}
 {{- $installPackages := promptBoolOnce . "installPackages" "Install packages from packages/ on apply? (needs yay)" false -}}
+{{/* machine: which physical box this is, so per-machine configs (e.g. niri
+     outputs, DPI, startup apps) can branch on it. Generic form-factor label
+     only — never a hostname or company tag. One of: work | laptop | home. */}}
+{{- $machine := promptStringOnce . "machine" "Machine profile (work | laptop | home)" "home" -}}
 
 [data]
     email = {{ $email | quote }}
@@ -21,3 +25,4 @@
     ghqRoot = {{ $ghqRoot | quote }}
     ghqCompanyRoot = {{ $ghqCompanyRoot | quote }}
     installPackages = {{ $installPackages }}
+    machine = {{ $machine | quote }}
