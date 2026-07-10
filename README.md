@@ -139,6 +139,7 @@ Each tool has a focused guide covering **what it is, why, and how to set it up**
 | [fcitx5.md](docs/fcitx5.md)                       | Vietnamese input (Bamboo)                               |
 | [screenshot.md](docs/screenshot.md)               | Screenshot pipeline (grim/slurp/satty)                  |
 | [screen-recording.md](docs/screen-recording.md)   | GPU screen recording (wl-screenrec)                     |
+| [clipboard.md](docs/clipboard.md)                 | Clipboard history (cliphist + Noctalia launcher)        |
 | [mise.md](docs/mise.md)                           | Runtime / dev-env version management                    |
 | [direnv.md](docs/direnv.md)                       | Per-directory environments (`.envrc`)                   |
 | [tuxedo.md](docs/tuxedo.md)                       | todo.txt task TUI + niri float keybind                  |

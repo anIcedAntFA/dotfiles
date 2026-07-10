@@ -355,6 +355,8 @@ binds {
 
 	// --- Applications & launchers -------------------------------------------
 	Mod+D { spawn-sh "qs -c noctalia-shell ipc call launcher toggle"; }
+	// Clipboard history: Noctalia launcher in clipboard mode (cliphist backend). See docs/clipboard.md.
+	Mod+Shift+C hotkey-overlay-title="Clipboard history" { spawn-sh "qs -c noctalia-shell ipc call launcher clipboard"; }
 	Mod+T hotkey-overlay-title="Open a Terminal: ghostty" { spawn "ghostty"; }
 	Mod+Shift+T hotkey-overlay-title="Todo: tuxedo" { spawn-sh "ghostty --class=com.tuxedo.todo -e tuxedo ~/todo.txt"; }
 	Mod+B hotkey-overlay-title="Open a Browser: waterfox" { spawn "waterfox"; }

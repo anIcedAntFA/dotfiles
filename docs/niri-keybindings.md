@@ -37,6 +37,7 @@ interchangeable everywhere.
 | Keybind       | Action / command          | What it does                  |
 | ------------- | ------------------------- | ----------------------------- |
 | `Mod+D`       | noctalia launcher toggle  | App launcher                  |
+| `Mod+Shift+C` | noctalia launcher (clip)  | Clipboard history panel       |
 | `Mod+T`       | `spawn ghostty`           | Open a terminal               |
 | `Mod+Shift+T` | `spawn` tuxedo in ghostty | Todo.txt TUI (opens floating) |
 | `Mod+B`       | `spawn waterfox`          | Open the browser              |

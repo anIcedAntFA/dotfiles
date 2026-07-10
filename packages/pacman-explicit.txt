@@ -219,6 +219,7 @@ welcome
 wget
 which
 wireplumber
+wl-clipboard
 wlsunset
 wpa_supplicant
 xdg-desktop-portal-gnome
