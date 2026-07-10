@@ -1,3 +1,4 @@
+7zip
 accountsservice
 alacritty
 alsa-firmware
@@ -152,6 +153,7 @@ nvidia-hook
 nwg-look
 openssh
 os-prober
+ouch
 pacman-contrib
 papirus-folders-git
 papirus-icon-theme
