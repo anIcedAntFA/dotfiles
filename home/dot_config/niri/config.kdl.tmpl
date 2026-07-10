@@ -1,0 +1,559 @@
+// ============================================================================
+// niri — main configuration (chezmoi template)
+// ============================================================================
+//
+// This is a chezmoi *template*: it renders to ~/.config/niri/config.kdl on
+// `chezmoi apply`, and niri hot-reloads that rendered file on save. Because niri
+// reloads the *applied* file (not this source), the edit loop is:
+//
+//   1. `chezmoi edit ~/.config/niri/config.kdl`  (opens THIS .tmpl)
+//   2. `just validate-niri`                       (render + `niri validate`)
+//   3. `chezmoi apply`  writes the real config.kdl; niri hot-reloads it
+//
+// Everything machine-specific (outputs, DPI, startup apps, touchpad) branches on
+// the `machine` chezmoi var — one of: work | laptop | home. See the profile
+// table just below and docs/niri-config.md for the full explanation.
+//
+// Theme colors (focus-ring / border / shadow / tabs) are NOT set here — they
+// live in ./noctalia.kdl, which is `include`d at the very bottom and wins.
+// ----------------------------------------------------------------------------
+
+// --- Per-machine profile table ----------------------------------------------
+// One place to see "what's different about each box". Scalars are pulled from
+// here via {{ `{{ $p.cursor }}` }} etc.; whole multi-line blocks (outputs,
+// startup apps, touchpad) branch inline further down with {{ `{{ if eq $machine ... }}` }}.
+//
+//   - cursor : xcursor-size in logical px (scales with DPI — smaller on laptop)
+//   - gaps   : layout gaps in logical px
+//   - ws     : named-workspace -> output name (monitor pinning); empty = no pin
+{{- /* `dig` tolerates a missing key (e.g. before `chezmoi init` re-runs), unlike
+	  a bare `.machine` under chezmoi's strict missingkey=error. Falls back to
+	  "work" only for ad-hoc renders; real machines set it via the prompt. */ -}}
+{{- $machine := dig "machine" "work" . -}}
+{{- $profiles := dict
+	"work" (dict
+		"cursor" 64
+		"gaps"	 12
+		"ws"	 (dict "terminal" "HDMI-A-2" "coding" "HDMI-A-2" "browser" "DP-1" "chatting" "DP-1" "tools" "DP-1"))
+	"laptop" (dict
+		"cursor" 32
+		"gaps"	 8
+		"ws"	 (dict))
+	"home" (dict
+		"cursor" 48
+		"gaps"	 12
+		"ws"	 (dict)) -}}
+{{- $p := index $profiles $machine -}}
+{{- if not $p }}{{ fail (printf "niri config: unknown machine profile %q (want: work | laptop | home)" $machine) }}{{ end -}}
+
+// ============================================================================
+// GLOBAL
+// ============================================================================
+
+// Ask clients to omit their client-side decorations (title bars) when possible.
+// Also fixes border/focus-ring drawing behind some semitransparent windows.
+prefer-no-csd
+
+// Where screenshots land. strftime(3) formats the date/time. Set to `null` to
+// keep screenshots in memory only (never written to disk).
+screenshot-path "~/Pictures/Screenshots/Screenshot from %Y-%m-%d %H-%M-%S.png"
+
+hotkey-overlay {
+	// Uncomment to stop the "Important Hotkeys" pop-up from showing at startup.
+	// skip-at-startup
+}
+
+environment {
+	XDG_CURRENT_DESKTOP "niri"
+	XDG_SESSION_TYPE "wayland"
+}
+
+// ============================================================================
+// INPUT
+// ============================================================================
+input {
+	keyboard {
+		repeat-delay 200
+		repeat-rate 40
+		xkb {
+			// layout "us"
+			// options "ctrl:nocaps"   // e.g. Caps Lock -> Ctrl
+		}
+		numlock
+	}
+
+{{- if eq $machine "laptop" }}
+	// Laptop-only pointing devices. Desktops have no touchpad/trackpoint, so
+	// these blocks only render on the laptop profile.
+	touchpad {
+		tap
+		natural-scroll
+		accel-speed 0.2
+		// dwt   // disable-while-typing (dwt)
+		// scroll-method "two-finger"
+		// disabled-on-external-mouse
+	}
+
+	trackpoint {
+	}
+{{- end }}
+
+	mouse {
+	}
+
+	// Focus follows the pointer, but only after it travels a bit (avoids
+	// stealing focus from tiny cursor jitters).
+	focus-follows-mouse max-scroll-amount="20%"
+}
+
+// ============================================================================
+// CURSOR
+// ============================================================================
+cursor {
+	xcursor-theme "Banana"
+	xcursor-size {{ $p.cursor }}
+
+	hide-when-typing
+	hide-after-inactive-ms 1200
+}
+
+// ============================================================================
+// OUTPUTS (per machine)
+// ============================================================================
+// Find names/modes with `niri msg outputs` inside a niri session. Outputs that
+// aren't connected are simply ignored, and positions are in logical (scaled) px.
+{{ if eq $machine "work" -}}
+// Left monitor: ASUS PA278CV in PORTRAIT (rotated 90° counter-clockwise).
+output "HDMI-A-2" {
+	mode "2560x1440@75.002"
+	transform "90"
+	// Placed at x=1280, which leaves 0-1280 empty to its left. This offset is
+	// carried over from the previous config -- set x=0 to make it flush-left.
+	position x=1280 y=0
+	// scale 1.0 is the default for a 27" 1440p panel (100%).
+}
+// Right monitor: a second PA278CV in landscape. niri already auto-configures it
+// (preferred 2560x1440@60, auto-placed to the right at x=2720). Uncomment to pin
+// its refresh rate / position explicitly.
+/-output "DP-1" {
+	mode "2560x1440@59.951"
+	position x=2720 y=0
+}
+{{- end -}}
+{{- if eq $machine "laptop" }}
+// TODO: run `niri msg outputs` on the laptop and replace these values.
+// The internal panel is usually "eDP-1".
+output "eDP-1" {
+	// mode "1920x1080@60.000"
+	// A 1080p 13-15" panel is more comfortable with fractional scaling.
+	scale 1.25
+}
+{{- end -}}
+{{- if eq $machine "home" }}
+// TODO: run `niri msg outputs` on the home PC and fill in real values, e.g.:
+// output "DP-1" { mode "3840x2160@144.000"; scale 1.5 }
+// output "HDMI-A-1" { mode "2560x1440@60.000"; position x=2560 y=0 }
+{{- end }}
+
+// ============================================================================
+// LAYOUT
+// ============================================================================
+// How windows are positioned and sized. Colors are intentionally absent here --
+// noctalia.kdl (included last) themes focus-ring/border/shadow.
+layout {
+	gaps {{ $p.gaps }}
+
+	// "never"       keep the focused column where it is (default)
+	// "always"      always center the focused column
+	// "on-overflow" center only when it wouldn't fit next to the previous one
+	center-focused-column "never"
+
+	// Widths cycled by `switch-preset-column-width` (Mod+R): 1/3, 1/2, 2/3.
+	preset-column-widths {
+		proportion 0.33333
+		proportion 0.5
+		proportion 0.66667
+	}
+
+	// Width a fresh column opens at.
+	default-column-width { proportion 0.5; }
+
+	focus-ring {
+		width 2.8
+		// active/inactive/urgent colors come from noctalia.kdl.
+	}
+
+	border {
+		// Disabled in favour of the focus-ring above. Remove `off` to enable.
+		off
+		width 2
+		// active/inactive/urgent colors come from noctalia.kdl.
+	}
+
+	shadow {
+		// on
+		softness 40
+		spread 8
+		offset x=0 y=8
+		// color comes from noctalia.kdl.
+	}
+
+	struts {
+	}
+}
+
+// ============================================================================
+// NAMED WORKSPACES
+// ============================================================================
+// Persistent, named workspaces (created in this order). Monitor pinning
+// (`open-on-output`) is driven by the per-machine `ws` table at the top, so the
+// same names exist on every box while only the pinning changes.
+workspace "terminal" {
+	{{- with (index $p.ws "terminal") }}
+	open-on-output {{ . | quote }}
+	{{- end }}
+}
+workspace "coding" {
+	{{- with (index $p.ws "coding") }}
+	open-on-output {{ . | quote }}
+	{{- end }}
+}
+workspace "browser" {
+	{{- with (index $p.ws "browser") }}
+	open-on-output {{ . | quote }}
+	{{- end }}
+}
+workspace "chatting" {
+	{{- with (index $p.ws "chatting") }}
+	open-on-output {{ . | quote }}
+	{{- end }}
+}
+workspace "tools" {
+	{{- with (index $p.ws "tools") }}
+	open-on-output {{ . | quote }}
+	{{- end }}
+}
+
+// ============================================================================
+// STARTUP (spawn-at-startup)
+// ============================================================================
+// The shell, terminal and browser start everywhere.
+spawn-at-startup "qs" "-c" "noctalia-shell"
+spawn-at-startup "ghostty"
+spawn-at-startup "zen-browser"
+{{- if eq $machine "work" }}
+// Work chat clients -- only autostarted on the work machine.
+spawn-at-startup "slack"
+spawn-at-startup "sh" "-c" "sleep 3 && teams-for-linux"
+{{- end }}
+
+// ============================================================================
+// ANIMATIONS
+// ============================================================================
+animations {
+	// off				// turn off all animations
+	// slowdown 3.0		// <1 speeds up, >1 slows down
+}
+
+// ============================================================================
+// WINDOW RULES
+// ============================================================================
+// Per-app behavior. `match app-id=...` -- find an app's id with `niri msg
+// windows` (focus the window first). See docs/niri-config.md.
+
+// Rounded corners for every window, clipped to the rounded geometry.
+window-rule {
+	geometry-corner-radius 8
+	clip-to-geometry true
+}
+
+// Dim unfocused windows slightly.
+window-rule {
+	match is-active=false
+	opacity 0.8
+}
+
+// --- App -> workspace placement ---------------------------------------------
+window-rule {
+	match app-id="com.mitchellh.ghostty"
+	open-on-workspace "terminal"
+	open-maximized true
+}
+
+window-rule {
+	match app-id="code"
+	open-on-workspace "coding"
+	open-maximized true
+}
+
+window-rule {
+	match app-id="zen"
+	open-on-workspace "browser"
+	open-maximized true
+}
+
+// window-rule {
+//	   match app-id="google-chrome"
+//	   open-on-workspace "browser"
+//	   open-maximized true
+// }
+
+// window-rule {
+//	   match app-id="firefox"
+//	   open-on-workspace "browser"
+//	   open-maximized true
+// }
+
+window-rule {
+	match app-id="Slack"
+	open-on-workspace "chatting"
+	open-maximized false
+}
+
+window-rule {
+	match app-id="teams-for-linux"
+	open-on-workspace "chatting"
+	open-maximized false
+}
+
+// tuxedo (todo.txt TUI) is launched via Mod+Shift+T with a custom ghostty class
+// so it floats instead of tiling. See docs/tuxedo.md.
+window-rule {
+	match app-id="com.tuxedo.todo"
+	open-floating true
+	default-column-width { fixed 1000; }
+	default-window-height { fixed 700; }
+}
+
+// --- Examples (disabled with a leading /-) ----------------------------------
+// Open Firefox's picture-in-picture player floating.
+/-window-rule {
+	match app-id=r#"firefox$"# title="^Picture-in-Picture$"
+	open-floating true
+}
+
+// Block password managers out of screen capture.
+/-window-rule {
+	match app-id=r#"^org\.keepassxc\.KeePassXC$"#
+	match app-id=r#"^org\.gnome\.World\.Secrets$"#
+	block-out-from "screen-capture"
+	// Use "screencast" instead if you want them visible to third-party tools.
+}
+
+// ============================================================================
+// KEY BINDINGS
+// ============================================================================
+// Convention: a bind that *focuses* somewhere, plus Ctrl, *moves* the focused
+// column/window there. Full reference: docs/niri-keybindings.md.
+binds {
+	// --- Overview & window lifecycle ----------------------------------------
+	// Overview: zoomed-out view of workspaces/windows (also: top-left hot
+	// corner, or a four-finger swipe up on a touchpad).
+	Mod+O repeat=false { toggle-overview; }
+	Mod+Q repeat=false { close-window; }
+	Mod+Shift+Slash { show-hotkey-overlay; }
+
+	// --- Applications & launchers -------------------------------------------
+	Mod+D { spawn-sh "qs -c noctalia-shell ipc call launcher toggle"; }
+	// Clipboard history: Noctalia launcher in clipboard mode (cliphist backend). See docs/clipboard.md.
+	Mod+Shift+C hotkey-overlay-title="Clipboard history" { spawn-sh "qs -c noctalia-shell ipc call launcher clipboard"; }
+	Mod+T hotkey-overlay-title="Open a Terminal: ghostty" { spawn "ghostty"; }
+	Mod+Shift+T hotkey-overlay-title="Todo: tuxedo" { spawn-sh "ghostty --class=com.tuxedo.todo -e tuxedo ~/todo.txt"; }
+	Mod+B hotkey-overlay-title="Open a Browser: waterfox" { spawn "waterfox"; }
+	Super+Alt+L hotkey-overlay-title="Lock the Screen: swaylock" { spawn "swaylock"; }
+
+	// --- Screenshots / capture ----------------------------------------------
+	// dot-screenshot wires niri + grim/slurp into satty. See docs/niri.md.
+	Mod+S			 hotkey-overlay-title="Screenshot (region)" { spawn "dot-screenshot" "region"; }
+	Mod+Shift+S		 hotkey-overlay-title="Screenshot (window)" { spawn "dot-screenshot" "window"; }
+	Mod+Ctrl+S		 hotkey-overlay-title="Screenshot (monitor: focused)" { spawn "dot-screenshot" "monitor-focused"; }
+	Mod+Ctrl+Shift+S hotkey-overlay-title="Screenshot (monitor: all)" { spawn "dot-screenshot" "monitor-all"; }
+	// niri's own built-in screenshot actions (write straight to disk):
+	Ctrl+Print { screenshot-screen; }
+	Alt+Print { screenshot-window; }
+	// dot-screenrec drives wl-screenrec (GPU h264). Start records, then stop
+	// them explicitly (no terminal to Ctrl-C). See docs/screen-recording.md.
+	Mod+Backslash		hotkey-overlay-title="Record (region)" { spawn "dot-screenrec" "region"; }
+	Mod+Shift+Backslash hotkey-overlay-title="Record (screen)" { spawn "dot-screenrec" "screen"; }
+	Mod+Ctrl+Backslash	hotkey-overlay-title="Record (stop & save)" { spawn "dot-screenrec" "stop"; }
+
+	// Toggle the Orca screen reader. allow-when-locked so it works on the lock screen.
+	Super+Alt+S allow-when-locked=true hotkey-overlay-title=null { spawn-sh "pkill orca || exec orca"; }
+
+	// --- Audio & brightness (media keys) ------------------------------------
+	// allow-when-locked so they work on the lock screen.
+	XF86AudioRaiseVolume allow-when-locked=true { spawn-sh "wpctl set-volume @DEFAULT_AUDIO_SINK@ 0.1+"; }
+	XF86AudioLowerVolume allow-when-locked=true { spawn-sh "wpctl set-volume @DEFAULT_AUDIO_SINK@ 0.1-"; }
+	XF86AudioMute		 allow-when-locked=true { spawn-sh "wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle"; }
+	XF86AudioMicMute	 allow-when-locked=true { spawn-sh "wpctl set-mute @DEFAULT_AUDIO_SOURCE@ toggle"; }
+	XF86MonBrightnessUp	  allow-when-locked=true { spawn "brightnessctl" "--class=backlight" "set" "+5%"; }
+	XF86MonBrightnessDown allow-when-locked=true { spawn "brightnessctl" "--class=backlight" "set" "5%-"; }
+
+	// --- Focus columns & windows --------------------------------------------
+	Mod+Left  { focus-column-left; }
+	Mod+Down  { focus-window-down; }
+	Mod+Up	  { focus-window-up; }
+	Mod+Right { focus-column-right; }
+	Mod+H	  { focus-column-left; }
+	Mod+J	  { focus-window-down; }
+	Mod+K	  { focus-window-up; }
+	Mod+L	  { focus-column-right; }
+
+	Mod+Home { focus-column-first; }
+	Mod+End	 { focus-column-last; }
+
+	// --- Move columns & windows (add Ctrl) ----------------------------------
+	Mod+Ctrl+Left  { move-column-left; }
+	Mod+Ctrl+Down  { move-window-down; }
+	Mod+Ctrl+Up	   { move-window-up; }
+	Mod+Ctrl+Right { move-column-right; }
+	Mod+Ctrl+H	   { move-column-left; }
+	Mod+Ctrl+J	   { move-window-down; }
+	Mod+Ctrl+K	   { move-window-up; }
+	Mod+Ctrl+L	   { move-column-right; }
+
+	Mod+Ctrl+Home { move-column-to-first; }
+	Mod+Ctrl+End  { move-column-to-last; }
+
+	// Alternatives that cross workspaces at the top/bottom of a column:
+	// Mod+J		  { focus-window-or-workspace-down; }
+	// Mod+K		  { focus-window-or-workspace-up; }
+	// Mod+Ctrl+J	  { move-window-down-or-to-workspace-down; }
+	// Mod+Ctrl+K	  { move-window-up-or-to-workspace-up; }
+
+	// --- Monitors (Shift = focus, Shift+Ctrl = move column) -----------------
+	Mod+Shift+Left	{ focus-monitor-left; }
+	Mod+Shift+Down	{ focus-monitor-down; }
+	Mod+Shift+Up	{ focus-monitor-up; }
+	Mod+Shift+Right { focus-monitor-right; }
+	Mod+Shift+H		{ focus-monitor-left; }
+	Mod+Shift+J		{ focus-monitor-down; }
+	Mod+Shift+K		{ focus-monitor-up; }
+	Mod+Shift+L		{ focus-monitor-right; }
+
+	Mod+Shift+Ctrl+Left	 { move-column-to-monitor-left; }
+	Mod+Shift+Ctrl+Down	 { move-column-to-monitor-down; }
+	Mod+Shift+Ctrl+Up	 { move-column-to-monitor-up; }
+	Mod+Shift+Ctrl+Right { move-column-to-monitor-right; }
+	Mod+Shift+Ctrl+H	 { move-column-to-monitor-left; }
+	Mod+Shift+Ctrl+J	 { move-column-to-monitor-down; }
+	Mod+Shift+Ctrl+K	 { move-column-to-monitor-up; }
+	Mod+Shift+Ctrl+L	 { move-column-to-monitor-right; }
+
+	// Variants: move a single window (move-window-to-monitor-*) or a whole
+	// workspace (move-workspace-to-monitor-*) between monitors.
+
+	// --- Workspaces ---------------------------------------------------------
+	Mod+Page_Down { focus-workspace-down; }
+	Mod+Page_Up	  { focus-workspace-up; }
+	Mod+U		  { focus-workspace-down; }
+	Mod+I		  { focus-workspace-up; }
+	Mod+Ctrl+Page_Down { move-column-to-workspace-down; }
+	Mod+Ctrl+Page_Up   { move-column-to-workspace-up; }
+	Mod+Ctrl+U		   { move-column-to-workspace-down; }
+	Mod+Ctrl+I		   { move-column-to-workspace-up; }
+
+	Mod+Shift+Page_Down { move-workspace-down; }
+	Mod+Shift+Page_Up	{ move-workspace-up; }
+	Mod+Shift+U			{ move-workspace-down; }
+	Mod+Shift+I			{ move-workspace-up; }
+
+	// Jump to / move a column to workspace N by index. niri is a dynamic
+	// workspace system, so an index past the last workspace lands on the
+	// bottom (empty) one.
+	Mod+1 { focus-workspace 1; }
+	Mod+2 { focus-workspace 2; }
+	Mod+3 { focus-workspace 3; }
+	Mod+4 { focus-workspace 4; }
+	Mod+5 { focus-workspace 5; }
+	Mod+6 { focus-workspace 6; }
+	Mod+7 { focus-workspace 7; }
+	Mod+8 { focus-workspace 8; }
+	Mod+9 { focus-workspace 9; }
+	Mod+Shift+1 { move-column-to-workspace 1; }
+	Mod+Shift+2 { move-column-to-workspace 2; }
+	Mod+Shift+3 { move-column-to-workspace 3; }
+	Mod+Shift+4 { move-column-to-workspace 4; }
+	Mod+Shift+5 { move-column-to-workspace 5; }
+	Mod+Shift+6 { move-column-to-workspace 6; }
+	Mod+Shift+7 { move-column-to-workspace 7; }
+	Mod+Shift+8 { move-column-to-workspace 8; }
+	Mod+Shift+9 { move-column-to-workspace 9; }
+
+	// Mod+Tab { focus-workspace-previous; }   // toggle current/previous
+
+	// --- Column & window layout ---------------------------------------------
+	// Consume/expel: pull a window into the current column or push it out.
+	Mod+BracketLeft	 { consume-or-expel-window-left; }
+	Mod+BracketRight { consume-or-expel-window-right; }
+	Mod+Comma  { consume-window-into-column; }
+	Mod+Period { expel-window-from-column; }
+
+	Mod+R { switch-preset-column-width; }
+	// Mod+R { switch-preset-column-width-back; }	// cycle in reverse
+	Mod+Shift+R { switch-preset-window-height; }
+	Mod+Ctrl+R	{ reset-window-height; }
+
+	Mod+F		{ maximize-column; }
+	Mod+Shift+F { fullscreen-window; }
+	// Expand the focused column to fill space not used by other visible columns.
+	Mod+Ctrl+F	{ expand-column-to-available-width; }
+
+	Mod+C	   { center-column; }
+	Mod+Ctrl+C { center-visible-columns; }
+
+	// Finer width/height adjustments. set-column-width also accepts pixels
+	// ("1000"), pixel deltas ("+5"/"-5"), or percentages ("25%", "+5%").
+	Mod+Minus { set-column-width "-10%"; }
+	Mod+Equal { set-column-width "+5%"; }
+	Mod+Shift+Minus { set-window-height "-10%"; }
+	Mod+Shift+Equal { set-window-height "+5%"; }
+
+	// Floating <-> tiling.
+	Mod+V		{ toggle-window-floating; }
+	Mod+Shift+V { switch-focus-between-floating-and-tiling; }
+
+	// Tabbed column: stack a column's windows as vertical tabs.
+	Mod+W { toggle-column-tabbed-display; }
+
+	// --- Mouse wheel & touchpad scroll --------------------------------------
+	// cooldown-ms rate-limits the wheel so you don't fly through workspaces.
+	Mod+WheelScrollDown		 cooldown-ms=150 { focus-workspace-down; }
+	Mod+WheelScrollUp		 cooldown-ms=150 { focus-workspace-up; }
+	Mod+Ctrl+WheelScrollDown cooldown-ms=150 { move-column-to-workspace-down; }
+	Mod+Ctrl+WheelScrollUp	 cooldown-ms=150 { move-column-to-workspace-up; }
+
+	Mod+WheelScrollRight	  { focus-column-right; }
+	Mod+WheelScrollLeft		  { focus-column-left; }
+	Mod+Ctrl+WheelScrollRight { move-column-right; }
+	Mod+Ctrl+WheelScrollLeft  { move-column-left; }
+
+	// Shift turns vertical wheel into horizontal (like apps do).
+	Mod+Shift+WheelScrollDown	   { focus-column-right; }
+	Mod+Shift+WheelScrollUp		   { focus-column-left; }
+	Mod+Ctrl+Shift+WheelScrollDown { move-column-right; }
+	Mod+Ctrl+Shift+WheelScrollUp   { move-column-left; }
+
+	// --- Layout switching (xkb) ---------------------------------------------
+	// If you enable these, do NOT also set an xkb layout-switch option above,
+	// or the layout will switch twice per press.
+	// Mod+Space	   { switch-layout "next"; }
+	// Mod+Shift+Space { switch-layout "prev"; }
+
+	// --- System -------------------------------------------------------------
+	// Escape hatch for remote-desktop/KVM apps that want the raw keystrokes.
+	// allow-inhibiting=false keeps this bind working even while inhibited.
+	Mod+Escape allow-inhibiting=false { toggle-keyboard-shortcuts-inhibit; }
+
+	// Quit shows a confirmation dialog to avoid accidental exits.
+	Mod+Shift+E { quit; }
+	Ctrl+Alt+Delete { quit; }
+
+	// Power off the monitors (any input turns them back on).
+	Mod+Shift+P { power-off-monitors; }
+}
+
+// ============================================================================
+// Theme overrides -- keep this last so its colors win.
+// ============================================================================
+include "./noctalia.kdl"

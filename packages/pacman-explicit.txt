@@ -1,3 +1,4 @@
+7zip
 accountsservice
 alacritty
 alsa-firmware
@@ -95,6 +96,7 @@ hwdetect
 hwinfo
 hyperfine
 inetutils
+intel-media-driver
 intel-ucode
 inxi
 iptables
@@ -108,6 +110,7 @@ libdvdcss
 libgsf
 libopenraw
 libva-intel-driver
+libva-utils
 libwnck3
 linux
 linux-firmware
@@ -152,6 +155,7 @@ nvidia-hook
 nwg-look
 openssh
 os-prober
+ouch
 pacman-contrib
 papirus-folders-git
 papirus-icon-theme
@@ -219,6 +223,7 @@ welcome
 wget
 which
 wireplumber
+wl-clipboard
 wlsunset
 wpa_supplicant
 xdg-desktop-portal-gnome

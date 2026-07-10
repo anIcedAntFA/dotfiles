@@ -1,0 +1,71 @@
+{{- $isLaptop := eq (dig "machine" "work" .) "laptop" -}}
+{{- $sub := ternary "laptop" "pc" $isLaptop -}}
+{
+  "$schema": "https://github.com/fastfetch-cli/fastfetch/raw/dev/doc/json_schema.json",
+
+  // ==========================================================================
+  // fastfetch — chezmoi template
+  // ==========================================================================
+  // Renders to ~/.config/fastfetch/config.jsonc on `chezmoi apply`.
+  //
+  // Logo: a RANDOM pre-colored Arch ASCII logo each launch, from a per-machine
+  // subset. fastfetch renders once (no animation), so the random pick is the
+  // "variety". The subset ("pc" vs "laptop") is chosen from the `machine` chezmoi
+  // var and passed to the random-logo script; the script + the ASCII files carry
+  // the color (command-raw skips fastfetch's own $1-$9 coloring).
+  // See docs/fastfetch.md. Per-machine mechanism: docs/adr/0006-*.
+
+  "logo": {
+    "type": "command-raw",
+    "source": "$HOME/.config/fastfetch/random-logo {{ $sub }}",
+    "padding": { "top": 1, "left": 2 },
+  },
+
+  "display": {
+    "separator": "  ",
+  },
+
+  "modules": [
+    // --- Identity ---------------------------------------------------------
+    "title", // user@host
+    "break",
+
+    // --- System -----------------------------------------------------------
+    "os", // EndeavourOS x86_64
+    "kernel", // Linux x.y-arch
+    "wm", // niri (Wayland)
+    "lm", // login/display manager
+    {
+      "type": "custom",
+      "key": "Desktop shell",
+      "format": "Noctalia (Wayland)",
+    },
+    "packages", // pacman count
+    "break",
+
+    // --- Terminal & shell -------------------------------------------------
+    "terminal", // ghostty
+    "shell", // fish
+    "font",
+    "editor",
+    "break",
+
+    // --- Hardware ---------------------------------------------------------
+    "cpu",
+    "gpu",
+    "memory",
+    "physicalmemory",
+    {
+      "type": "disk",
+      "folders": "/", // root partition only
+    },
+{{- if $isLaptop }}
+    "battery", // laptop only
+{{- end }}
+    {
+      "type": "display",
+      "format": "{width}x{height} @ {refresh-rate} Hz",
+    },
+    "break",
+  ],
+}

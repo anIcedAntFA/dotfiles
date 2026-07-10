@@ -1,0 +1,13 @@
+#!/usr/bin/env bash
+# Print the Wayland clipboard to stdout via wl-paste. A thin, memorable wrapper
+# (parallel to dot-clip-copy) — all args pass straight through to wl-paste.
+#
+#   dot-clip-paste
+#   dot-clip-paste | sort
+#   dot-clip-paste > myfile
+
+set -o errexit
+set -o pipefail
+set -o nounset
+
+exec wl-paste "$@"

@@ -9,6 +9,7 @@ navicat-premium-lite-en
 noctalia-qs
 noctalia-shell
 papirus-folders-git
+peazip
 pgadmin4-bin
 postman-bin
 rate-mirrors-bin
@@ -17,4 +18,5 @@ teams-for-linux-bin
 tuxedo
 visual-studio-code-bin
 waterfox-bin
+wl-screenrec-git
 zen-browser-bin

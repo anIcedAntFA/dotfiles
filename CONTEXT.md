@@ -29,6 +29,16 @@ The GlobalProtect VPN gateway host. Stored as the chezmoi var `workVpnPortal`, n
 hard-coded in the repo.
 _Avoid_: server, endpoint, gateway (in config we say portal).
 
+## Machines
+
+**Machine profile** (or _profile_):
+One of the three boxes this config targets — `work`, `laptop`, or `home` — selected
+by the chezmoi var `machine` (prompted on init, stored in the gitignored
+`chezmoi.toml`). Templated configs branch on it to pick outputs, DPI cosmetics,
+startup apps, and input. The value is a generic form-factor label, never a hostname
+or company name (the real hostname may carry a company tag, so it stays out of the repo).
+_Avoid_: host, box, device (in config we say profile / the `machine` var).
+
 ## Identity
 
 **Identity** (personal / work):

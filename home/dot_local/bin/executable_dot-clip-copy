@@ -1,0 +1,17 @@
+#!/usr/bin/env bash
+# Copy stdin to the Wayland clipboard via wl-copy. A thin, memorable wrapper
+# (parallel to dot-clip-paste) — all args pass straight through to wl-copy.
+#
+#   echo "hello" | dot-clip-copy
+#   dot-clip-copy < myfile
+#
+# Secrets: pass --sensitive so clipboard managers don't persist it to history
+# (cliphist honours the hint), e.g.:
+#
+#   pass show wifi | dot-clip-copy --sensitive
+
+set -o errexit
+set -o pipefail
+set -o nounset
+
+exec wl-copy "$@"

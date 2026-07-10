@@ -1,0 +1,89 @@
+#!/usr/bin/env bash
+# Record the screen with wl-screenrec. Start a capture, then stop it later with
+# a separate `stop` invocation (SIGINT), since a niri keybind has no terminal to
+# Ctrl-C. One recording at a time; state lives in a runtime pidfile.
+#
+#   dot-screenrec region [audio]   # slurp a rectangle, then record it
+#   dot-screenrec screen [audio]   # record the focused monitor
+#   dot-screenrec stop             # finish the running recording
+#
+# A trailing `audio` on a start mode adds --audio (default capture source).
+
+set -o errexit
+set -o pipefail
+set -o nounset
+
+MODE="${1:-region}"
+WANT_AUDIO="${2:-}"
+
+STATE="${XDG_RUNTIME_DIR:-/tmp}/dot-screenrec.state"
+
+notify() {
+	# Fire a fresh one-shot bubble. Don't try to reuse one bubble by id across
+	# start/stop: a recording outlives a toast, and Noctalia silently drops a
+	# --replace-id that points at an already-closed bubble.
+	notify-send --app-name=screenrec "$1" "${2:-}" 2>/dev/null || true
+}
+
+running_pid() {
+	# Echo the live wl-screenrec PID from the statefile, or nothing.
+	[ -f "${STATE}" ] || return 0
+	local pid
+	pid="$(head -n1 "${STATE}")"
+	if [ -n "${pid}" ] && kill -0 "${pid}" 2>/dev/null; then
+		echo "${pid}"
+	fi
+}
+
+stop() {
+	local pid file
+	pid="$(running_pid)"
+	if [ -z "${pid}" ]; then
+		notify "Screen recording" "Nothing is recording."
+		rm -f "${STATE}"
+		exit 0
+	fi
+	file="$(sed -n 2p "${STATE}")"
+	kill -INT "${pid}"
+	rm -f "${STATE}"
+	notify "Recording saved" "${file}"
+	exit 0
+}
+
+if [ "${MODE}" = "stop" ]; then
+	stop
+fi
+
+# A start mode: refuse if one is already in flight.
+if [ -n "$(running_pid)" ]; then
+	notify "Already recording" "Stop the current capture first (Mod+Ctrl+Backslash)."
+	exit 1
+fi
+
+# Resolve the capture target into wl-screenrec args.
+declare -a REC_ARGS=(--codec avc)
+case "${MODE}" in
+region)
+	REC_ARGS+=(--geometry "$(slurp)")
+	;;
+screen)
+	REC_ARGS+=(--output "$(niri msg --json focused-output | jq --raw-output .name)")
+	;;
+*)
+	echo "'${MODE}' is not a supported mode, aborting!" >&2
+	exit 1
+	;;
+esac
+
+[ "${WANT_AUDIO}" = "audio" ] && REC_ARGS+=(--audio)
+
+# Where the file lands. mp4 + h264 plays inline in any browser/blog.
+DIR="${XDG_VIDEOS_DIR:-${HOME}/Videos}"
+mkdir -p "${DIR}"
+FILE="${DIR}/Screencast from $(date '+%Y-%m-%d %H-%M-%S').mp4"
+
+# Record our own PID + the target path, then hand this process over to
+# wl-screenrec (exec keeps the PID stable so `stop` can SIGINT it).
+printf '%s\n%s\n' "$$" "${FILE}" >"${STATE}"
+notify "● Recording — ${MODE}${WANT_AUDIO:+ + audio}" "Mod+Ctrl+Backslash to stop"
+exec wl-screenrec --filename "${FILE}" "${REC_ARGS[@]}"

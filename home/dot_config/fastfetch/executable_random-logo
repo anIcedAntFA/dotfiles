@@ -1,0 +1,19 @@
+#!/bin/sh
+# Random pre-colored ASCII logo for fastfetch.
+#
+# fastfetch renders once and has no animation, so "variety" = a different logo
+# each launch. config.jsonc calls this via  logo.type "command-raw"  with the
+# per-machine subset as the first argument ("pc" or "laptop"), chosen by the
+# chezmoi template. Logo files are plain text containing \e / \033 escapes; they
+# are interpreted here at runtime with `printf %b` (command-raw skips fastfetch's
+# own $1-$9 color processing, so the color lives in the files).
+#
+# Add a logo: drop a *.txt into logos/pc or logos/laptop. See docs/fastfetch.md.
+
+sub="${1:-pc}"
+base="${XDG_CONFIG_HOME:-$HOME/.config}/fastfetch/logos"
+dir="$base/$sub"
+[ -d "$dir" ] || dir="$base/pc"
+
+logo=$(find "$dir" -maxdepth 1 -type f -name '*.txt' 2>/dev/null | shuf -n 1)
+[ -n "$logo" ] && printf '%b' "$(cat "$logo")"
