@@ -182,5 +182,3 @@ me along the way. You're amazing and kind. 🙏
 ## License
 
 [MIT](LICENSE) © ngockhoi96
-
-Read /tmp/niri-fastfetch-handoff.md, and continue with:
