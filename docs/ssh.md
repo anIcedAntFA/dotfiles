@@ -58,7 +58,7 @@ ssh -T git@gitlab.example.com
 ## Related
 
 - Git picks your work identity by path — see [ghq.md](ghq.md) and the
-  `includeIf` block in [`home/dot_gitconfig.tmpl`](../home/dot_gitconfig.tmpl).
+  `includeIf` block in [`home/dot_config/git/config.tmpl`](../home/dot_config/git/config.tmpl).
 
 ## References
 

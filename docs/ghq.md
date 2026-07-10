@@ -24,7 +24,7 @@ yay -S --needed ghq peco
 
 ## How it's configured
 
-The roots live in [`home/dot_gitconfig.tmpl`](../home/dot_gitconfig.tmpl) (values
+The roots live in [`home/dot_config/git/config.tmpl`](../home/dot_config/git/config.tmpl) (values
 come from `chezmoi init` prompts):
 
 ```gitconfig

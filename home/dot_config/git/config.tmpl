@@ -1,0 +1,137 @@
+# ~/.config/git/config — personal (default) identity + shared settings.
+# chezmoi source: home/dot_config/git/config.tmpl · see docs/git.md
+[user]
+	name = {{ .name }}
+	email = {{ .email }}
+	signingkey = ~/.ssh/github.pub
+
+[core]
+	editor = nano
+	pager = delta
+	ignorecase = false
+[init]
+	defaultBranch = main
+
+[column]
+	ui = auto
+[branch]
+	sort = -committerdate
+[tag]
+	sort = version:refname
+	gpgsign = true
+[commit]
+	verbose = true
+	gpgsign = true
+[gpg]
+	format = ssh
+[gpg "ssh"]
+	allowedSignersFile = ~/.ssh/allowed_signers
+
+[diff]
+	algorithm = histogram
+	colorMoved = plain
+	colorMovedWS = allow-indentation-change
+	mnemonicPrefix = true
+	renames = true
+[interactive]
+	diffFilter = delta --color-only
+[delta]
+	navigate = true
+	line-numbers = true
+	dark = true
+[merge]
+	conflictStyle = zdiff3
+
+[pull]
+	rebase = true
+[push]
+	default = simple
+	autoSetupRemote = true
+	followTags = true
+[fetch]
+	prune = true
+	pruneTags = true
+	fsckObjects = true
+[transfer]
+	fsckObjects = true
+[receive]
+	fsckObjects = true
+
+[rebase]
+	autoSquash = true
+	autoStash = true
+	updateRefs = true
+	missingCommitsCheck = error
+[rerere]
+	enabled = true
+	autoupdate = true
+[help]
+	autocorrect = prompt
+[log]
+	date = iso
+
+[filter "lfs"]
+	clean = git-lfs clean -- %f
+	smudge = git-lfs smudge -- %f
+	process = git-lfs filter-process
+	required = true
+
+[alias]
+	a = add
+	ap = add -p
+	ci = commit
+	cm = commit -m
+	ca = commit -a
+	cam = commit --amend
+	cane = commit --amend --no-edit
+	cf = commit --fixup
+	undo = reset --soft HEAD~1
+	unstage = restore --staged --
+	br = branch
+	ba = branch -a
+	bm = branch --merged
+	bn = branch --no-merged
+	bda = "!git branch --merged | grep -vE '^[*+]|\\b(develop|master|main)\\b' | xargs -r git branch -d"
+	co = checkout
+	cob = checkout -b
+	pr = pull --rebase
+	pf = push --force-with-lease --force-if-includes
+	f = fetch --all --prune
+	rpo = remote prune origin
+	rb = rebase
+	ri = rebase -i
+	rc = rebase --continue
+	rab = rebase --abort
+	cp = cherry-pick
+	cpc = cherry-pick --continue
+	cpa = cherry-pick --abort
+	wt = worktree
+	wta = worktree add
+	wtl = worktree list
+	wtr = worktree remove
+	st = status
+	s = status -sb
+	d = diff
+	dc = diff --cached
+	rl = reflog
+	last = log -1 HEAD
+	lg = log --graph --pretty=format:'%Cred%h%Creset%C(yellow)%d%Creset %s %Cgreen(%cr) %C(blue)<%an>%Creset' --abbrev-commit
+	fu = "!git log -n 20 --no-merges --pretty=format:'%h %s' | fzf --reverse | cut -d' ' -f1 | xargs -o git commit --fixup"
+
+[ghq]
+	root = {{ .ghqRoot }}
+[ghq "ssh://git@{{ .workGitHost }}:{{ .workGitPort }}/"]
+	root = {{ .ghqCompanyRoot }}
+
+[url "git@github.com:anIcedAntFA/"]
+	insteadOf = https://github.com/anIcedAntFA/
+{{- $ghPath := lookPath "gh" }}
+{{- if $ghPath }}
+[credential "https://github.com"]
+	helper = !{{ $ghPath }} auth git-credential
+[credential "https://gist.github.com"]
+	helper = !{{ $ghPath }} auth git-credential
+{{- end }}
+
+[includeIf "gitdir:{{ .ghqCompanyRoot }}/"]
+	path = ./config-work

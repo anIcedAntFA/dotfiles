@@ -1,0 +1,6 @@
+# ~/.config/git/config-work — work identity overrides, pulled in by the
+# includeIf in config for repos under {{ .ghqCompanyRoot }}/. See docs/git.md.
+[user]
+	email = {{ .workEmail }}
+	name = {{ .name }}
+	signingkey = ~/.ssh/gitlab.pub
