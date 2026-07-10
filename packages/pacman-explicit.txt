@@ -96,6 +96,7 @@ hwdetect
 hwinfo
 hyperfine
 inetutils
+intel-media-driver
 intel-ucode
 inxi
 iptables
@@ -109,6 +110,7 @@ libdvdcss
 libgsf
 libopenraw
 libva-intel-driver
+libva-utils
 libwnck3
 linux
 linux-firmware

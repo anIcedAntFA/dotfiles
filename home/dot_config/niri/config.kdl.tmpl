@@ -373,9 +373,9 @@ binds {
 	Alt+Print { screenshot-window; }
 	// dot-screenrec drives wl-screenrec (GPU h264). Start records, then stop
 	// them explicitly (no terminal to Ctrl-C). See docs/screen-recording.md.
-	Mod+Print		hotkey-overlay-title="Record (region)" { spawn "dot-screenrec" "region"; }
-	Mod+Shift+Print hotkey-overlay-title="Record (screen)" { spawn "dot-screenrec" "screen"; }
-	Mod+Ctrl+Print	hotkey-overlay-title="Record (stop & save)" { spawn "dot-screenrec" "stop"; }
+	Mod+Backslash		hotkey-overlay-title="Record (region)" { spawn "dot-screenrec" "region"; }
+	Mod+Shift+Backslash hotkey-overlay-title="Record (screen)" { spawn "dot-screenrec" "screen"; }
+	Mod+Ctrl+Backslash	hotkey-overlay-title="Record (stop & save)" { spawn "dot-screenrec" "stop"; }
 
 	// Toggle the Orca screen reader. allow-when-locked so it works on the lock screen.
 	Super+Alt+S allow-when-locked=true hotkey-overlay-title=null { spawn-sh "pkill orca || exec orca"; }

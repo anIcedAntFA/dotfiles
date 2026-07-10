@@ -30,9 +30,48 @@ yay -S --needed wl-screenrec-git slurp jq libnotify
 - `jq` — read the focused output name from `niri msg --json`.
 - `libnotify` — `notify-send`, the only signal a recording is live.
 
-Hardware encoding needs a working VA-API stack (`intel-media-driver`,
-`libva-mesa-driver`, etc. for your GPU). If it fails, `wl-screenrec --no-hw`
-falls back to a software encoder.
+Hardware encoding needs a working VA-API driver for your GPU — see the next
+section, which is where the one real setup snag lives.
+
+## VA-API / hardware encoding
+
+wl-screenrec encodes h264 **on the GPU** via VA-API, so it needs a VA-API driver
+that supports your GPU. On Intel there are **two** drivers, and picking the wrong
+one fails hard:
+
+- **`intel-media-driver`** — the `iHD` driver, for **Gen8+** (Broadwell and newer,
+  including this box's Alder Lake **UHD 770**). The modern one.
+- **`libva-intel-driver`** — the legacy `i965` driver, only up to ~Gen9. On a
+  Gen12 GPU it can't initialise at all.
+
+If only `libva-intel-driver` is present, VA-API tries `i965` and dies — the
+recorder even tells you it's not its own bug:
+
+```text
+[VAAPI] libva: /usr/lib/dri/i965_drv_video.so init failed
+[VAAPI] Failed to initialise VAAPI connection: -1 (unknown libva error).
+[ERROR] failed to create encoder(s): Failed to load vaapi device: Input/output error.
+thread 'main' panicked at src/main.rs: enc left in intermediate state
+```
+
+Fix (per [wl-screenrec#30](https://github.com/russelltg/wl-screenrec/issues/30)) —
+install the iHD driver and `vainfo` to check it:
+
+```sh
+yay -S --needed intel-media-driver libva-utils
+vainfo   # from libva-utils
+```
+
+A healthy `vainfo` names the **iHD** driver and lists `VAProfileH264*` with
+`VAEntrypointEncSlice` — the hardware h264 _encode_ path wl-screenrec needs:
+
+```text
+vainfo: Driver version: Intel iHD driver for Intel(R) Gen Graphics ...
+      VAProfileH264High    : VAEntrypointEncSlice
+```
+
+No working VA-API (or a non-Intel GPU without its own driver)? `wl-screenrec
+--no-hw` falls back to a CPU encoder — heavier on battery, but it records.
 
 ## The `dot-screenrec` script
 
@@ -60,19 +99,20 @@ How it behaves:
 - **Web-ready output.** Files are `.mp4` with `--codec avc` (h264), which plays
   inline in any browser `<video>` — no transcode before a blog embed. They land
   in `$XDG_VIDEOS_DIR` as `Screencast from <timestamp>.mp4`.
-- **Feedback.** `notify-send` fires on start (`● Recording — region`) and stop
-  (the saved path), reusing one notification bubble so it doesn't stack.
+- **Feedback.** `notify-send` fires a fresh notification on start
+  (`● Recording — region`) and on stop (the saved path).
 
 ## Keybinds
 
-The `Print` family, parallel to the `Mod+S` screenshot family (see
-[niri-keybindings.md](niri-keybindings.md#screenshots--capture)):
+The `Mod+Backslash` family, parallel to the `Mod+S` screenshot family (see
+[niri-keybindings.md](niri-keybindings.md#screenshots--capture)). `Backslash`
+rather than `Print` so it works on keyboards without a dedicated `Print` key:
 
-| Keybind           | Command                | Action                 |
-| ----------------- | ---------------------- | ---------------------- |
-| `Mod+Print`       | `dot-screenrec region` | Start: select a region |
-| `Mod+Shift+Print` | `dot-screenrec screen` | Start: focused monitor |
-| `Mod+Ctrl+Print`  | `dot-screenrec stop`   | Stop & save            |
+| Keybind               | Command                | Action                 |
+| --------------------- | ---------------------- | ---------------------- |
+| `Mod+Backslash`       | `dot-screenrec region` | Start: select a region |
+| `Mod+Shift+Backslash` | `dot-screenrec screen` | Start: focused monitor |
+| `Mod+Ctrl+Backslash`  | `dot-screenrec stop`   | Stop & save            |
 
 Audio variants aren't bound by default — run them from a terminal, or add a bind
 passing the `audio` arg if you record talking demos often.

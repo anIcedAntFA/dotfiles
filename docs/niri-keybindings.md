@@ -45,18 +45,18 @@ interchangeable everywhere.
 
 ## Screenshots & capture
 
-| Keybind            | Action / command                 | What it does                             |
-| ------------------ | -------------------------------- | ---------------------------------------- |
-| `Mod+S`            | `dot-screenshot region`          | Region → satty for annotation            |
-| `Mod+Shift+S`      | `dot-screenshot window`          | Focused window → satty                   |
-| `Mod+Ctrl+S`       | `dot-screenshot monitor-focused` | Focused monitor → satty                  |
-| `Mod+Ctrl+Shift+S` | `dot-screenshot monitor-all`     | All monitors → satty                     |
-| `Ctrl+Print`       | `screenshot-screen`              | Built-in: whole screen straight to disk  |
-| `Alt+Print`        | `screenshot-window`              | Built-in: focused window to disk         |
-| `Mod+Print`        | `dot-screenrec region`           | Start recording a slurp region           |
-| `Mod+Shift+Print`  | `dot-screenrec screen`           | Start recording the focused monitor      |
-| `Mod+Ctrl+Print`   | `dot-screenrec stop`             | Stop & save the running recording        |
-| `Super+Alt+S`      | toggle `orca`                    | Screen reader on/off (works when locked) |
+| Keybind               | Action / command                 | What it does                             |
+| --------------------- | -------------------------------- | ---------------------------------------- |
+| `Mod+S`               | `dot-screenshot region`          | Region → satty for annotation            |
+| `Mod+Shift+S`         | `dot-screenshot window`          | Focused window → satty                   |
+| `Mod+Ctrl+S`          | `dot-screenshot monitor-focused` | Focused monitor → satty                  |
+| `Mod+Ctrl+Shift+S`    | `dot-screenshot monitor-all`     | All monitors → satty                     |
+| `Ctrl+Print`          | `screenshot-screen`              | Built-in: whole screen straight to disk  |
+| `Alt+Print`           | `screenshot-window`              | Built-in: focused window to disk         |
+| `Mod+Backslash`       | `dot-screenrec region`           | Start recording a slurp region           |
+| `Mod+Shift+Backslash` | `dot-screenrec screen`           | Start recording the focused monitor      |
+| `Mod+Ctrl+Backslash`  | `dot-screenrec stop`             | Stop & save the running recording        |
+| `Super+Alt+S`         | toggle `orca`                    | Screen reader on/off (works when locked) |
 
 See [screenshot.md](screenshot.md) for how `dot-screenshot` wires grim/slurp into
 satty, and [screen-recording.md](screen-recording.md) for `dot-screenrec`.

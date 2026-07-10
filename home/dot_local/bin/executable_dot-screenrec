@@ -17,14 +17,12 @@ MODE="${1:-region}"
 WANT_AUDIO="${2:-}"
 
 STATE="${XDG_RUNTIME_DIR:-/tmp}/dot-screenrec.state"
-NOTIFY_ID_FILE="${XDG_RUNTIME_DIR:-/tmp}/dot-screenrec.notify"
 
 notify() {
-	# Reuse one notification bubble across start/stop so it doesn't stack.
-	local id="0"
-	[ -f "${NOTIFY_ID_FILE}" ] && id="$(cat "${NOTIFY_ID_FILE}")"
-	notify-send --app-name=screenrec --print-id --replace-id="${id}" \
-		"$1" "${2:-}" >"${NOTIFY_ID_FILE}" 2>/dev/null || true
+	# Fire a fresh one-shot bubble. Don't try to reuse one bubble by id across
+	# start/stop: a recording outlives a toast, and Noctalia silently drops a
+	# --replace-id that points at an already-closed bubble.
+	notify-send --app-name=screenrec "$1" "${2:-}" 2>/dev/null || true
 }
 
 running_pid() {
@@ -58,7 +56,7 @@ fi
 
 # A start mode: refuse if one is already in flight.
 if [ -n "$(running_pid)" ]; then
-	notify "Already recording" "Stop the current capture first (Mod+Ctrl+Print)."
+	notify "Already recording" "Stop the current capture first (Mod+Ctrl+Backslash)."
 	exit 1
 fi
 
@@ -87,5 +85,5 @@ FILE="${DIR}/Screencast from $(date '+%Y-%m-%d %H-%M-%S').mp4"
 # Record our own PID + the target path, then hand this process over to
 # wl-screenrec (exec keeps the PID stable so `stop` can SIGINT it).
 printf '%s\n%s\n' "$$" "${FILE}" >"${STATE}"
-notify "● Recording — ${MODE}${WANT_AUDIO:+ + audio}" "Mod+Ctrl+Print to stop"
+notify "● Recording — ${MODE}${WANT_AUDIO:+ + audio}" "Mod+Ctrl+Backslash to stop"
 exec wl-screenrec --filename "${FILE}" "${REC_ARGS[@]}"
