@@ -1,0 +1,16 @@
+# Global gitignore (~/.config/git/ignore, auto-detected by git).
+# Only OS/editor/tool cruft that should never land in ANY repo lives here —
+# project-specific patterns belong in each repo's own .gitignore.
+
+# Editor / IDE swap & backup files
+.*.sw[a-p]
+*~
+.idea/
+
+# Tooling caches
+.direnv/
+__pycache__/
+*.pyc
+
+# Claude Code machine-local settings
+**/.claude/settings.local.json

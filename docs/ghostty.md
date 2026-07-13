@@ -29,23 +29,21 @@ From [`home/dot_config/ghostty/config`](../home/dot_config/ghostty/config):
 | `custom-shader = shaders/cursor_sweep.glsl` | Animated cursor (vendored `shaders/` — see below).            |
 | `window-padding-x/y = 8`                    | Breathing room around the grid.                               |
 
-## Cursor shaders
+## Cursor shader
 
-The [`shaders/`](../home/dot_config/ghostty/shaders/) folder holds several cursor
-effects (`cursor_sweep`, `cursor_tail`, `ripple_cursor`, `sonic_boom_cursor`…).
-Swap the effect by pointing `custom-shader` at a different `.glsl` file. These
-are GLSL, so they're excluded from formatting/linting.
+[`shaders/cursor_sweep.glsl`](../home/dot_config/ghostty/shaders/cursor_sweep.glsl)
+is the single vendored cursor effect, loaded via `custom-shader`. It's GLSL, so
+it's excluded from formatting/linting.
 
-**Vendored, not cloned.** The `.glsl` files are committed here (with their upstream
-[`README`](../home/dot_config/ghostty/shaders/README.md)) rather than cloned at
-install time — so the setup is self-contained and works offline. They're **MIT**
-licensed, from [`sahaj-b/ghostty-cursor-shaders`](https://github.com/sahaj-b/ghostty-cursor-shaders)
-(the vendored README carries the attribution and license; keep it). To update, pull
-the upstream files over `shaders/` and re-check the license.
-
-> [!NOTE]
-> If you actually sourced these from a fork (e.g. `0xhckr/ghostty-shaders`), point
-> the attribution at the real upstream chain so credit/license stay accurate.
+**Vendored, not cloned — and deliberately not a git submodule or `.chezmoiexternal`.**
+The one shader in use is committed here rather than pulled at install time. For a
+single settled effect that keeps the setup self-contained and offline, with no
+upstream coupling or network dependency on `chezmoi apply`; a submodule would also
+fight chezmoi's source model (nested `.git`, naming attributes). It's **MIT**, from
+[`sahaj-b/ghostty-cursor-shaders`](https://github.com/sahaj-b/ghostty-cursor-shaders);
+[`NOTICE`](../home/dot_config/ghostty/shaders/NOTICE) carries the attribution — keep
+it. To update, copy the upstream `cursor_sweep.glsl` over this one and re-check the
+license.
 
 ## Themes
 

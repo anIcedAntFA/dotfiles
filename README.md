@@ -83,7 +83,7 @@ chezmoi init --apply https://github.com/anIcedAntFA/dotfiles.git
 ```
 
 Your answers are stored in `~/.config/chezmoi/chezmoi.toml` (never committed) and
-injected into templates like `~/.gitconfig` and `~/.ssh/config`. To preview
+injected into templates like `~/.config/git/config` and `~/.ssh/config`. To preview
 changes before applying: `chezmoi diff`.
 
 Then, if you didn't opt into package auto-install, install them manually:
@@ -104,7 +104,7 @@ dotfiles/
 │   ├── dot_config/          → ~/.config/*
 │   ├── dot_local/           → ~/.local/*
 │   ├── private_dot_ssh/     → ~/.ssh/*  (0600)
-│   ├── dot_gitconfig.tmpl   → ~/.gitconfig  (templated)
+│   ├── dot_config/git/config.tmpl → ~/.config/git/config  (templated)
 │   └── .chezmoi.toml.tmpl   prompts for your private values
 ├── docs/            per-tool guides + Architecture Decision Records (adr/)
 ├── packages/        reproducible package snapshots

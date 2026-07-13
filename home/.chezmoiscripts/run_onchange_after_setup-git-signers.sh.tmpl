@@ -1,0 +1,27 @@
+{{- /* Build ~/.ssh/allowed_signers so `git log --show-signature` can verify
+       SSH-signed commits locally (config: gpg.ssh.allowedSignersFile).
+       Pubkeys are machine-local (never in the repo), so we read whatever
+       exists on this box and pair each with its identity email. Re-runs
+       whenever either email changes, via the trigger comment below. */ -}}
+#!/usr/bin/env bash
+set -euo pipefail
+
+# Re-run trigger (do not edit): {{ list .email .workEmail | join "," }}
+
+signers="$HOME/.ssh/allowed_signers"
+tmp="$(mktemp)"
+
+if [ -f "$HOME/.ssh/github.pub" ]; then
+	printf '%s %s\n' '{{ .email }}' "$(cat "$HOME/.ssh/github.pub")" >>"$tmp"
+fi
+if [ -f "$HOME/.ssh/gitlab.pub" ]; then
+	printf '%s %s\n' '{{ .workEmail }}' "$(cat "$HOME/.ssh/gitlab.pub")" >>"$tmp"
+fi
+
+if [ -s "$tmp" ]; then
+	install -m 0644 "$tmp" "$signers"
+	echo "==> Wrote $signers"
+else
+	echo "==> No ~/.ssh/{github,gitlab}.pub found yet — skipping allowed_signers."
+fi
+rm -f "$tmp"

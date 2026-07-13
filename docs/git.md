@@ -13,35 +13,49 @@ The counterpart to identity is _authentication_ (which SSH key reaches which hos
 
 ## The layout
 
-Two templated source files, applied by chezmoi:
+Config lives in the XDG directory `~/.config/git/`, not a single `~/.gitconfig`.
+Three source files, applied by chezmoi:
 
-| Source                                                             | Applies to             | Role                        |
-| ------------------------------------------------------------------ | ---------------------- | --------------------------- |
-| [`dot_gitconfig.tmpl`](../home/dot_gitconfig.tmpl)                 | `~/.gitconfig`         | default (personal) identity |
-| [`dot_gitconfig-company.tmpl`](../home/dot_gitconfig-company.tmpl) | `~/.gitconfig-company` | work identity overrides     |
+| Source (`home/dot_config/git/`)                               | Applies to                  | Role                                          |
+| ------------------------------------------------------------- | --------------------------- | --------------------------------------------- |
+| [`config.tmpl`](../home/dot_config/git/config.tmpl)           | `~/.config/git/config`      | default (personal) identity + shared settings |
+| [`config-work.tmpl`](../home/dot_config/git/config-work.tmpl) | `~/.config/git/config-work` | work identity overrides                       |
+| [`ignore`](../home/dot_config/git/ignore)                     | `~/.config/git/ignore`      | global gitignore (auto-detected)              |
 
 The private bits (`{{ .email }}`, `{{ .name }}`, `{{ .workEmail }}`, `ghq` roots)
 come from your `chezmoi init` answers — see [chezmoi.md](chezmoi.md).
 
+> [!NOTE]
+> **Config scope is by _layer_, not by directory tree.** `~/.config/git/config`
+> and `~/.gitconfig` are the **same** scope (git's "global" layer) — the XDG path
+> is just the modern location. It is _not_ scoped to `~/.config/*`; it applies to
+> every repo, including `~/workspace/*`. The only way to scope config to a
+> directory is `includeIf "gitdir:…"` (below). Because both files are global,
+> `~/.gitconfig` — if present — is read _last_ and would **shadow** the XDG file.
+> [`.chezmoiremove`](../home/.chezmoiremove) deletes the old `~/.gitconfig` and
+> `~/.gitconfig-company` on apply so this can't happen; it also keeps future
+> `git config --global …` writes flowing to the XDG file.
+
 ## Identity switching with `includeIf`
 
-The default identity is personal. At the **bottom** of `~/.gitconfig`:
+The default identity is personal. At the **bottom** of `~/.config/git/config`:
 
 ```gitconfig
 [user]
+	name = Your Name
 	email = you@personal.example
-	name  = Your Name
 	signingkey = ~/.ssh/github.pub
 
 [includeIf "gitdir:~/workspace/company/"]
-	path = ./.gitconfig-company
+	path = ./config-work
 ```
 
-`includeIf "gitdir:…"` pulls in `~/.gitconfig-company` **only** for repos under
-that path. Because the include sits _after_ `[user]`, its values win there:
+`includeIf "gitdir:…"` pulls in `~/.config/git/config-work` **only** for repos under
+that path. The relative `path = ./config-work` resolves next to the including file
+(`~/.config/git/`). Because the include sits _after_ `[user]`, its values win there:
 
 ```gitconfig
-# ~/.gitconfig-company
+# ~/.config/git/config-work
 [user]
 	email = you@company.example
 	name  = Your Name
@@ -63,14 +77,12 @@ cd ~/workspace/company/some-repo   && git config user.email  # work
 One naming subtlety catches people out:
 
 > [!NOTE]
-> **`.gitconfig-company` is a fixed filename, not your company name.** In the
-> template, the `gitdir` path is a variable (`{{ .ghqCompanyRoot }}` → e.g.
-> `~/workspace/ndvn/`) but `path = ./.gitconfig-company` is a literal — chezmoi can't
-> template a target's _name_ ([chezmoi.md](chezmoi.md)). So the work file is always
-> `~/.gitconfig-company` regardless of the company slug; only its _directory match_
-> and _contents_ (email, signingkey) reflect your `chezmoi init` answers. If an older
-> setup left a `~/.gitconfig-ndvn`, applying repoints the include to
-> `.gitconfig-company` and the old file becomes an orphan you can `rm`.
+> **`config-work` is a fixed filename, not your company name.** In the template
+> the `gitdir` path is a variable (`{{ .ghqCompanyRoot }}` → e.g. `~/workspace/ndvn/`)
+> but `path = ./config-work` is a literal — chezmoi can't template a target's
+> _name_ ([chezmoi.md](chezmoi.md)). So the work file is always `config-work`
+> regardless of the company slug; only its _directory match_ and _contents_
+> (email, signingkey) reflect your `chezmoi init` answers.
 
 ## Signing commits with SSH (not GPG)
 
@@ -79,35 +91,37 @@ with the **existing SSH key**, not GPG — no extra keys, no `gpg-agent`/`pinent
 and each identity signs with its own key. (Our one GPG key is dedicated to
 [gopass](gopass.md); see [ADR 0004](adr/0004-terminal-password-manager-gopass.md).)
 
-The config is already in the templates:
+The config is in `config`:
 
 ```gitconfig
 [gpg]
 	format = ssh
+[gpg "ssh"]
+	allowedSignersFile = ~/.ssh/allowed_signers
 [commit]
 	gpgsign = true
 [tag]
 	gpgsign = true
 ```
 
-Two one-time steps you still do by hand:
+**Local verification is automated.** The
+[`run_onchange_after_setup-git-signers.sh.tmpl`](../home/.chezmoiscripts/run_onchange_after_setup-git-signers.sh.tmpl)
+script builds `~/.ssh/allowed_signers` from whichever of `~/.ssh/github.pub` /
+`~/.ssh/gitlab.pub` exist, pairing each with its identity email. It re-runs when
+an email changes. That's why `git log --show-signature` reports _Good_ locally —
+no manual step. (The pubkeys are machine-local and never committed, so the file
+is generated on each box rather than templated.)
 
-1. **Tell the host it's a signing key** — the UX differs per host:
-   - **GitHub** (_Settings → SSH and GPG keys_): add `~/.ssh/github.pub` a **second**
-     time with key type **Signing key**. GitHub treats auth and signing as separate
-     entries, so the same key appears twice.
-   - **GitLab** (_Preferences → SSH Keys_): GitLab uses **one** entry per key with a
-     **Usage type**, and won't accept the same key twice (`Fingerprint … already
-been taken`). So **delete** the existing `gitlab.pub` (auth-only) entry and
-     **re-add it once** with Usage type **Authentication & Signing**.
+One one-time step you still do by hand — **tell the host it's a signing key**
+(the UX differs per host):
 
-2. **(Optional) Verify signatures locally.** Point git at an allowed-signers file so
-   `git log --show-signature` says _Good_:
-
-   ```sh
-   echo "you@personal.example $(cat ~/.ssh/github.pub)" >> ~/.ssh/allowed_signers
-   git config --global gpg.ssh.allowedSignersFile ~/.ssh/allowed_signers
-   ```
+- **GitHub** (_Settings → SSH and GPG keys_): add `~/.ssh/github.pub` a **second**
+  time with key type **Signing key**. GitHub treats auth and signing as separate
+  entries, so the same key appears twice.
+- **GitLab** (_Preferences → SSH Keys_): GitLab uses **one** entry per key with a
+  **Usage type**, and won't accept the same key twice (`Fingerprint … already been
+taken`). So **delete** the existing `gitlab.pub` (auth-only) entry and **re-add
+  it once** with Usage type **Authentication & Signing**.
 
 Check it works:
 
@@ -116,14 +130,59 @@ git commit -m "test"          # signed automatically
 git log --show-signature -1    # "Good \"git\" signature ..."
 ```
 
-## The rest of `~/.gitconfig`
+## The rest of `config`
 
-- **Aliases** — short forms (`st`, `co`, `ci`, `pr = pull --rebase`, `bda` to nuke
-  merged branches). Read the source before adopting `bda`; it force-deletes.
+Beyond identity and signing, `config` adopts a modern, DX-focused baseline. The
+picks follow the consensus of the git core developers (see [References](#references)).
+
+- **Diff pager: [delta](https://github.com/dandavison/delta)** (`core.pager`,
+  `interactive.diffFilter`, `[delta]`). Syntax-highlighted, line-numbered diffs;
+  `n`/`N` navigate between files. Requires the `git-delta` package.
+- **Editor: `nano`** (`core.editor`). Switching to `nvim` later is a one-line
+  change on that key.
+- **Better defaults** (strictly nicer, no downside): `column.ui`, `branch.sort`,
+  `tag.sort`, `diff.algorithm = histogram`, `diff.colorMoved`, `diff.mnemonicPrefix`,
+  `push.autoSetupRemote`, `push.followTags`, `fetch.prune`/`pruneTags`,
+  `commit.verbose`, `help.autocorrect = prompt`, `init.defaultBranch = main`.
+- **Rebase-first workflow**: `pull.rebase`, `rebase.autoSquash`/`autoStash`, and
+  `rebase.updateRefs` (rebasing the bottom of a stack moves every branch above it)
+  — plus `rebase.missingCommitsCheck = error` so an interactive rebase can't silently
+  drop a commit. `merge.conflictStyle = zdiff3` shows the common ancestor in conflicts.
+- **`rerere`** records conflict resolutions and replays them, so repeated
+  rebase/merge conflicts only get solved once (`enabled` + `autoupdate`).
+- **Data integrity**: `transfer`/`fetch`/`receive.fsckObjects` detect repo
+  corruption eagerly on transfer.
+- **`url.insteadOf`** rewrites `https://github.com/anIcedAntFA/…` to SSH — but only
+  _your own_ namespace, so public clones and Go modules keep using HTTPS.
+- **`gh` credential helper** is wired only if `gh` is installed (template `lookPath`).
 - **`ghq` roots** — `ghq.root` (personal) and a host-scoped root for company repos
   keep clones organised. See [ghq.md](ghq.md).
-- **`core.excludesfile`** — a global `~/.gitignore`.
-- **`core.editor = nano`** — swap to your editor of choice.
+
+### Aliases
+
+Short forms grouped by workflow area: staging/commit (`a`, `ap`, `ci`, `cm`, `ca`,
+`cam`, `cane`, `cf`, `undo` = `reset --soft HEAD~1`, `unstage`), branches (`br`,
+`ba`, `bm`, `bn`, `bda`, `co`, `cob`), sync (`pr` = `pull --rebase`, `pf` =
+`push --force-with-lease --force-if-includes`, `f`, `rpo`), rebase (`rb`, `ri`,
+`rc`, `rab`), cherry-pick (`cp`, `cpc`, `cpa`), worktree (`wt`, `wta`, `wtl`,
+`wtr`), and inspection (`st`, `s`, `d`, `dc`, `rl`, `last`, `lg`).
+
+Two worth calling out:
+
+- **`bda`** force-cleans branches already merged into develop/master/main. It uses
+  `-d` (safe — refuses unmerged branches), and is a shell alias (leading `!`) so its
+  pipeline actually runs.
+- **`fu`** picks a recent commit in an `fzf` list and creates a `fixup!` commit
+  targeting it; the next `git rebase -i` auto-squashes it (`rebase.autoSquash`).
+  Requires the `fzf` package.
+
+### Global gitignore
+
+`~/.config/git/ignore` is auto-detected by git (no `core.excludesfile` needed). It
+holds only universal cruft — editor swap files, `.direnv/`, `__pycache__`,
+`**/.claude/settings.local.json`. Project-specific ignores belong in each repo's
+own `.gitignore`. Note `.vscode/` is deliberately _not_ ignored globally, since
+projects sometimes commit shared workspace settings.
 
 ## `gh` — GitHub from the terminal
 
@@ -139,6 +198,24 @@ gh pr checkout 123         # check out someone's PR
 `gh auth login` can also configure git to use HTTPS with a token — since we use SSH
 (see [ssh.md](ssh.md)), choose **SSH** when it asks, so `gh` and `git` agree.
 
+### What's tracked (and what isn't)
+
+`gh` splits its state across two files in `~/.config/gh/`:
+
+| File                                             | Holds                                                           | Tracked?                                       |
+| ------------------------------------------------ | --------------------------------------------------------------- | ---------------------------------------------- |
+| [`config.yml`](../home/dot_config/gh/config.yml) | preferences — `git_protocol`, aliases, editor/pager, colors     | ✅ yes (no secrets)                            |
+| `hosts.yml`                                      | OAuth token (or a keyring pointer) + per-host identity/protocol | ❌ no — written by `gh auth login` per machine |
+
+So aliases and defaults are shared via the repo; only the token + identity are
+bootstrapped per box. `git_protocol` is set to `ssh` to match our SSH-first setup.
+
+**Automation / AI-agent use.** Keep agent-safety out of `config.yml` (it's tuned for
+interactive use) — gh already drops the pager, spinner, and prompts when output isn't
+a TTY. For non-interactive callers, prefer env vars and structured output instead:
+`GH_PROMPT_DISABLED=1`, `GH_PAGER=cat`, `GH_TOKEN=…` for auth, and
+`gh … --json <fields> -q <jq>` so you parse data, not scraped text.
+
 ## Related
 
 - [ssh.md](ssh.md) — the SSH keys these identities authenticate with
@@ -148,4 +225,6 @@ gh pr checkout 123         # check out someone's PR
 ## References
 
 - [git-config — `includeIf`](https://git-scm.com/docs/git-config#_conditional_includes)
+- [How core git devs configure git](https://blog.gitbutler.com/how-git-core-devs-configure-git)
+- [Popular git config options — Julia Evans](https://jvns.ca/blog/2024/02/16/popular-git-config-options/)
 - [GitHub: SSH commit signature verification](https://docs.github.com/authentication/managing-commit-signature-verification/about-commit-signature-verification)

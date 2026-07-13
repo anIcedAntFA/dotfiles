@@ -68,11 +68,13 @@ fish
 fisher
 flyctl
 fuzzel
+fzf
 gemini-cli
 ghostty
 ghq
 git
 git-cliff
+git-delta
 git-filter-repo
 github-cli
 gitleaks

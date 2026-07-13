@@ -1,0 +1,8 @@
+# Target paths under $HOME that chezmoi should REMOVE on apply.
+#
+# Git config moved from ~/.gitconfig to the XDG dir ~/.config/git/. The old
+# files must be removed or ~/.gitconfig would shadow ~/.config/git/config (both
+# are the "global" scope; ~/.gitconfig is read last and wins). Removing them
+# also keeps future `git config --global` writes flowing to the XDG file.
+.gitconfig
+.gitconfig-company

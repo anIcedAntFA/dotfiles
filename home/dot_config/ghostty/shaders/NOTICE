@@ -1,0 +1,10 @@
+cursor_sweep.glsl — vendored cursor shader for Ghostty.
+
+Source: https://github.com/sahaj-b/ghostty-cursor-shaders  (MIT License)
+Upstream acknowledgements:
+  - https://github.com/KroneCorylus/ghostty-shader-playground
+  - Neovide cursor animations — https://neovide.dev/
+
+Only cursor_sweep.glsl is vendored here (the one effect in use). It is kept under
+the MIT license; retain this attribution if you redistribute. To update, copy the
+upstream cursor_sweep.glsl over this file and re-check the license.
