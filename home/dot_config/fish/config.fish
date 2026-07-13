@@ -54,6 +54,11 @@ if not string match -q -- $PNPM_HOME $PATH
 end
 # pnpm end
 
+# CLI hygiene: silence gh's "new release" nags; opt out of telemetry.
+# DO_NOT_TRACK is a cross-tool standard (gh and many other CLIs honor it).
+set -gx GH_NO_UPDATE_NOTIFIER 1
+set -gx DO_NOT_TRACK 1
+
 # Machine-local secrets (npm registry tokens, work-only env vars, etc.) live in
 # a file that is NOT tracked by git or managed by chezmoi. Create it per machine:
 #   ~/.config/fish/local.fish   e.g.  set -gx NPM_TOKEN_XXX "..."

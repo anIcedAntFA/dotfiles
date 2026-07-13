@@ -198,6 +198,24 @@ gh pr checkout 123         # check out someone's PR
 `gh auth login` can also configure git to use HTTPS with a token — since we use SSH
 (see [ssh.md](ssh.md)), choose **SSH** when it asks, so `gh` and `git` agree.
 
+### What's tracked (and what isn't)
+
+`gh` splits its state across two files in `~/.config/gh/`:
+
+| File                                             | Holds                                                           | Tracked?                                       |
+| ------------------------------------------------ | --------------------------------------------------------------- | ---------------------------------------------- |
+| [`config.yml`](../home/dot_config/gh/config.yml) | preferences — `git_protocol`, aliases, editor/pager, colors     | ✅ yes (no secrets)                            |
+| `hosts.yml`                                      | OAuth token (or a keyring pointer) + per-host identity/protocol | ❌ no — written by `gh auth login` per machine |
+
+So aliases and defaults are shared via the repo; only the token + identity are
+bootstrapped per box. `git_protocol` is set to `ssh` to match our SSH-first setup.
+
+**Automation / AI-agent use.** Keep agent-safety out of `config.yml` (it's tuned for
+interactive use) — gh already drops the pager, spinner, and prompts when output isn't
+a TTY. For non-interactive callers, prefer env vars and structured output instead:
+`GH_PROMPT_DISABLED=1`, `GH_PAGER=cat`, `GH_TOKEN=…` for auth, and
+`gh … --json <fields> -q <jq>` so you parse data, not scraped text.
+
 ## Related
 
 - [ssh.md](ssh.md) — the SSH keys these identities authenticate with
