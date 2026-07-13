@@ -1,0 +1,18 @@
+# ripgrep config — https://github.com/BurntSushi/ripgrep
+# ripgrep does NOT read XDG by default; it only reads the file pointed at by
+# $RIPGREP_CONFIG_PATH, which config.fish exports to this path.
+#
+# One flag per line. Behavioural flags only — no display/grouping flags
+# (--no-heading, --sort), because this config affects EVERY rg call, including
+# tools that shell out to rg and expect its default output.
+
+# Case-insensitive unless the pattern has an uppercase letter.
+--smart-case
+
+# Search dotfiles too — apt for a dotfiles repo where everything is a dotfile.
+# (.gitignore is still respected; --hidden only lifts the dotfile filter.)
+--hidden
+
+# Never descend into these, even with --hidden.
+--glob=!.git/
+--glob=!vendor/

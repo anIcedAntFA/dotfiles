@@ -16,9 +16,9 @@ full rationale and rejected alternatives (Bitwarden, `pass`, KeePassXC) see
 ## How it fits together
 
 ```text
-  gopass  ──uses──►  GPG key (encrypts every secret)
-     │
-     └──stores──►  ~/.local/share/gopass/stores/root  ──git push──►  private remote
+gopass  ──uses──►  GPG key (encrypts every secret)
+   │
+   └──stores──►  ~/.local/share/gopass/stores/root  ──git push──►  private remote
 ```
 
 Each secret is a single GPG-encrypted file. Because the store is a git repo, you
@@ -127,6 +127,33 @@ gopass completion fish > ~/.config/fish/completions/gopass.fish
 
 There's also a short alias `pw` (→ `gopass`) in
 [`config.fish`](../home/dot_config/fish/config.fish), so `pw ls`, `pw show -c …`.
+
+## gpg-agent (passphrase caching + pinentry)
+
+Every `gopass show` decrypts with your GPG key, so `gpg-agent` sits behind the
+whole workflow: it caches your passphrase and drives the prompt (pinentry). This
+repo tracks one config for it,
+[`home/private_dot_gnupg/private_gpg-agent.conf`](../home/private_dot_gnupg/private_gpg-agent.conf):
+
+```text
+pinentry-program /usr/bin/pinentry-curses
+default-cache-ttl 3600
+max-cache-ttl 7200
+```
+
+- **pinentry-curses** draws the passphrase prompt in the active terminal — no GUI
+  or dbus needed, and it works over SSH. It needs `GPG_TTY`, which
+  [`config.fish`](../home/dot_config/fish/config.fish) exports
+  (`set -gx GPG_TTY (tty)`).
+- The **cache TTLs** mean the passphrase is remembered for 1h idle / 2h max, so a
+  gopass session isn't re-prompting on every entry. Reload the agent after editing:
+  `gpg-connect-agent reloadagent /bye`.
+
+> [!IMPORTANT]
+> `gpg-agent.conf` is the **only** file tracked from `~/.gnupg`. The private keys
+> (`private-keys-v3.d/`), `trustdb.gpg`, and random seed live in the same
+> directory but are never committed — same rule as the store itself. chezmoi
+> applies `~/.gnupg` as `0700` and this file as `0600`.
 
 ## Security notes
 
