@@ -15,8 +15,14 @@ welcome. 🎉
 ## Local setup
 
 ```sh
-just setup     # installs shellcheck, shfmt, just, lefthook + node deps + git hooks
+mise trust     # once: allow this repo's mise.toml
+just setup     # installs pinned tooling via mise (no Node) + git hooks
 ```
+
+All dev tools (dprint, rumdl, shellcheck, shfmt, just, lefthook, gitleaks) are
+pinned in [`mise.toml`](mise.toml) and installed by [mise](https://mise.jdx.dev/) —
+there's no `package.json`. `fish_indent` comes with fish itself. See
+[ADR 0007](docs/adr/0007-node-free-toolchain-via-mise.md).
 
 This is a [chezmoi](https://www.chezmoi.io/) repo with `.chezmoiroot` pointing at
 [`home/`](home/). Edit the source files under `home/` — not your live `$HOME`.
@@ -31,8 +37,8 @@ just check     # runs exactly what CI runs
 
 `just check` must pass. It runs:
 
-- **oxfmt** — format check for Markdown, JSON/JSONC, YAML, TOML
-- **markdownlint** — Markdown rules (`.markdownlint.yml`)
+- **dprint** — format check for Markdown, JSON/JSONC, YAML, TOML
+- **rumdl** — Markdown rules (`.markdownlint.yml`)
 - **shellcheck** + **shfmt** — shell scripts
 - **fish_indent** — fish scripts
 - **gitleaks** — secret scan

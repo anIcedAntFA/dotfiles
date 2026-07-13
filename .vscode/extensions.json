@@ -1,8 +1,8 @@
 {
   "recommendations": [
-    "oxc.oxc-vscode",
+    "dprint.dprint",
+    "rvben.rumdl",
     "editorconfig.editorconfig",
-    "davidanson.vscode-markdownlint",
     "timonwong.shellcheck",
     "foxundermoon.shell-format",
     "bmalehorn.vscode-fish",

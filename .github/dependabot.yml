@@ -1,12 +1,9 @@
 # Keep tooling fresh — https://docs.github.com/code-security/dependabot
 version: 2
 updates:
-  # npm dev tooling (oxfmt, markdownlint-cli2)
-  - package-ecosystem: npm
-    directory: "/"
-    schedule:
-      interval: weekly
-    labels: ["dependencies"]
+  # No npm/language ecosystem: dev tooling is pinned in mise.toml (dprint, rumdl,
+  # …), which Dependabot doesn't track. Those pin to "latest" and update on
+  # `mise install`. See docs/adr/0007-node-free-toolchain-via-mise.md.
 
   # GitHub Actions used by the CI workflow
   - package-ecosystem: github-actions

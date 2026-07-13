@@ -43,7 +43,7 @@ the next poll. Handy for jotting a task from your phone.
 
 A keybind opens tuxedo in a **floating** ghostty window (so it doesn't tile over
 your work) using a custom app-id that a window rule matches — both live in
-[`config.kdl`](../home/dot_config/niri/config.kdl):
+[`config.kdl`](../home/dot_config/niri/config.kdl.tmpl):
 
 ```kdl
 Mod+Shift+T { spawn-sh "ghostty --class=com.tuxedo.todo -e tuxedo ~/todo.txt"; }

@@ -1,0 +1,19 @@
+# Tool versions for THIS repo — https://mise.jdx.dev
+# Checked into the repo (not a chezmoi-managed dotfile): it pins the build/lint
+# tooling so a fresh checkout is one command. No Node required.
+#
+#   mise trust      # once, to allow this config
+#   mise install    # install everything below  (or: just setup)
+#
+# Daily runtimes (node, go, …) live in ~/.config/mise/config.toml, not here.
+# See docs/adr/0007-node-free-toolchain-via-mise.md and docs/mise.md.
+
+[tools]
+dprint = "latest" # formats md / json / jsonc / yaml / toml (dprint.json)
+"aqua:rvben/rumdl" = "latest" # Markdown linter, reads .markdownlint.yml
+just = "latest" # task runner (justfile)
+lefthook = "latest" # git hooks manager (lefthook.yml)
+gitleaks = "latest" # secret scanning (.gitleaks.toml)
+shfmt = "latest" # shell formatter
+shellcheck = "latest" # shell linter
+# fish_indent is not here — it ships with fish itself (a system package).

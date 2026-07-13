@@ -10,11 +10,10 @@ useDefault = true
 [allowlist]
 description = "Paths and patterns that are safe / not real secrets"
 paths = [
-	'''pnpm-lock\.yaml''',
-	'''(^|/)node_modules/''',
-	'''(^|/)images/''',
-	# Docs use obvious placeholder values (you@example.com, gitlab.example.com …).
-	'''(^|/)docs/''',
+  '''(^|/)node_modules/''',
+  '''(^|/)images/''',
+  # Docs use obvious placeholder values (you@example.com, gitlab.example.com …).
+  '''(^|/)docs/''',
 ]
 # Placeholder tokens that appear in templates/examples, not real credentials.
 regexes = ['''you@example\.com''', '''you@company\.example''', '''gitlab\.example\.com''']

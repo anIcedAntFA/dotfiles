@@ -1,6 +1,12 @@
 # Formatting & linting toolchain
 
-**Status:** accepted
+**Status:** superseded by [ADR 0007](./0007-node-free-toolchain-via-mise.md)
+
+> Superseded 2026-07: oxfmt (beta, npm) and markdownlint-cli2 (npm) are replaced
+> by **dprint** (format) + **rumdl** (Markdown lint), provisioned by **mise** — no
+> Node/pnpm in the repo. The dprint-vs-oxfmt trade-off recorded below was resolved
+> the other way once removing the repo's Node toolchain became the goal. See
+> [ADR 0007](./0007-node-free-toolchain-via-mise.md). Retained for history.
 
 This repo has no JS/TS source, so **oxlint** (a JS/TS-only linter) is not used.
 For formatting we use **oxfmt** — since its 2026-02 beta it formats Markdown,

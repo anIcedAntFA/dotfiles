@@ -25,7 +25,7 @@ XMODIFIERS=@im=fcitx
 ```
 
 Autostart the daemon under niri (`spawn-at-startup "fcitx5"` in
-[`config.kdl`](../home/dot_config/niri/config.kdl)).
+[`config.kdl`](../home/dot_config/niri/config.kdl.tmpl)).
 
 ## What's configured
 

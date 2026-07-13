@@ -45,8 +45,6 @@ MD010:
   # Don't flag hard tabs inside fenced code blocks — the guides quote real config
   # files (ssh_config, .gitconfig, fish) that legitimately use tabs.
   code_blocks: false
-  # Fenced code languages to ignore
-  ignore_code_languages: []
   # Number of spaces for each hard tab
   spaces_per_tab: 1
 
@@ -59,8 +57,9 @@ MD012:
   maximum: 1
 
 # MD013/line-length : Line length : https://github.com/DavidAnson/markdownlint/blob/v0.33.0/doc/md013.md
-# Disabled: oxfmt owns formatting and uses proseWrap:preserve (no hard wrapping),
-# so line length is intentionally not enforced. Avoids oxfmt vs markdownlint fights.
+# Disabled: dprint owns formatting with textWrap:maintain (no hard wrapping), so
+# line length is intentionally not enforced. Avoids dprint vs rumdl fights. This
+# file is consumed unchanged by rumdl (the Markdown linter) — see ADR 0007.
 MD013: false
 
 # MD014/commands-show-output : Dollar signs used before commands without showing output : https://github.com/DavidAnson/markdownlint/blob/v0.33.0/doc/md014.md
@@ -166,8 +165,6 @@ MD039: true
 MD040:
   # List of languages
   allowed_languages: []
-  # Require language only
-  language_only: false
 
 # MD041/first-line-heading/first-line-h1 : First line in a file should be a top-level heading : https://github.com/DavidAnson/markdownlint/blob/v0.33.0/doc/md041.md
 MD041:

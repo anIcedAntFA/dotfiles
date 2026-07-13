@@ -27,6 +27,7 @@ global runtimes:
 ```toml
 [tools]
 bun = "1.3.9"
+go = "1.26.3"
 node = "24.13.1"
 pnpm = "10.29.3"
 wrangler = "latest"
@@ -38,6 +39,30 @@ Install them all:
 ```sh
 mise install
 ```
+
+These are the runtimes you want on **every** machine. Project-specific linters
+(gofumpt, golangci-lint, …) belong in a project's own `mise.toml`, not here.
+
+## Repo tooling vs global runtimes
+
+There are two mise files, with different jobs — don't conflate them:
+
+| File                         | Scope                       | chezmoi?       | Holds                           |
+| ---------------------------- | --------------------------- | -------------- | ------------------------------- |
+| `~/.config/mise/config.toml` | your machine, every project | yes (dotfile)  | daily runtimes (node, go, bun…) |
+| `<repo>/mise.toml`           | one project                 | no (repo file) | that project's build/lint tools |
+
+This dotfiles repo carries its own [`mise.toml`](../mise.toml) pinning
+`dprint`, `rumdl`, `just`, `lefthook`, `gitleaks`, `shfmt`, and `shellcheck`, so a
+fresh checkout is one command — no Node required:
+
+```sh
+mise trust      # once, to allow the repo's mise.toml
+mise install    # or: just setup
+```
+
+See [ADR 0007](adr/0007-node-free-toolchain-via-mise.md) for why the repo dropped
+its Node/pnpm toolchain in favour of mise-provisioned single binaries.
 
 ## Per-project versions
 

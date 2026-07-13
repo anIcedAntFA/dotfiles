@@ -64,8 +64,12 @@ dist/
 *.so
 *.a
 
-# Node tooling (oxfmt, markdownlint-cli2)
+# Node modules — the repo's own tooling is node-free (dprint + rumdl via mise),
+# but keep this so a stray `npm install` in a sub-project is never committed.
 node_modules/
+
+# mise local install cache / rumdl cache
+.rumdl_cache/
 
 # chezmoi machine-local config — holds your prompted private values. NEVER commit.
 .config/chezmoi/

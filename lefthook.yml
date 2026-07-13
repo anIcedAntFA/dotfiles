@@ -5,12 +5,13 @@
 pre-commit:
   parallel: true
   commands:
-    oxfmt:
+    dprint:
       glob: "*.{md,json,jsonc,json5,yaml,yml,toml}"
-      run: pnpm exec oxfmt --check {staged_files}
-    markdownlint:
+      run: dprint check {staged_files}
+    rumdl:
       glob: "*.md"
-      run: pnpm exec markdownlint-cli2 {staged_files}
+      exclude: "home/**"
+      run: rumdl check {staged_files}
     shellcheck:
       glob: "*.{sh,bash}"
       run: shellcheck {staged_files}
