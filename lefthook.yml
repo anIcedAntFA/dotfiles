@@ -4,6 +4,7 @@
 
 pre-commit:
   parallel: true
+  skip: [merge, rebase] # don't re-lint replayed commits during rebase/merge
   commands:
     dprint:
       glob: "*.{md,json,jsonc,json5,yaml,yml,toml}"
@@ -18,9 +19,34 @@ pre-commit:
     shfmt:
       glob: "*.{sh,bash}"
       run: shfmt -d {staged_files}
-    fish:
+    fish-fmt:
       glob: "*.fish"
       run: fish_indent --check {staged_files}
+    # Syntax check, not just formatting — ADR 0003/0007 promise `fish -n`. Looped
+    # because `fish -n a b` only checks the first arg and treats the rest as $argv.
+    fish-syntax:
+      glob: "*.fish"
+      run: 'for f in {staged_files}; do fish -n "$f" || exit 1; done'
     # Block commits that contain secrets (this is what would have caught the npm token).
     gitleaks:
       run: gitleaks git --staged --no-banner --redact
+
+# Enforce gitmoji + Conventional Commits (CLAUDE.md) without Node — no commitlint,
+# per ADR 0007 (node-free toolchain). {1} is the commit-message file; auto-generated
+# messages (merge/revert/fixup/squash) are exempt. The leading `[^\x00-\x7F]+` (PCRE)
+# gate requires a gitmoji without enumerating them (robust to multi-codepoint emoji);
+# it's used instead of `[:ascii:]`, which glibc rejects under the hook's C locale.
+commit-msg:
+  commands:
+    convention:
+      run: |
+        head -1 {1} | grep -qE '^(Merge |Revert |fixup!|squash!)' && exit 0
+        head -1 {1} | grep -qP '^[^\x00-\x7F]+ (feat|fix|docs|style|refactor|perf|test|build|ci|chore|revert)(\([A-Za-z0-9._/-]+\))?!?: .+' \
+          || { echo '✗ commit message must be: <emoji> type(scope): subject  — e.g. ✨ feat(fish): add abbr'; exit 1; }
+
+# Last gate before bytes reach the public remote: full-history secret scan. Catches
+# secrets in earlier commits or a `git commit --no-verify` that skipped pre-commit.
+pre-push:
+  commands:
+    secrets:
+      run: just secrets

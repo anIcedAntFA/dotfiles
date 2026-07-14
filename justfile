@@ -31,7 +31,8 @@ check:
     echo "▶ rumdl";       rumdl check . --exclude 'home/,node_modules/,.agents/,.claude/,.gemini/,.docs/'
     echo "▶ shellcheck";  [ -n "$shell" ] && shellcheck $shell
     echo "▶ shfmt";       [ -n "$shell" ] && shfmt -d $shell
-    echo "▶ fish";        fish_indent --check $(find home -name '*.fish')
+    echo "▶ fish-fmt";    fish_indent --check $(find home -name '*.fish')
+    echo "▶ fish-syntax"; for f in $(find home -name '*.fish'); do fish -n "$f" || exit 1; done
     just secrets
 
 # Scan the repository (working tree + history) for leaked secrets
