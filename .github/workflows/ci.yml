@@ -19,7 +19,7 @@ jobs:
       # Installs mise, trusts the repo config, and runs `mise install` — this
       # provisions dprint, rumdl, just, lefthook, gitleaks, shfmt and shellcheck
       # from mise.toml and puts them on PATH for the steps below. No Node.
-      - uses: jdx/mise-action@v2
+      - uses: jdx/mise-action@v4
         env:
           # Auth the aqua/ubi backends (rumdl) against the GitHub API to dodge
           # anonymous rate limits.
