@@ -17,10 +17,10 @@ chezmoi always reasons about three things:
 Every command is some flavour of "compare two of these and reconcile them":
 
 ```text
-  edit source ─┐                        ┌─ chezmoi apply ─► overwrites $HOME
-   (home/…)    │  chezmoi diff/status   │
-              ▼         (compare)       ▼
-        SOURCE  ◄── chezmoi add/re-add ── DESTINATION ($HOME)
+edit source ─┐                        ┌─ chezmoi apply ─► overwrites $HOME
+ (home/…)    │  chezmoi diff/status   │
+            ▼         (compare)       ▼
+      SOURCE  ◄── chezmoi add/re-add ── DESTINATION ($HOME)
 ```
 
 The single most important thing to internalise: **you never edit `~/.config/foo`

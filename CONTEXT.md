@@ -39,6 +39,17 @@ startup apps, and input. The value is a generic form-factor label, never a hostn
 or company name (the real hostname may carry a company tag, so it stays out of the repo).
 _Avoid_: host, box, device (in config we say profile / the `machine` var).
 
+## Desktop
+
+**Desktop shell** vs **Login shell**:
+Two unrelated things that both get called "shell". The **desktop shell** is
+[Noctalia](https://github.com/noctalia-dev/noctalia-shell) — the Wayland bar,
+widgets, and launcher layer that sits on top of the niri compositor. The **login
+shell** is [fish](https://fishshell.com/) — the interactive command shell in the
+terminal. When a doc or the README says "shell" unqualified, prefer one of these
+two labels.
+_Avoid_: bare "shell" (ambiguous); "bar"/"panel" for Noctalia (it's the whole shell).
+
 ## Identity
 
 **Identity** (personal / work):

@@ -5,7 +5,6 @@ vt = 2
 
 # The default session, also known as the greeter.
 [default_session]
-
 # `agreety` is the bundled agetty/login-lookalike. You can replace `/bin/sh`
 # with whatever you want started, such as `sway`.
 # command = "tuigreet --time --sessions /usr/share/wayland-sessions"

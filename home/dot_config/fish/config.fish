@@ -59,6 +59,12 @@ end
 set -gx GH_NO_UPDATE_NOTIFIER 1
 set -gx DO_NOT_TRACK 1
 
+# ripgrep reads no XDG path on its own — point it at the tracked config.
+set -gx RIPGREP_CONFIG_PATH ~/.config/ripgrep/config
+
+# gpg-agent's pinentry-curses draws in the current terminal; it needs GPG_TTY.
+set -gx GPG_TTY (tty)
+
 # Machine-local secrets (npm registry tokens, work-only env vars, etc.) live in
 # a file that is NOT tracked by git or managed by chezmoi. Create it per machine:
 #   ~/.config/fish/local.fish   e.g.  set -gx NPM_TOKEN_XXX "..."

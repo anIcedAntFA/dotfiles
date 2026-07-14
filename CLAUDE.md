@@ -37,13 +37,18 @@ images/      screenshots & wallpapers
 ## Toolchain
 
 - `just fmt` — format everything · `just check` — format-check + lint + secret scan
-- **oxfmt** formats md/json/jsonc/yaml/toml (config `.oxfmtrc.json`, embedded
-  formatting is **off** so code samples in docs stay verbatim)
-- **markdownlint-cli2** (`.markdownlint.yml`) — MD013/MD043 are intentionally off
+- All dev tools are pinned in `mise.toml` and installed by `just setup`
+  (`mise install`) — **no Node/pnpm in the repo**. See
+  [ADR 0007](docs/adr/0007-node-free-toolchain-via-mise.md). Run `mise trust` once
+  on a fresh checkout.
+- **dprint** formats md/json/jsonc/yaml/toml (config `dprint.json`). Note: unlike
+  the old oxfmt, dprint _does_ normalize embedded json/toml/yaml code blocks inside
+  Markdown — wrap a sample in `<!-- dprint-ignore -->` to keep it verbatim.
+- **rumdl** lints Markdown — reads `.markdownlint.yml` unchanged; MD013/MD043 off
 - **shellcheck** + **shfmt** (shell), **fish_indent** (fish — canonical, forces
-  4 spaces; `.editorconfig` matches), **gitleaks** (`.gitleaks.toml`)
+  4 spaces; `.editorconfig` matches; ships with fish, not mise), **gitleaks**
+  (`.gitleaks.toml`)
 - **KDL** (niri) isn't formatted — validate with `just validate-niri`
-- oxfmt + markdownlint-cli2 install via `pnpm`; the rest via `just setup` (yay)
 
 ## Conventions
 
@@ -62,6 +67,6 @@ images/      screenshots & wallpapers
 
 ## Gotchas
 
-- Don't format app-managed configs (e.g. `home/dot_config/noctalia/**` is
-  excluded in `.oxfmtrc.json`).
+- Don't format app-managed/vendored configs (e.g. `home/dot_config/noctalia/**`
+  and the vendored `yazi/flavors/**` theme are excluded in `dprint.json`).
 - A hard-to-reverse decision with real trade-offs → record an ADR in `docs/adr/`.

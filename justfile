@@ -5,20 +5,20 @@
 default:
     @just --list
 
-# One-time setup: system tools + node dev deps + git hooks.
-# Uses yay because `lefthook` lives in the AUR (plain `pacman` can't install it).
+# One-time setup: install pinned tooling (mise) + git hooks.
+# All dev tools are pinned in ./mise.toml — no Node/pnpm. Run `mise trust` first
+# if this is a fresh checkout. See docs/adr/0007-node-free-toolchain-via-mise.md.
 setup:
-    yay -S --needed shellcheck shfmt just lefthook gitleaks
-    pnpm install
+    mise install
     lefthook install
     @echo "✅ setup complete — hooks installed, tooling ready"
 
-# Format everything in place (oxfmt + shfmt + fish_indent)
+# Format everything in place (dprint + shfmt + fish_indent)
 fmt:
     #!/usr/bin/env bash
     set -euo pipefail
     shell=$(shfmt -f . | grep -vE 'node_modules|/\.(agents|gemini|claude)/')
-    pnpm exec oxfmt
+    dprint fmt
     [ -n "$shell" ] && shfmt -w $shell
     fish_indent -w $(find home -name '*.fish')
 
@@ -27,11 +27,12 @@ check:
     #!/usr/bin/env bash
     set -euo pipefail
     shell=$(shfmt -f . | grep -vE 'node_modules|/\.(agents|gemini|claude)/')
-    echo "▶ oxfmt";        pnpm exec oxfmt --check
-    echo "▶ markdownlint"; pnpm exec markdownlint-cli2 "**/*.md" "!**/node_modules/**" "!home/**" "!.agents/**" "!.claude/**"
-    echo "▶ shellcheck";   [ -n "$shell" ] && shellcheck $shell
-    echo "▶ shfmt";        [ -n "$shell" ] && shfmt -d $shell
-    echo "▶ fish";         fish_indent --check $(find home -name '*.fish')
+    echo "▶ dprint";      dprint check
+    echo "▶ rumdl";       rumdl check . --exclude 'home/,node_modules/,.agents/,.claude/,.gemini/,.docs/'
+    echo "▶ shellcheck";  [ -n "$shell" ] && shellcheck $shell
+    echo "▶ shfmt";       [ -n "$shell" ] && shfmt -d $shell
+    echo "▶ fish-fmt";    fish_indent --check $(find home -name '*.fish')
+    echo "▶ fish-syntax"; for f in $(find home -name '*.fish'); do fish -n "$f" || exit 1; done
     just secrets
 
 # Scan the repository (working tree + history) for leaked secrets

@@ -40,7 +40,7 @@ the `machine` var. See [niri-config.md](niri-config.md) and
 [ADR 0006](adr/0006-per-machine-niri-via-chezmoi-template.md).
 
 niri uses the [KDL](https://kdl.dev/) document language, so it isn't touched by
-oxfmt — validate it instead (see below).
+dprint — validate it instead (see below).
 
 ## Autostart
 

@@ -46,17 +46,30 @@
 
 ## What I use
 
+<!-- TODO: AI-generated "my stack" banner — isometric cozy dev workspace, -->
+<!-- Catppuccin (Mocha dark / Latte light) pastels, mauve+lavender accent, NO -->
+<!-- baked text or logos (tool names stay in the table below). Export optimized -->
+<!-- WebP/AVIF to images/banner/. Optionally ship dark + light and swap via -->
+<!-- <picture> + prefers-color-scheme, mirroring the auto-theme setup. -->
+<!-- <picture>
+  <source media="(prefers-color-scheme: dark)" srcset="images/banner/stack-dark.webp">
+  <img alt="my dev stack — isometric workspace" src="images/banner/stack-light.webp">
+</picture> -->
+
 | Layer               | Choice                                                                              |
 | ------------------- | ----------------------------------------------------------------------------------- |
 | **Distro**          | [EndeavourOS](https://endeavouros.com/) (Arch-based), "no desktop" base             |
 | **AUR helper**      | [yay](https://github.com/Jguer/yay)                                                 |
 | **Compositor**      | [niri](https://github.com/niri-wm/niri) — scrollable tiling, Wayland                |
-| **Shell (desktop)** | [Noctalia](https://github.com/noctalia-dev/noctalia-shell)                          |
+| **Desktop shell**   | [Noctalia](https://github.com/noctalia-dev/noctalia-shell) — bar, widgets, launcher |
 | **Login**           | [greetd](https://sr.ht/~kennylevinsen/greetd/) + tuigreet — [guide](docs/greetd.md) |
 | **Terminal**        | [Ghostty](https://ghostty.org/) — [guide](docs/ghostty.md)                          |
-| **Shell**           | [fish](https://fishshell.com/) — [guide](docs/fish.md)                              |
+| **Login shell**     | [fish](https://fishshell.com/) — [guide](docs/fish.md)                              |
 | **Prompt**          | [starship](https://starship.rs/)                                                    |
+| **File manager**    | [yazi](https://github.com/sxyazi/yazi) — blazing-fast TUI                           |
 | **Dotfile manager** | [chezmoi](https://www.chezmoi.io/) — [why (ADR)](docs/adr/0001-adopt-chezmoi.md)    |
+| **Dev env**         | [mise](https://mise.jdx.dev/) — runtimes + tooling — [guide](docs/mise.md)          |
+| **Passwords**       | [gopass](https://www.gopass.pw/) — GPG + git — [guide](docs/gopass.md)              |
 
 <details>
 <summary>A note on the base install</summary>
@@ -110,7 +123,7 @@ dotfiles/
 ├── packages/        reproducible package snapshots
 ├── etc/             system files (/etc/*) — applied manually
 ├── images/          screenshots & wallpapers
-└── justfile, lefthook.yml, .oxfmtrc.json, .github/  tooling
+└── mise.toml, dprint.json, justfile, lefthook.yml, .github/  tooling
 ```
 
 ## Guides
@@ -142,6 +155,7 @@ Each tool has a focused guide covering **what it is, why, and how to set it up**
 | [clipboard.md](docs/clipboard.md)                 | Clipboard history (cliphist + Noctalia launcher)        |
 | [archives.md](docs/archives.md)                   | Compression / archives (7zz · ouch · PeaZip GUI)        |
 | [mise.md](docs/mise.md)                           | Runtime / dev-env version management                    |
+| [ripgrep.md](docs/ripgrep.md)                     | Fast recursive search + config (`RIPGREP_CONFIG_PATH`)  |
 | [direnv.md](docs/direnv.md)                       | Per-directory environments (`.envrc`)                   |
 | [tuxedo.md](docs/tuxedo.md)                       | todo.txt task TUI + niri float keybind                  |
 
@@ -157,14 +171,19 @@ grouped, and explained subset is in [docs/packages.md](docs/packages.md).
 This repo lints and formats itself. See [CONTRIBUTING.md](CONTRIBUTING.md).
 
 ```sh
-just setup    # install tooling + git hooks
+mise trust    # once: allow this repo's mise.toml
+just setup    # install pinned tooling (mise) + git hooks
 just check    # format check + lint + secret scan (what CI runs)
 just fmt      # auto-format everything
 ```
 
-- **Format:** [oxfmt](https://oxc.rs/docs/guide/usage/formatter.html) (md/json/yaml/toml),
+All dev tools are pinned in [`mise.toml`](mise.toml) and installed by
+[mise](https://mise.jdx.dev/) — **no Node/pnpm** in the repo
+([ADR 0007](docs/adr/0007-node-free-toolchain-via-mise.md)).
+
+- **Format:** [dprint](https://dprint.dev/) (md/json/yaml/toml),
   `shfmt` (shell), `fish_indent` (fish)
-- **Lint:** [markdownlint](https://github.com/DavidAnson/markdownlint), `shellcheck`
+- **Lint:** [rumdl](https://github.com/rvben/rumdl) (Markdown), `shellcheck`
 - **Secrets:** [gitleaks](https://github.com/gitleaks/gitleaks) in the pre-commit hook and CI
 
 ## Credits
