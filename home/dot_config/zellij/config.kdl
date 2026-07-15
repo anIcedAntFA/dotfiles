@@ -1,0 +1,31 @@
+// ============================================================================
+// zellij — session/layout layer for project work (see docs/zellij.md)
+// ============================================================================
+// Ghostty is the host window; zellij owns project sessions, tabs and panes.
+// Keybinds stay at zellij DEFAULTS (Ctrl-modal: Ctrl+p pane, Ctrl+t tab,
+// Ctrl+n resize, Ctrl+o session, Ctrl+s scroll…) so they never collide with
+// Ghostty's Alt / Ctrl+Space namespace — see ADR 0008. Inside a zellij session,
+// drive panes with the Ctrl-modal keys, NOT Alt: Ghostty intercepts Alt+hjkl
+// before zellij ever sees it. The status bar advertises the current mode's keys.
+
+// Track the desktop mode like Ghostty's theme does — Dracula in dark, Latte in
+// light. `theme` is the fallback when the terminal doesn't report its scheme.
+theme "dracula"
+theme_dark "dracula"
+theme_light "catppuccin-latte"
+
+default_shell "fish"
+
+// Persist sessions so a project survives closing the terminal; resume it with
+// the `zj` picker (or `zellij attach`).
+session_serialization true
+pane_viewport_serialization true
+
+ui {
+    pane_frames {
+        rounded_corners true
+        hide_session_name false
+    }
+}
+
+copy_on_select false

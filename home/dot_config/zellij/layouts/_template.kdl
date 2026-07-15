@@ -1,0 +1,37 @@
+// ============================================================================
+// zellij project layout — TEMPLATE
+// ============================================================================
+// Copy this to a project name and edit paths/commands, e.g.
+//   cp _template.kdl myproject.kdl
+// then open it via the `zj` picker, or directly:
+//   zellij --session myproject --layout myproject
+//
+// Model (ADR 0008): one session per PROJECT, one tab per REPO, panes for the
+// code editor + a script + a log/monitor. `_`-prefixed layouts are hidden from
+// the `zj` picker, so this template won't show up there.
+//
+// NB: if `~` in cwd isn't expanded on your zellij version, use an absolute path.
+
+layout {
+    // --- repo 1: an app — editor beside a monitor/log stack -----------------
+    tab name="app" cwd="~/workspace/github.com/you/app" {
+        pane split_direction="vertical" {
+            pane size="65%"                    // editor / shell (nvim, lazygit…)
+            pane split_direction="horizontal" {
+                pane command="btop"            // resource monitor
+                pane                           // logs / scratch shell
+            }
+        }
+    }
+
+    // --- repo 2: a service — editor + a dev server --------------------------
+    tab name="api" cwd="~/workspace/github.com/you/api" {
+        pane split_direction="vertical" {
+            pane size="65%"
+            pane                               // run the dev server / tests here
+        }
+    }
+
+    // --- repo 3: infra / tools (single pane) --------------------------------
+    tab name="infra" cwd="~/workspace/github.com/you/infra"
+}
