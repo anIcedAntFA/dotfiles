@@ -50,6 +50,27 @@ terminal. When a doc or the README says "shell" unqualified, prefer one of these
 two labels.
 _Avoid_: bare "shell" (ambiguous); "bar"/"panel" for Noctalia (it's the whole shell).
 
+## Terminal workspace layers
+
+Three layers all get loosely called "workspace/tab/window"; keep them distinct.
+
+**niri workspace**:
+Compositor-level named workspace (`terminal`, `coding`, `browser`…), pinned to a
+monitor. Owns `Super`-prefixed keys. This is where a Ghostty _window_ lives.
+_Avoid_: calling a Ghostty tab a "workspace".
+
+**Ghostty tab** / **Ghostty split** (a split is a **pane**):
+Inside a single Ghostty window. Tabs are switched along the bottom bar; a split
+divides one tab into panes. This is the self-sufficient layer — it must work with
+no multiplexer. Owns `Alt` + `Ctrl+Shift` keys (never `Super` — niri eats those).
+_Avoid_: "pane" for a tab; "window" for a split.
+
+**Multiplexer session** / **layout** (zellij, optional):
+An _optional_ layer run inside one Ghostty surface for declarative project layouts
+(repo→tab, code/log/btop→panes) and session persistence — the tmux-like capability
+Ghostty lacks natively. Never required; Ghostty stands alone without it.
+_Avoid_: conflating a zellij session with a niri workspace or a Ghostty tab.
+
 ## Identity
 
 **Identity** (personal / work):
