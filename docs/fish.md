@@ -4,13 +4,14 @@
 
 [fish](https://fishshell.com/) is a shell tuned for **interactive** use:
 sane autosuggestions, syntax highlighting, and readable scripting — with almost
-no config needed to feel good. This setup layers a plugin manager, a directory
-jumper, fuzzy history/cd, and theming on top.
+no config needed to feel good. This setup layers a plugin manager,
+[zoxide](https://github.com/ajeetdsouza/zoxide) for directory jumping, fuzzy
+history/cd, and theming on top.
 
 ## Install
 
 ```sh
-yay -S --needed fish fisher peco
+yay -S --needed fish fisher peco zoxide
 ```
 
 Make it your login shell:
@@ -23,17 +24,30 @@ chsh -s "$(command -v fish)"
 
 Managed in [`home/dot_config/fish/fish_plugins`](../home/dot_config/fish/fish_plugins):
 
-| Plugin                                                                                                      | Purpose                                          |
-| ----------------------------------------------------------------------------------------------------------- | ------------------------------------------------ |
-| [`jorgebucaran/fisher`](https://github.com/jorgebucaran/fisher)                                             | The plugin manager itself.                       |
-| [`jethrokuan/z`](https://github.com/jethrokuan/z)                                                           | `z <dir>` — jump to frequently used directories. |
-| [`catppuccin/fish`](https://github.com/catppuccin/fish) · [`dracula/fish`](https://github.com/dracula/fish) | Color themes.                                    |
+| Plugin                                                                                                      | Purpose                    |
+| ----------------------------------------------------------------------------------------------------------- | -------------------------- |
+| [`jorgebucaran/fisher`](https://github.com/jorgebucaran/fisher)                                             | The plugin manager itself. |
+| [`catppuccin/fish`](https://github.com/catppuccin/fish) · [`dracula/fish`](https://github.com/dracula/fish) | Color themes.              |
 
 Install/sync them:
 
 ```sh
 fisher update
 ```
+
+## Directory jumping (zoxide)
+
+[zoxide](https://github.com/ajeetdsouza/zoxide) replaced the older `jethrokuan/z`
+fisher plugin — it's faster, SQLite-backed, and maintained. `config.fish` runs
+`zoxide init fish`, which adds:
+
+| Command       | Action                                            |
+| ------------- | ------------------------------------------------- |
+| `z <partial>` | Jump to the highest-ranked matching directory.    |
+| `zi`          | Fuzzy-pick a directory interactively (via `fzf`). |
+
+The builtin `cd` is left intact. See **[zoxide.md](zoxide.md)** for the one-time
+migration from the old `z` history and troubleshooting.
 
 ## Key bindings
 
@@ -48,8 +62,9 @@ From [`functions/fish_user_key_bindings.fish`](../home/dot_config/fish/functions
 ## Handy custom functions
 
 Under [`functions/`](../home/dot_config/fish/functions/): `take` (mkdir + cd),
-`refresh` (reload config), `show_path` (pretty-print `$PATH`), plus the
-peco-powered history/cd helpers.
+`refresh` (reload config), `show_path` (pretty-print `$PATH`), `zj` (pick/resume
+a [zellij](zellij.md) session or project layout via `fzf`), plus the peco-powered
+history/cd helpers.
 
 ## Secrets & machine-local config
 
@@ -66,7 +81,8 @@ gitignored and not managed by chezmoi.
 ## What config.fish wires up
 
 `mise` (runtimes — see [mise.md](mise.md)), `direnv` (per-project env),
-`pnpm`/`bun` paths, and the `local.fish` secrets hook.
+`zoxide` (`z`/`zi` jumping), `starship` (prompt), `pnpm`/`bun` paths, and the
+`local.fish` secrets hook.
 
 ## References
 

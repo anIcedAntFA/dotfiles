@@ -47,6 +47,13 @@ set -gx GOPATH $HOME/go
 # direnv
 direnv hook fish | source
 
+# zoxide — frecency directory jumper; replaces jethrokuan/z. Adds `z` (jump) and
+# `zi` (fuzzy pick via fzf), leaving the builtin `cd` intact. One-time migration
+# from the old z history: see docs/zoxide.md.
+if type -q zoxide
+    zoxide init fish | source
+end
+
 # pnpm
 set -gx PNPM_HOME "$HOME/.local/share/pnpm"
 if not string match -q -- $PNPM_HOME $PATH
