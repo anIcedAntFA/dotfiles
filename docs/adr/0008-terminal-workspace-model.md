@@ -10,11 +10,12 @@ no native sessions and can't open a multi-split, multi-command layout at startup
 the session model has to come from somewhere. We split the responsibility across two
 layers with **non-overlapping keybind namespaces** so neither depends on the other:
 
-- **Ghostty native** is the base. It owns `Alt+*` (direct) and `Ctrl+Space` (leader,
-  a key-table). It must stay fully usable with no multiplexer — worst case, panes are
-  opened by hand. `Super` is deliberately **not** used: niri (the compositor) grabs
-  `Super` globally, so Ghostty would never receive `Super+hjkl`. `Alt` becomes
-  "Ghostty's Super", reusing the `hjkl` muscle memory already built for niri.
+- **Ghostty native** is the base. It owns `Alt+*` — both the direct binds and the
+  `Alt+Space` leader (a key sequence). It must stay fully usable with no multiplexer —
+  worst case, panes are opened by hand. `Super` is deliberately **not** used: niri
+  (the compositor) grabs `Super` globally, so Ghostty would never receive
+  `Super+hjkl`. `Alt` becomes "Ghostty's Super", reusing the `hjkl` muscle memory
+  already built for niri.
 - **zellij** is an **optional** layer for project work. When present it owns the whole
   session: project = one zellij session, repo = a zellij tab, panes = code/script/log.
   It drives everything through its default `Ctrl`-modal keys (`Ctrl+p/t/n/o/s…`), which
@@ -22,11 +23,22 @@ layers with **non-overlapping keybind namespaces** so neither depends on the oth
   picker, and declarative [layouts](../zellij.md) all live here. Ghostty's own tabs are
   then only for ad-hoc terminals.
 
-The keybind partition is the load-bearing part: **niri = `Super`, Ghostty = `Alt` +
-`Ctrl+Space`, zellij = `Ctrl`-modal**. Three consumers, three disjoint modifier spaces,
-no interception fights. `Ctrl+<letter>` is avoided for Ghostty binds because Ghostty
-consumes keys before the terminal app sees them, and `Ctrl+A/E/W/L` etc. are shell
-line-editing.
+The keybind partition is the load-bearing part: **niri = `Super`, Ghostty = `Alt`,
+zellij = `Ctrl`-modal**. Three consumers, one modifier each, no interception fights.
+`Ctrl+<letter>` is avoided for Ghostty binds because Ghostty consumes keys before the
+terminal app sees them, and `Ctrl+A/E/W/L` etc. are shell line-editing.
+
+The leader is `Alt+Space`, not the more traditional `Ctrl+Space`, so that `Alt`
+stays the single rule for Ghostty. It is also the cheaper key to take: a leader is
+swallowed whole — Ghostty waits **indefinitely** for the next key in the sequence and
+never forwards the prefix on its own — and `Ctrl+Space` is a key programs want (it
+sends `NUL`, and editors bind it for completion). Nothing wants `Alt+Space` here:
+niri binds only `Alt+Print`, and `window-decoration = none` means there is no GTK
+window menu to collide with.
+
+`Ctrl+Tab` / `Ctrl+Shift+Tab` (cycle tabs) are the one deliberate carve-out from
+zellij's `Ctrl` space. zellij's defaults are `Ctrl+g/p/t/n/h/o/s/q` — letters only —
+so there is no actual contention.
 
 ## Considered options
 
@@ -53,9 +65,21 @@ line-editing.
   a `background-image`. `background-opacity` does work on niri, but Noctalia runs with
   the wallpaper disabled (a solid-colour desktop), so a see-through window would only
   pick up that flat colour — nothing to reveal. (An earlier draft wrongly blamed a
-  light-theme blend bug; that was a misdiagnosis.) The image is wired through an
-  optional untracked `config-file = ?ghostty-local.conf`, mirroring the `local.fish`
-  pattern, so the public repo carries no chosen wallpaper. `background-blur` is a
-  no-op on niri regardless (it needs the KDE/KWin blur protocol).
+  light-theme blend bug; that was a misdiagnosis.) `background-blur` is a no-op on
+  niri regardless (it needs the KDE/KWin blur protocol).
+- The background image is **tracked, and carried by the theme files**, which costs
+  Noctalia's control of Ghostty's palette. `background-image` has no `light:/dark:`
+  form — only `theme` does — but a theme file is an ordinary config file, so putting
+  the image inside `themes/latte` and `themes/dracula` makes it swap with the mode
+  for free. That requires two static theme files, so Noctalia's ghostty theming is
+  switched off (`settings.json`, `id: ghostty` → `enabled: false`). Little is lost:
+  Ghostty never watched the file Noctalia rewrote, so its colours only changed on a
+  manual reload anyway; now both palette and image follow the desktop mode live. The
+  cost is real but small — changing Noctalia's accent colour no longer reaches
+  Ghostty. Two further knots come undone: `themes/noctalia` stops showing perpetually
+  dirty in `chezmoi status`, and a plain `chezmoi apply` is safe again.
+  An earlier draft kept the image in an untracked `config-file = ?ghostty-local.conf`
+  "so the public repo carries no chosen wallpaper" — but the repo has always tracked
+  `images/wallpaper/`, so that bought nothing and cost a manual setup step.
 - Reversing is cheap for the tools (uninstall zellij/zoxide, delete `~/.config/zellij`)
   but the keybind muscle memory is the real switching cost — hence this record.
