@@ -3,9 +3,10 @@
 # ============================================================================
 # Keybind model (see docs/adr/0008-terminal-workspace-model.md):
 #   niri   owns  Super+*        (compositor grabs these before Ghostty)
-#   Ghostty owns Alt+*  and  Ctrl+Space  (leader)   <- this file
-#   zellij owns  Ctrl-modal     (Ctrl+p/t/n/o/s…, passed straight through)
+#   Ghostty owns Alt+*, including the Alt+Space leader   <- this file
+#   zellij owns  Ctrl-modal     (Ctrl+g/p/t/n/o/s…, passed straight through)
 # Alt is "Ghostty's Super": it reuses the hjkl muscle memory built for niri.
+# Ctrl+Tab is the one carve-out from zellij's Ctrl space (zellij doesn't bind it).
 
 # --- Appearance -------------------------------------------------------------
 # Ghostty watches the desktop light/dark setting and swaps between these two
@@ -45,6 +46,21 @@ custom-shader = shaders/cursor_sweep.glsl
 # Hide the mouse pointer the moment you type; it reappears on movement.
 mouse-hide-while-typing = true
 
+# Hover a pane to focus it. This deliberately disagrees with niri, which is
+# click-to-focus: inside a Ghostty window the mouse focuses, between windows it
+# does not. The cost is accepted for the hands-off-keyboard case. Note the two
+# mouse options above/below do NOT conflict: focus only follows an actual
+# pointer *movement*, and any movement un-hides the pointer.
+focus-follows-mouse = true
+
+# --- Links ------------------------------------------------------------------
+# Preview only OSC 8 hyperlinks, where the link text may differ from the real
+# destination — there the preview is the only way to see where you're going.
+# On a plain URL the preview just echoes the text under the cursor, so it costs
+# a row and tells you nothing. (`link`, which would let us match our own
+# regexes, is documented but not settable as of 1.3.1.)
+link-previews = osc8
+
 # --- Shell integration ------------------------------------------------------
 shell-integration = fish
 shell-integration-features = no-cursor
@@ -79,7 +95,7 @@ notify-on-command-finish-after = 30s
 # ============================================================================
 # KEYBINDS
 # ============================================================================
-# Convention: Alt = focus/act now, Alt+Shift = resize, Ctrl+Space = leader (rare).
+# Convention: Alt = focus/act now, Alt+Shift = resize, Alt+Space = leader (rare).
 # Splits are "panes". A note on shadowing: Ghostty consumes these before the
 # terminal app, so Alt+h and Alt+l shadow fish's man-page / list-dir bindings.
 
@@ -94,11 +110,28 @@ keybind = alt+j=goto_split:down
 keybind = alt+k=goto_split:up
 keybind = alt+l=goto_split:right
 
-# Resize the focused pane.
+# Resize the focused pane. 60px is ~2.3% of a 2560px monitor — fine for a nudge,
+# painful for a real drag (9 presses for 20%). Hence the resize key table below,
+# which keeps this step size but drops the modifier.
 keybind = alt+shift+h=resize_split:left,60
 keybind = alt+shift+j=resize_split:down,60
 keybind = alt+shift+k=resize_split:up,60
 keybind = alt+shift+l=resize_split:right,60
+
+# --- Resize key table (sticky) ----------------------------------------------
+# A key table is modal: unlike the leader below (one key, then over), it stays
+# active until dismissed — and Ghostty draws NO indicator for it. See CONTEXT.md.
+# catch_all is the safety net: any key other than hjkl/escape drops the mode, so
+# you cannot get stuck. Worst case for typing `ls` while still in the table is
+# one stray 2.3% nudge (undo with alt+space>e), not a dead window.
+# The bindings above still work inside the table — lookup falls outward.
+keybind = alt+space>r=activate_key_table:resize
+keybind = resize/h=resize_split:left,60
+keybind = resize/j=resize_split:down,60
+keybind = resize/k=resize_split:up,60
+keybind = resize/l=resize_split:right,60
+keybind = resize/escape=deactivate_key_table
+keybind = resize/catch_all=deactivate_key_table
 
 # --- Tabs -------------------------------------------------------------------
 keybind = alt+t=new_tab
@@ -125,11 +158,14 @@ keybind = alt+9=goto_tab:9
 # alt+shift+f fits the Alt namespace; ctrl+shift+f (Ghostty default) still works.
 keybind = alt+shift+f=start_search
 
-# --- Leader (Ctrl+Space > key): infrequent ops ------------------------------
-keybind = ctrl+space>e=equalize_splits
-keybind = ctrl+space>r=prompt_tab_title
-keybind = ctrl+space>n=new_window
-keybind = ctrl+space>comma=move_tab:-1
-keybind = ctrl+space>period=move_tab:1
-keybind = ctrl+space>b=scroll_to_bottom
-keybind = ctrl+space>x=reload_config
+# --- Leader (Alt+Space > key): infrequent ops -------------------------------
+# `>` is a sequence, not a combo: press Alt+Space, release, then the next key.
+# Ghostty waits indefinitely for it (no timeout), so the leader key itself never
+# reaches the program — hence Alt+Space, which nothing else wants, rather than
+# Ctrl+Space, which apps use (e.g. completion in editors).
+keybind = alt+space>e=equalize_splits
+keybind = alt+space>n=new_window
+keybind = alt+space>comma=move_tab:-1
+keybind = alt+space>period=move_tab:1
+keybind = alt+space>b=scroll_to_bottom
+keybind = alt+space>x=reload_config
