@@ -6,3 +6,23 @@
 # also keeps future `git config --global` writes flowing to the XDG file.
 .gitconfig
 .gitconfig-company
+
+# jethrokuan/z was replaced by zoxide (ADR 0008 / docs/zellij.md). Remove its
+# autoloaded functions and conf.d init so its `z` doesn't shadow zoxide's. The
+# universal vars it set (Z_CMD, ZO_CMD, Z_DATA…) are inert once these are gone;
+# clear them by hand with: set -eU Z_CMD ZO_CMD Z_DATA Z_DATA_DIR Z_EXCLUDE
+.config/fish/functions/__z.fish
+.config/fish/functions/__z_add.fish
+.config/fish/functions/__z_clean.fish
+.config/fish/functions/__z_complete.fish
+.config/fish/conf.d/z.fish
+
+# Ghostty background/theme rework (ADR 0008 / docs/ghostty.md). The image now
+# lives in the tracked themes/{latte,dracula}, so the untracked local override
+# and its hand-copied image are dead weight; leaving them would only confuse.
+# `themes/noctalia` is gone because Noctalia's ghostty theming is switched off —
+# it rewrote that file per mode, which Ghostty never re-read anyway.
+.config/ghostty/ghostty-local.conf
+.config/ghostty/backgrounds/bg.jpeg
+.config/ghostty/themes/noctalia
+.config/ghostty/themes/catppuccin-latte.conf

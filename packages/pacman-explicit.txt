@@ -247,5 +247,7 @@ xwayland-satellite
 yay
 yazi
 zathura
+zellij
 zen-browser-bin
 zip
+zoxide

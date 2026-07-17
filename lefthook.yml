@@ -8,7 +8,11 @@ pre-commit:
   commands:
     dprint:
       glob: "*.{md,json,jsonc,json5,yaml,yml,toml}"
-      run: dprint check {staged_files}
+      # --allow-no-files: lefthook filters by the glob above, dprint filters again
+      # by its own `excludes`. Stage only excluded files (e.g. noctalia/settings.json)
+      # and dprint is handed a list it then discards, leaving it nothing to do —
+      # which it treats as error 14. That's a no-op, not a failure.
+      run: dprint check --allow-no-files {staged_files}
     rumdl:
       glob: "*.md"
       exclude: "home/**"
