@@ -8,21 +8,18 @@
 # Alt is "Ghostty's Super": it reuses the hjkl muscle memory built for niri.
 
 # --- Appearance -------------------------------------------------------------
-# theme = noctalia tracks the desktop mode (light = Catppuccin Latte,
-# dark = Dracula); Noctalia rewrites themes/noctalia and fish's auto-sync-theme
-# keeps it live.
-theme = noctalia
+# Ghostty watches the desktop light/dark setting and swaps between these two
+# themes live. Each theme file also carries its own background-image, which is
+# how the image follows the mode — background-image has no light:/dark: form of
+# its own. See docs/ghostty.md.
+theme = light:latte,dark:dracula
 
-# Opaque window: depth comes from a background-image (set per-machine in
-# ghostty-local.conf), not from window transparency. background-opacity DOES work
-# on niri, but Noctalia runs with the wallpaper disabled (a solid-colour desktop),
-# so a see-through window would only pick up that flat colour. background-blur is
-# a no-op on niri regardless (it needs the KDE/KWin blur protocol).
+# Opaque window: depth comes from the background-image in the theme files, not
+# from window transparency. background-opacity DOES work on niri, but Noctalia
+# runs with the wallpaper disabled (a solid-colour desktop), so a see-through
+# window would only pick up that flat colour. background-blur is a no-op on niri
+# regardless (it needs the KDE/KWin blur protocol).
 background-opacity = 1
-
-# Background image + any per-machine cosmetics live in an UNtracked local file,
-# pulled in by the optional `config-file` at the bottom. See docs/ghostty.md —
-# this keeps the public repo free of a chosen wallpaper.
 
 # --- Font -------------------------------------------------------------------
 font-family = JetBrainsMono Nerd Font
@@ -136,9 +133,3 @@ keybind = ctrl+space>comma=move_tab:-1
 keybind = ctrl+space>period=move_tab:1
 keybind = ctrl+space>b=scroll_to_bottom
 keybind = ctrl+space>x=reload_config
-
-# --- Machine-local overrides ------------------------------------------------
-# Optional (?) untracked file, loaded last so it wins. Put background-image and
-# any per-machine cosmetics in ~/.config/ghostty/ghostty-local.conf. See
-# docs/ghostty.md; missing file is fine (the ? makes it optional).
-config-file = ?ghostty-local.conf

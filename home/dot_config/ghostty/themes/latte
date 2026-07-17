@@ -20,3 +20,10 @@ cursor-color = #179299
 cursor-text = #eff1f5
 selection-background = #d8dae1
 selection-foreground = #4c4f69
+
+# Background image: swapped along with the palette by
+# `theme = light:latte,dark:dracula` in ../config. See docs/ghostty.md.
+background-image = ~/.config/ghostty/backgrounds/light.jpg
+background-image-fit = cover
+background-image-position = center
+background-image-opacity = 0.2
