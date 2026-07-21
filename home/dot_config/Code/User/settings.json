@@ -1,0 +1,120 @@
+{
+  "gitlens.advanced.messages": {
+    "suppressGitMissingWarning": true
+  },
+  "git.enableSmartCommit": true,
+  "editor.cursorSmoothCaretAnimation": "on",
+  "editor.suggest.preview": true,
+  "[html]": {
+    "editor.matchBrackets": "never"
+  },
+  "[css]": {
+    "editor.matchBrackets": "never"
+  },
+  "editor.guides.bracketPairs": "active",
+  "editor.bracketPairColorization.enabled": true,
+  "auto-close-tag.disableOnLanguage": [],
+  "editor.lineHeight": 26,
+  "editor.letterSpacing": 0.5,
+  "editor.fontFamily": "JetBrains Mono",
+  "editor.fontLigatures": true,
+  "editor.fontWeight": "300",
+  "editor.tabSize": 2,
+  "auto-close-tag.activationOnLanguage": [
+    "xml",
+    "php",
+    "blade",
+    "ejs",
+    "jinja",
+    "javascript",
+    "javascriptreact",
+    "typescript",
+    "typescriptreact",
+    "plaintext",
+    "markdown",
+    "vue",
+    "liquid",
+    "erb",
+    "lang-cfml",
+    "cfml",
+    "HTML (EEx)",
+    "HTML (Eex)",
+    "plist"
+  ],
+  "workbench.colorCustomizations": {
+    "editorCursor.foreground": "#10b981",
+    "terminalCursor.foreground": "#10b981"
+  },
+  "editor.detectIndentation": false,
+  "editor.quickSuggestions": {
+    "strings": true
+  },
+  "explorer.compactFolders": false,
+  "terminal.integrated.fontFamily": "JetbrainMono Nerd Font",
+  "go.toolsManagement.autoUpdate": true,
+  "editor.accessibilitySupport": "off",
+  "cSpell.diagnosticLevel": "Hint",
+  "editor.cursorBlinking": "expand",
+  "editor.cursorWidth": 4,
+  "terminal.integrated.cursorWidth": 2,
+  "css.lint.unknownAtRules": "ignore",
+  "errorLens.excludeBySource": ["ts(2779)"],
+  "security.workspace.trust.untrustedFiles": "open",
+  "window.titleBarStyle": "custom",
+  "files.eol": "\r\n",
+  "editor.formatOnType": true,
+  "editor.unicodeHighlight.nonBasicASCII": false,
+  "redhat.telemetry.enabled": false,
+  "explorer.confirmDelete": false,
+  "editor.minimap.enabled": false,
+  "markdownlint.config": {
+    "MD033": false
+  },
+  "markdown-preview-enhanced.previewTheme": "github-light.css",
+  "markdown-preview-enhanced.codeBlockTheme": "github.css",
+  "window.density.editorTabHeight": "compact",
+  "workbench.editor.highlightModifiedTabs": true,
+  "workbench.editor.wrapTabs": true,
+  "editor.formatOnSave": true,
+  "editor.fontSize": 18,
+  "editor.defaultFormatter": "biomejs.biome",
+  "github.copilot.nextEditSuggestions.enabled": true,
+  "biome.suggestInstallingGlobally": false,
+  "debug.console.lineHeight": -1,
+  "workbench.iconTheme": "material-icon-theme",
+  "github.copilot.selectedCompletionModel": "",
+  "chat.mcp.autostart": "newAndOutdated",
+  "debug.javascript.autoAttachFilter": "onlyWithFlag",
+  "git.openRepositoryInParentFolders": "never",
+  "[dockercompose]": {
+    "editor.insertSpaces": true,
+    "editor.tabSize": 2,
+    "editor.autoIndent": "advanced",
+    "editor.defaultFormatter": "redhat.vscode-yaml"
+  },
+  "[github-actions-workflow]": {
+    "editor.defaultFormatter": "redhat.vscode-yaml"
+  },
+  "github.copilot.enable": {
+    "*": true,
+    "plaintext": false,
+    "markdown": true,
+    "scminput": false
+  },
+  "json.schemaDownload.trustedDomains": {
+    "https://schemastore.azurewebsites.net/": true,
+    "https://raw.githubusercontent.com/": true,
+    "https://www.schemastore.org/": true,
+    "https://json.schemastore.org/": true,
+    "https://json-schema.org/": true,
+    "https://biomejs.dev": true
+  },
+  "accessibility.dimUnfocused.opacity": 0.8,
+  "workbench.colorTheme": "Dracula Theme",
+  "gitlens.ai.model": "vscode",
+  "gitlens.ai.vscode.model": "copilot:gpt-4.1",
+  "settingsSync.ignoredExtensions": ["bierner.markdown-preview-github-styles"],
+  "chat.mcp.gallery.enabled": true,
+  "docker.extension.enableComposeLanguageServer": false,
+  "js/ts.updateImportsOnFileMove.enabled": "always"
+}

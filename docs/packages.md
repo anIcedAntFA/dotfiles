@@ -8,6 +8,11 @@ setup what it is — grouped by purpose, with a short _why_ and a link each.
 - **`packages/pacman-explicit.txt`** — every explicitly installed native package
   (`pacman -Qqe`). The reproducible source of truth.
 - **`packages/aur.txt`** — AUR / foreign packages (`pacman -Qqm`).
+- **`packages/vscode-extensions.txt`** — VS Code extension IDs (`code
+  --list-extensions`), installed via
+  [`run_onchange_install-vscode-extensions.sh.tmpl`](../home/.chezmoiscripts/run_onchange_install-vscode-extensions.sh.tmpl).
+  VS Code's own settings live as a real chezmoi dotfile at
+  [`home/dot_config/Code/User/settings.json`](../home/dot_config/Code/User/settings.json).
 - **This file** — the human-readable subset worth explaining. It deliberately
   omits the base system, firmware, filesystem tools, Xorg, and dependencies that
   come with a stock install.
@@ -152,11 +157,20 @@ Or let chezmoi do it on `chezmoi apply` — answer **yes** to the
 Some tools come from an upstream script, source build, or vendor installer rather
 than pacman/AUR, so they **won't** show up in the snapshots. Track them here:
 
-| Tool                                                                            | Install method                                  |
-| ------------------------------------------------------------------------------- | ----------------------------------------------- |
-| [starship](https://starship.rs/)                                                | `curl -sS https://starship.rs/install.sh \| sh` |
-| [Nix (Determinate)](https://determinate.systems/)                               | Determinate Nix installer (`determinate-nixd`)  |
-| [GlobalProtect-openconnect](https://github.com/yuezk/GlobalProtect-openconnect) | Built from source — GUI VPN client              |
+| Tool                                                                            | Install method                                                         |
+| ------------------------------------------------------------------------------- | ---------------------------------------------------------------------- |
+| [starship](https://starship.rs/)                                                | Auto-installed — see below.                                            |
+| [Claude Code](https://claude.com/claude-code)                                   | Auto-installed — see below.                                            |
+| [Nix (Determinate)](https://determinate.systems/)                               | Determinate Nix installer (`determinate-nixd`) — manual, not automated |
+| [GlobalProtect-openconnect](https://github.com/yuezk/GlobalProtect-openconnect) | Built from source — manual, not automated                              |
+
+Unlike Nix and GlobalProtect (heavier, riskier to run unattended — a system
+daemon install and a from-source build, respectively), starship and claude are
+auto-installed by
+[`run_once_after_install-external-tools.sh.tmpl`](../home/.chezmoiscripts/run_once_after_install-external-tools.sh.tmpl)
+on `chezmoi apply`, gated by the same `installPackages` prompt as the
+pacman/AUR script. Each install is guarded by `command -v`, so it's a no-op if
+the tool is already present.
 
 > [!TIP]
 > To find hand-installed binaries not owned by pacman (pacman owns `/usr/bin`;

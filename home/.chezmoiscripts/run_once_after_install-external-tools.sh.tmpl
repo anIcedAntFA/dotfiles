@@ -1,0 +1,29 @@
+{{- /* Install tools that live outside pacman/AUR (see docs/packages.md's
+       "Installed outside pacman" table) via their official curl installers.
+       Gated by the same `installPackages` prompt as the yay script, since it's
+       the same trust boundary: unattended network installs on `chezmoi apply`.
+       `run_once_` (not `run_onchange_`) — these tools self-update afterwards,
+       so this only needs to run once per machine; each install is guarded by
+       `command -v` so re-running (e.g. after editing this script) is a no-op. */ -}}
+#!/usr/bin/env bash
+set -euo pipefail
+
+{{ if .installPackages -}}
+if ! command -v starship >/dev/null 2>&1; then
+  echo "==> Installing starship…"
+  curl -sS https://starship.rs/install.sh | sh -s -- -y
+else
+  echo "==> starship already installed, skipping."
+fi
+
+if ! command -v claude >/dev/null 2>&1; then
+  echo "==> Installing claude…"
+  curl -fsSL https://claude.ai/install.sh | bash
+else
+  echo "==> claude already installed, skipping."
+fi
+{{- else -}}
+# Auto-install is disabled (installPackages=false).
+# Re-run `chezmoi init` and answer "yes", or install manually — see docs/packages.md.
+echo "External-tool auto-install disabled — see docs/packages.md to install manually."
+{{- end }}
