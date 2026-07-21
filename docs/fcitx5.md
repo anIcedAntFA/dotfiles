@@ -15,8 +15,8 @@ yay -S --needed fcitx5 fcitx5-bamboo fcitx5-configtool
 ## Configure the environment
 
 Wayland-native apps talk to fcitx5 over the `text-input` protocol automatically.
-For **X11 / XWayland** apps you still need these env vars — add them to your
-session (e.g. a new `home/dot_config/environment.d/fcitx5.conf`):
+For **X11 / XWayland** apps you still need these env vars, set in
+[`environment.d/fcitx5.conf`](../home/dot_config/environment.d/fcitx5.conf):
 
 ```ini
 GTK_IM_MODULE=fcitx
@@ -24,8 +24,9 @@ QT_IM_MODULE=fcitx
 XMODIFIERS=@im=fcitx
 ```
 
-Autostart the daemon under niri (`spawn-at-startup "fcitx5"` in
-[`config.kdl`](../home/dot_config/niri/config.kdl.tmpl)).
+The daemon autostarts under niri via `spawn-at-startup "fcitx5"` in
+[`config.kdl`](../home/dot_config/niri/config.kdl.tmpl) — machine-agnostic,
+so it runs on every profile.
 
 ## What's configured
 

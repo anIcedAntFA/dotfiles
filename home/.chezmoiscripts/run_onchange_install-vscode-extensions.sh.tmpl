@@ -1,0 +1,33 @@
+{{- /* Install VS Code extensions from the packages/ snapshot, mirroring
+       run_onchange_install-packages.sh.tmpl. Re-runs whenever the extension
+       list changes, thanks to the content hash embedded below. Gated by the
+       same `installPackages` prompt — same trust boundary as the other
+       auto-install scripts. */ -}}
+{{- $repoRoot := joinPath .chezmoi.sourceDir ".." -}}
+{{- $extList := joinPath $repoRoot "packages" "vscode-extensions.txt" -}}
+#!/usr/bin/env bash
+set -euo pipefail
+
+{{ if .installPackages -}}
+# Re-run trigger (do not edit — changes when the extension list changes):
+#   vscode-extensions.txt: {{ output "sha256sum" $extList | trim }}
+
+ext_list="{{ $extList }}"
+
+if ! command -v code >/dev/null 2>&1; then
+  echo "code (VS Code) not found — install it first (see docs/packages.md). Skipping."
+  exit 0
+fi
+
+echo "==> Installing VS Code extensions from packages/vscode-extensions.txt…"
+while IFS= read -r ext; do
+  [ -z "$ext" ] && continue
+  code --install-extension "$ext" >/dev/null
+done <"$ext_list"
+echo "==> VS Code extension install complete."
+{{- else -}}
+# Extension auto-install is disabled (installPackages=false).
+# Re-run `chezmoi init` and answer "yes", or install manually:
+#   xargs -a packages/vscode-extensions.txt -I{} code --install-extension {}
+echo "VS Code extension auto-install disabled — see docs/packages.md to install manually."
+{{- end }}

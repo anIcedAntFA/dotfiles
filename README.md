@@ -131,36 +131,37 @@ dotfiles/
 
 Each tool has a focused guide covering **what it is, why, and how to set it up**:
 
-| Guide                                             | About                                                       |
-| ------------------------------------------------- | ----------------------------------------------------------- |
-| [chezmoi.md](docs/chezmoi.md)                     | Dotfile manager — workflows, templates, add/re-add          |
-| [niri.md](docs/niri.md)                           | The scrollable-tiling compositor + Noctalia shell (hub)     |
-| ⤷ [niri-concepts.md](docs/niri-concepts.md)       | niri's mental model — columns, workspaces, outputs          |
-| ⤷ [niri-config.md](docs/niri-config.md)           | Config walkthrough + one-file-three-machines template       |
-| ⤷ [niri-keybindings.md](docs/niri-keybindings.md) | Full Keybind ↔ Action tables                                |
-| [ghostty.md](docs/ghostty.md)                     | Terminal, keybinds, transparency, cursor shaders            |
-| ⤷ [zellij.md](docs/zellij.md)                     | Multiplexer — sessions, project layouts, the `zj` picker    |
-| [fish.md](docs/fish.md)                           | Shell, plugins, keybindings, secrets pattern                |
-| ⤷ [zoxide.md](docs/zoxide.md)                     | Frecency directory jumping (`z` / `zi`), z→zoxide migration |
-| [fastfetch.md](docs/fastfetch.md)                 | System-info banner — random Arch logo, per-machine          |
-| [ghq.md](docs/ghq.md)                             | Organized repo cloning + fuzzy jumping                      |
-| [ssh.md](docs/ssh.md)                             | SSH keys per host (personal + work auth)                    |
-| [git.md](docs/git.md)                             | Git identities, `includeIf`, SSH commit signing             |
-| [gopass.md](docs/gopass.md)                       | Terminal password manager (GPG + git)                       |
-| [certs.md](docs/certs.md)                         | Corporate CA certs — trust store restore                    |
-| [vpn.md](docs/vpn.md)                             | Corporate VPN (GlobalProtect / `gpclient`)                  |
-| [docker.md](docs/docker.md)                       | Engine setup, rootless usage, daemon config                 |
-| [firewalld.md](docs/firewalld.md)                 | Exposing a dev server to your LAN                           |
-| [greetd.md](docs/greetd.md)                       | Login manager + tuigreet + quiet boot                       |
-| [fcitx5.md](docs/fcitx5.md)                       | Vietnamese input (Bamboo)                                   |
-| [screenshot.md](docs/screenshot.md)               | Screenshot pipeline (grim/slurp/satty)                      |
-| [screen-recording.md](docs/screen-recording.md)   | GPU screen recording (wl-screenrec)                         |
-| [clipboard.md](docs/clipboard.md)                 | Clipboard history (cliphist + Noctalia launcher)            |
-| [archives.md](docs/archives.md)                   | Compression / archives (7zz · ouch · PeaZip GUI)            |
-| [mise.md](docs/mise.md)                           | Runtime / dev-env version management                        |
-| [ripgrep.md](docs/ripgrep.md)                     | Fast recursive search + config (`RIPGREP_CONFIG_PATH`)      |
-| [direnv.md](docs/direnv.md)                       | Per-directory environments (`.envrc`)                       |
-| [tuxedo.md](docs/tuxedo.md)                       | todo.txt task TUI + niri float keybind                      |
+| Guide                                             | About                                                                                      |
+| ------------------------------------------------- | ------------------------------------------------------------------------------------------ |
+| [chezmoi.md](docs/chezmoi.md)                     | Dotfile manager — workflows, templates, add/re-add                                         |
+| [niri.md](docs/niri.md)                           | The scrollable-tiling compositor + Noctalia shell (hub)                                    |
+| ⤷ [niri-concepts.md](docs/niri-concepts.md)       | niri's mental model — columns, workspaces, outputs                                         |
+| ⤷ [niri-config.md](docs/niri-config.md)           | Config walkthrough + one-file-three-machines template                                      |
+| ⤷ [niri-keybindings.md](docs/niri-keybindings.md) | Full Keybind ↔ Action tables                                                               |
+| [ghostty.md](docs/ghostty.md)                     | Terminal, keybinds, transparency, cursor shaders                                           |
+| ⤷ [zellij.md](docs/zellij.md)                     | Multiplexer — sessions, project layouts, the `zj` picker                                   |
+| [fish.md](docs/fish.md)                           | Shell, plugins, keybindings, secrets pattern                                               |
+| ⤷ [zoxide.md](docs/zoxide.md)                     | Frecency directory jumping (`z` / `zi`), z→zoxide migration                                |
+| [fastfetch.md](docs/fastfetch.md)                 | System-info banner — random Arch logo, per-machine                                         |
+| [ghq.md](docs/ghq.md)                             | Organized repo cloning + fuzzy jumping                                                     |
+| [ssh.md](docs/ssh.md)                             | SSH keys per host (personal + work auth)                                                   |
+| [git.md](docs/git.md)                             | Git identities, `includeIf`, SSH commit signing                                            |
+| [gopass.md](docs/gopass.md)                       | Terminal password manager (GPG + git)                                                      |
+| [certs.md](docs/certs.md)                         | Corporate CA certs — trust store restore                                                   |
+| [vpn.md](docs/vpn.md)                             | Corporate VPN (GlobalProtect / `gpclient`)                                                 |
+| [docker.md](docs/docker.md)                       | Engine setup, rootless usage, daemon config                                                |
+| [firewalld.md](docs/firewalld.md)                 | Exposing a dev server to your LAN                                                          |
+| [greetd.md](docs/greetd.md)                       | Login manager + tuigreet + quiet boot                                                      |
+| [xdg-environment.md](docs/xdg-environment.md)     | Env vars & desktop portals — `/etc/environment` vs `environment.d` vs `xdg-desktop-portal` |
+| [fcitx5.md](docs/fcitx5.md)                       | Vietnamese input (Bamboo)                                                                  |
+| [screenshot.md](docs/screenshot.md)               | Screenshot pipeline (grim/slurp/satty)                                                     |
+| [screen-recording.md](docs/screen-recording.md)   | GPU screen recording (wl-screenrec)                                                        |
+| [clipboard.md](docs/clipboard.md)                 | Clipboard history (cliphist + Noctalia launcher)                                           |
+| [archives.md](docs/archives.md)                   | Compression / archives (7zz · ouch · PeaZip GUI)                                           |
+| [mise.md](docs/mise.md)                           | Runtime / dev-env version management                                                       |
+| [ripgrep.md](docs/ripgrep.md)                     | Fast recursive search + config (`RIPGREP_CONFIG_PATH`)                                     |
+| [direnv.md](docs/direnv.md)                       | Per-directory environments (`.envrc`)                                                      |
+| [tuxedo.md](docs/tuxedo.md)                       | todo.txt task TUI + niri float keybind                                                     |
 
 Bigger design decisions are recorded as [ADRs](docs/adr/).
 

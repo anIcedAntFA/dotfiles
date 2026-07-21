@@ -56,8 +56,18 @@ Three layers all get loosely called "workspace/tab/window"; keep them distinct.
 
 **niri workspace**:
 Compositor-level named workspace (`terminal`, `coding`, `browser`…), pinned to a
-monitor. Owns `Super`-prefixed keys. This is where a Ghostty _window_ lives.
-_Avoid_: calling a Ghostty tab a "workspace".
+monitor via `open-on-output`. Owns `Super`-prefixed keys. This is where a
+Ghostty _window_ lives.
+A workspace _name_ pins to at most one output — it does not represent a role.
+A role (e.g. "a browser lives here") can span more than one workspace name on
+the same machine when a single app can't be routed to two outputs (see
+`browser` vs `web`, [ADR 0009](docs/adr/0009-zen-browser-not-forced-across-outputs.md)).
+Separately, whether an app actually _lands_ on its pinned workspace depends on
+a window-rule's `open-on-workspace` — pinning the workspace to an output and
+forcing a window onto it are two independent mechanisms; not every app uses
+the second one.
+_Avoid_: calling a Ghostty tab a "workspace"; assuming a role name is unique
+per machine.
 
 **Ghostty tab** / **Ghostty split** (a split is a **pane**):
 Inside a single Ghostty window. Tabs are switched along the bottom bar; a split
