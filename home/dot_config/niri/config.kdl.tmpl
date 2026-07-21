@@ -40,9 +40,9 @@
 		"gaps"	 8
 		"ws"	 (dict))
 	"home" (dict
-		"cursor" 48
+		"cursor" 64
 		"gaps"	 12
-		"ws"	 (dict)) -}}
+		"ws"	 (dict "terminal" "HDMI-A-1" "coding" "HDMI-A-1" "browser" "HDMI-A-1" "web" "DP-3" "chatting" "DP-3")) -}}
 {{- $p := index $profiles $machine -}}
 {{- if not $p }}{{ fail (printf "niri config: unknown machine profile %q (want: work | laptop | home)" $machine) }}{{ end -}}
 
@@ -150,9 +150,18 @@ output "eDP-1" {
 }
 {{- end -}}
 {{- if eq $machine "home" }}
-// TODO: run `niri msg outputs` on the home PC and fill in real values, e.g.:
-// output "DP-1" { mode "3840x2160@144.000"; scale 1.5 }
-// output "HDMI-A-1" { mode "2560x1440@60.000"; position x=2560 y=0 }
+// Left monitor: LG QHD in PORTRAIT (rotated 90° counter-clockwise).
+output "HDMI-A-1" {
+	mode "2560x1440@59.951"
+	transform "90"
+	position x=0 y=0
+}
+// Right monitor: LG UltraFine 4K, landscape, 1.25 scale.
+output "DP-3" {
+	mode "3840x2160@60.000"
+	scale 1.25
+	position x=1440 y=0
+}
 {{- end }}
 
 // ============================================================================
@@ -223,6 +232,13 @@ workspace "browser" {
 	open-on-output {{ . | quote }}
 	{{- end }}
 }
+// A second browser-role workspace: on `home`, DP-3 has its own browser slot
+// (chrome) distinct from HDMI-A-1's "browser" (zen). See docs/adr/0009.
+workspace "web" {
+	{{- with (index $p.ws "web") }}
+	open-on-output {{ . | quote }}
+	{{- end }}
+}
 workspace "chatting" {
 	{{- with (index $p.ws "chatting") }}
 	open-on-output {{ . | quote }}
@@ -241,10 +257,19 @@ workspace "tools" {
 spawn-at-startup "qs" "-c" "noctalia-shell"
 spawn-at-startup "ghostty"
 spawn-at-startup "zen-browser"
+// Vietnamese input (fcitx5) and the GTK3/xsettings theme bridge -- both
+// machine-agnostic, so they start everywhere. See docs/fcitx5.md.
+spawn-at-startup "fcitx5"
+spawn-at-startup "xsettingsd"
 {{- if eq $machine "work" }}
 // Work chat clients -- only autostarted on the work machine.
 spawn-at-startup "slack"
 spawn-at-startup "sh" "-c" "sleep 3 && teams-for-linux"
+{{- end }}
+{{- if eq $machine "home" }}
+// Home browser/chat clients -- DP-3's "web"/"chatting" slots.
+spawn-at-startup "google-chrome-stable"
+spawn-at-startup "discord"
 {{- end }}
 
 // ============================================================================
@@ -288,15 +313,21 @@ window-rule {
 
 window-rule {
 	match app-id="zen"
+	{{- if ne $machine "home" }}
+	// Forced placement only on work/laptop, where zen has one home. On `home`
+	// zen needs to land on either HDMI-A-1's "browser" or DP-3's "web" workspace
+	// depending on where you opened it -- a forced rule would always snap it
+	// back to one, so it's left unforced there. See docs/adr/0009.
 	open-on-workspace "browser"
+	{{- end }}
 	open-maximized true
 }
 
-// window-rule {
-//	   match app-id="google-chrome"
-//	   open-on-workspace "browser"
-//	   open-maximized true
-// }
+window-rule {
+	match app-id="google-chrome"
+	open-on-workspace "web"
+	open-maximized true
+}
 
 // window-rule {
 //	   match app-id="firefox"
@@ -312,6 +343,12 @@ window-rule {
 
 window-rule {
 	match app-id="teams-for-linux"
+	open-on-workspace "chatting"
+	open-maximized false
+}
+
+window-rule {
+	match app-id="discord"
 	open-on-workspace "chatting"
 	open-maximized false
 }
