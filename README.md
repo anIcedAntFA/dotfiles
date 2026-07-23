@@ -66,7 +66,7 @@
 | **Terminal**        | [Ghostty](https://ghostty.org/) — [guide](docs/ghostty.md)                          |
 | **Multiplexer**     | [zellij](https://zellij.dev/) — sessions + layouts — [guide](docs/zellij.md)        |
 | **Login shell**     | [fish](https://fishshell.com/) — [guide](docs/fish.md)                              |
-| **Prompt**          | [starship](https://starship.rs/)                                                    |
+| **Prompt**          | [starship](https://starship.rs/) — [guide](docs/starship.md)                        |
 | **File manager**    | [yazi](https://github.com/sxyazi/yazi) — blazing-fast TUI                           |
 | **Dotfile manager** | [chezmoi](https://www.chezmoi.io/) — [why (ADR)](docs/adr/0001-adopt-chezmoi.md)    |
 | **Dev env**         | [mise](https://mise.jdx.dev/) — runtimes + tooling — [guide](docs/mise.md)          |
@@ -142,6 +142,7 @@ Each tool has a focused guide covering **what it is, why, and how to set it up**
 | ⤷ [zellij.md](docs/zellij.md)                     | Multiplexer — sessions, project layouts, the `zj` picker    |
 | [fish.md](docs/fish.md)                           | Shell, plugins, keybindings, secrets pattern                |
 | ⤷ [zoxide.md](docs/zoxide.md)                     | Frecency directory jumping (`z` / `zi`), z→zoxide migration |
+| ⤷ [starship.md](docs/starship.md)                 | Prompt layout, the TOML quoting trap, module cost           |
 | [fastfetch.md](docs/fastfetch.md)                 | System-info banner — random Arch logo, per-machine          |
 | [ghq.md](docs/ghq.md)                             | Organized repo cloning + fuzzy jumping                      |
 | [ssh.md](docs/ssh.md)                             | SSH keys per host (personal + work auth)                    |

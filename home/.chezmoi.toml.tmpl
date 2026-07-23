@@ -14,6 +14,11 @@
      outputs, DPI, startup apps) can branch on it. Generic form-factor label
      only — never a hostname or company tag. One of: work | laptop | home. */}}
 {{- $machine := promptStringOnce . "machine" "Machine profile (work | laptop | home)" "home" -}}
+{{/* hostAlias: short label the shell prompt shows instead of the real hostname.
+     A hostname like "alice-acme" repeats the username and carries a company tag;
+     the prompt only needs enough to tell one box from another. Kept out of the
+     repo for the same reason workGitHost is. */}}
+{{- $hostAlias := promptStringOnce . "hostAlias" "Short hostname label for the shell prompt" "box" -}}
 
 [data]
     email = {{ $email | quote }}
@@ -26,3 +31,4 @@
     ghqCompanyRoot = {{ $ghqCompanyRoot | quote }}
     installPackages = {{ $installPackages }}
     machine = {{ $machine | quote }}
+    hostAlias = {{ $hostAlias | quote }}

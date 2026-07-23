@@ -1,0 +1,459 @@
+"$schema" = 'https://starship.rs/config-schema.json'
+
+# ── Three rules, in priority order ────────────────────────────────────────
+#
+# 1. QUOTING. Escape sequences (\uXXXX, \UXXXXXXXX) only work in TOML *basic*
+#    strings (double quotes). A *literal* string (single quotes) keeps the
+#    backslash, and starship's format parser then fails on it:
+#
+#        discharging_symbol = '\U0001f4a6'   ✗ → "expected escaped_char"
+#        discharging_symbol = "\U0001f4a6"   ✓
+#
+#    The failure is silent until the module actually renders. This is what once
+#    made git_status vanish in every dirty repo and battery warn below 30%.
+#
+#    For Nerd Font glyphs, write the \uXXXX escape rather than the character.
+#    Most of them live in the Private Use Area (U+E000-U+F8FF), which survives a
+#    byte-exact copy but is silently dropped by anything that re-encodes the
+#    text — leaving `symbol = " "`, a config that parses cleanly and displays
+#    nothing. An escape is plain ASCII, so nothing can eat it, and the codepoint
+#    stays greppable. The generated symbol block at the end of the file is the
+#    exception: it is piped straight from `starship preset`, never retyped.
+#
+# 2. COLOUR. Styles use ANSI colour NAMES, never hex, so the terminal resolves
+#    them against the active theme and the prompt follows the desktop light/dark
+#    switch — Ghostty is `theme = light:latte,dark:dracula`, zellij mirrors it.
+#    See ADR 0009. Brand marks are the documented exception.
+#
+# 3. PROSE. The left prompt is a sentence. starship's *default* formats already
+#    supply the connectors — "at", "on", "via", "is" — so this file sets almost
+#    no `format` keys. Overriding format per module is exactly what broke the
+#    previous config: some modules were bracketed, others weren't, giving
+#    "[ v22.19.0]via ❄ impure" — half badge, half sentence. Leave format alone
+#    and all 50+ modules stay consistent for free.
+
+add_newline = true
+command_timeout = 500
+scan_timeout = 30
+
+# `$all` renders every module in starship's canonical order, and it *excludes*
+# anything named in right_format — so the four trailing modules move right
+# without appearing twice. New starship modules join the sentence automatically.
+format = '$all'
+
+# The right side is deliberately NOT part of the sentence: it reports on the
+# command that just ran, not on where you are. Its modules are the only ones
+# whose `format` is overridden here, swapping the prose connectors ("took",
+# "at") for glyphs, because a connector with nothing to connect to reads wrong.
+right_format = '$status$cmd_duration$battery$time'
+
+# ── Identity ──────────────────────────────────────────────────────────────
+# Always visible. On a machine with several SSH targets and a habit of root
+# shells, "which box am I on" is worth the width every line.
+
+[username]
+disabled = false
+show_always = true
+style_user = 'bold blue'
+style_root = 'bold red'
+format = '[$user]($style) '
+
+[hostname]
+disabled = false
+ssh_only = false
+ssh_symbol = "\uEB01 " # U+EB01 ssh
+trim_at = '.'
+style = 'bold green'
+format = 'at [$ssh_symbol$hostname]($style) ' # "at", not the default "in"
+
+# A hostname of the form "<user>-<org>" repeats the username the prompt already
+# shows and carries an organisation tag. The alias trades it for a short label.
+# `trim_at` cannot do this — it keeps the text *before* the separator, so it
+# would yield the username, not the suffix.
+#
+# Templated because the real hostname must not enter a public repo (rule 1 in
+# CLAUDE.md); `hostAlias` is prompted by .chezmoi.toml.tmpl and lives only in
+# the untracked ~/.config/chezmoi/chezmoi.toml. See ADR 0002.
+#
+# The key comes from `output "hostname"`, NOT `.chezmoi.hostname`: chezmoi
+# derives the latter from a reverse-DNS lookup, which on a VPN answers with the
+# network's name for the box ("local", FQDN "local.<corp domain>") rather than
+# the kernel hostname starship actually reads. The alias key has to match
+# gethostname() exactly or it silently does nothing.
+[hostname.aliases]
+{{ output "hostname" | trim | quote }} = {{ .hostAlias | quote }}
+
+# ── Location ──────────────────────────────────────────────────────────────
+
+[directory]
+truncation_length = 3
+truncate_to_repo = true
+truncation_symbol = "…/"
+read_only = " 󰌾"
+read_only_style = 'red'
+style = 'bold cyan'
+
+# ── Git ───────────────────────────────────────────────────────────────────
+# git_branch keeps its default "on " connector and the preset's U+F418 symbol.
+#
+# Everything below uses monochrome Nerd Font glyphs rather than emoji. Emoji
+# were measured at twice the width (12 terminal columns for six symbols against
+# six) and they ignore `style` entirely — they render in their own fixed
+# colours, so the "this repo is dirty" red never reaches them. Both facts break
+# the rules at the top of this file, and they would clash with the surrounding
+# monochrome glyphs.
+#
+# Every codepoint here is verified present in JetBrainsMono Nerd Font, and each
+# state below was reproduced in a scratch repo rather than assumed.
+
+[git_status]
+style = 'bold red'
+format = '([\[$all_status$ahead_behind\]]($style) )'
+# All twelve states starship can report. Each entry leads with a space so the
+# groups stay legible when several apply at once, e.g. "[ 4  2  1]"
+# rendered as edit-4 question-2 trash-1.
+conflicted = " \uF071${count}" # U+F071 merge conflict — unresolved
+staged = " \uF067${count}" # U+F067 staged, ready to commit
+modified = " \uF044${count}" # U+F044 modified, not staged
+untracked = " \uF128${count}" # U+F128 untracked, git has never seen it
+deleted = " \uF1F8${count}" # U+F1F8 deleted
+renamed = " \uF061${count}" # U+F061 renamed or moved
+typechanged = " \uF0EC${count}" # U+F0EC type changed, e.g. file became a symlink
+stashed = " \uF187${count}" # U+F187 entries sitting in the stash
+ahead = " ⇡${count}" # local commits not pushed
+behind = " ⇣${count}" # remote commits not pulled
+diverged = " ⇕⇡${ahead_count}⇣${behind_count}" # history has forked
+up_to_date = '' # clean: show the branch alone
+
+# The dangerous, half-finished states. Icon *and* word: these are rare enough
+# that nobody memorises seven glyphs, and the moment you need this is the moment
+# you are lost in the middle of a rebase. $progress_current/$progress_total is
+# what tells you how far through you are.
+[git_state]
+style = 'bold yellow'
+format = '\([$state( $progress_current/$progress_total)]($style)\) '
+rebase = "\uE725 REBASING" # U+E725
+merge = "\uE727 MERGING" # U+E727
+revert = "\uF0E2 REVERTING" # U+F0E2
+cherry_pick = "\uF0C5 CHERRY-PICKING" # U+F0C5
+bisect = "\uF002 BISECTING" # U+F002
+am = "\uF0E0 AM" # U+F0E0
+am_or_rebase = "\uF074 AM/REBASE" # U+F074
+
+# Only speaks up on a detached HEAD, where git_branch has no branch to show —
+# checking out a tag or an old commit. The tag is enabled so the answer to
+# "where am I?" is a name when one exists, not just a hash.
+[git_commit]
+commit_hash_length = 7
+only_detached = true
+tag_disabled = false
+tag_symbol = " \uF02B "  # U+F02B tag
+style = 'bold green'
+format = "[\\(\uF417 $hash$tag\\)]($style) " # U+F417 commit
+
+# Off by default; measured at 8-10ms here, the most expensive module in this
+# prompt but still well inside the ~20ms budget. Note it pays that cost even on
+# a clean tree, where it prints nothing.
+[git_metrics]
+disabled = false
+only_nonzero_diffs = true
+added_style = 'bold green'
+deleted_style = 'bold red'
+format = '([+$added]($added_style) )([-$deleted]($deleted_style) )'
+
+# ── Prompt character ──────────────────────────────────────────────────────
+# Colour says "something failed"; `status` on the right says what.
+
+[character]
+success_symbol = "[➜](bold green)"
+error_symbol = "[➜](bold red)"
+vimcmd_symbol = "[❮](bold yellow)"
+vimcmd_replace_symbol = "[❮](bold purple)"
+vimcmd_visual_symbol = "[❮](bold cyan)"
+
+# ── Right side: reports, not prose ────────────────────────────────────────
+
+[status]
+disabled = false
+map_symbol = true # "SIGINT" rather than a bare 130
+pipestatus = true
+style = 'bold red'
+format = '[$symbol$common_meaning$signal_name$maybe_int]($style) '
+# map_symbol pulls in starship's per-case defaults, several of which are emoji
+# (sigint is 🧱 out of the box). Emoji carry fixed colours and ignore the
+# palette, so each one is replaced with a glyph.
+symbol = "✘ "
+signal_symbol = "⚡ "
+sigint_symbol = "✋ "
+not_executable_symbol = "\uF05E " # U+F05E not executable
+not_found_symbol = "\uF002 " # U+F002 command not found
+
+[cmd_duration]
+min_time = 2_000
+show_milliseconds = false
+style = 'bold yellow'
+format = "[\uF252 $duration]($style) " # U+F252, instead of the default "took "
+
+# Laptops only; silent on a desktop with no battery, and hidden above 30% —
+# a healthy battery is not news.
+[battery]
+full_symbol = "\U000F0079 " # U+F0079
+charging_symbol = "\U000F0084 " # U+F0084
+discharging_symbol = "\U000F0083 " # U+F0083
+unknown_symbol = "\U000F007D " # U+F007D
+empty_symbol = "\U000F008E " # U+F008E
+format = '[$symbol$percentage]($style) '
+
+[[battery.display]] # 0-10%: act now
+threshold = 10
+style = 'bold red'
+
+[[battery.display]] # 10-30%: think about a cable
+threshold = 30
+style = 'bold yellow'
+
+[time]
+disabled = false
+# No utc_time_offset: starship uses the system zone, already Asia/Ho_Chi_Minh.
+# A previous '-5' pinned the clock to the wrong hemisphere.
+time_format = '%R'
+style = 'bold bright-black'
+format = "[\uF017 $time]($style)" # U+F017, instead of the default "at "
+
+# ── Extras ────────────────────────────────────────────────────────────────
+
+[env_var.ZELLIJ]
+variable = 'ZELLIJ'
+symbol = "\uF120 " # U+F120 terminal
+style = 'bold yellow'
+format = 'in [$symbol]($style) '
+
+# Cloudflare has no starship module. `detect_files` gates this to Worker repos,
+# and there is deliberately NO `command`: adding one costs ~51ms of shell spawn
+# every prompt, while this static badge measures <1ms.
+#
+# Brand mark exception to rule 2 — a logo colour should be identical in Latte
+# and Dracula, the way the real logo is.
+[custom.cloudflare]
+detect_files = ['wrangler.jsonc', 'wrangler.toml', 'wrangler.json']
+symbol = "☁ "
+style = 'bold #f6821f'
+format = 'on [$symbol]($style) '
+
+# No [mise] module on purpose: it shells out to `mise doctor` on every prompt,
+# measured at ~230ms here — far more than everything else combined. The runtime
+# modules already report the versions mise resolves, which is the part that
+# varies. Run `mise doctor` by hand when in doubt.
+
+# ── Symbols ───────────────────────────────────────────────────────────────
+# Generated, not hand-typed: `starship preset nerd-font-symbols` piped straight
+# into this file. Most Nerd Font glyphs live in the Private Use Area
+# (U+E000-U+F8FF); retyping or copying them through tooling that is not
+# byte-exact silently drops them, leaving `symbol = " "` — a config that parses
+# cleanly and shows nothing. Regenerate, never retype.
+#
+# Symbols only, no `format`, so every module keeps its default prose connector.
+# The exceptions are five `style` lines marked `# was NNN`: starship's defaults
+# are ANSI names nearly everywhere, but these ship with 256-colour indices,
+# which are fixed RGB and ignore the theme (rule 2).
+
+[aws]
+symbol = " "
+
+[buf]
+symbol = " "
+
+[bun]
+symbol = " "
+
+[c]
+symbol = " "
+style = 'bold green' # was 149
+
+[cmake]
+symbol = " "
+
+[conda]
+symbol = " "
+
+[cpp]
+symbol = " "
+style = 'bold green' # was 149
+
+[crystal]
+symbol = " "
+
+[dart]
+symbol = " "
+
+[deno]
+symbol = " "
+
+[docker_context]
+symbol = " "
+
+[elixir]
+symbol = " "
+
+[elm]
+symbol = " "
+
+[fennel]
+symbol = " "
+
+[fortran]
+symbol = " "
+
+[fossil_branch]
+symbol = " "
+
+[gcloud]
+symbol = " "
+
+[git_branch]
+symbol = " "
+
+[golang]
+symbol = " "
+
+[gradle]
+symbol = " "
+
+[guix_shell]
+symbol = " "
+
+[haskell]
+symbol = " "
+
+[haxe]
+symbol = " "
+
+[hg_branch]
+symbol = " "
+
+[java]
+symbol = " "
+
+[julia]
+symbol = " "
+
+[kotlin]
+symbol = " "
+
+[lua]
+symbol = " "
+
+[memory_usage]
+symbol = "󰍛 "
+
+[meson]
+symbol = "󰔷 "
+
+[nim]
+symbol = "󰆥 "
+
+[nix_shell]
+symbol = " "
+
+[nodejs]
+symbol = " "
+
+[ocaml]
+symbol = " "
+
+[package]
+symbol = "󰏗 "
+style = 'bold yellow' # was 208
+
+[perl]
+symbol = " "
+
+[php]
+symbol = " "
+style = 'bold purple' # was 147
+
+[pijul_channel]
+symbol = " "
+
+[pixi]
+symbol = "󰏗 "
+
+[python]
+symbol = " "
+
+[rlang]
+symbol = "󰟔 "
+
+[ruby]
+symbol = " "
+
+[rust]
+symbol = "󱘗 "
+
+[scala]
+symbol = " "
+
+[swift]
+symbol = " "
+
+[terraform]
+style = 'bold purple' # was 105
+
+[xmake]
+symbol = " "
+
+[zig]
+symbol = " "
+
+# The `os` module is disabled by default; these are ready if it is ever turned
+# on with `disabled = false`.
+[os.symbols]
+Alpaquita = " "
+Alpine = " "
+AlmaLinux = " "
+Amazon = " "
+Android = " "
+AOSC = " "
+Arch = " "
+Artix = " "
+CachyOS = " "
+CentOS = " "
+Debian = " "
+DragonFly = " "
+Elementary = " "
+Emscripten = " "
+EndeavourOS = " "
+Fedora = " "
+FreeBSD = " "
+Garuda = "󰛓 "
+Gentoo = " "
+HardenedBSD = "󰞌 "
+Illumos = "󰈸 "
+Ios = "󰀷 "
+Kali = " "
+Linux = " "
+Mabox = " "
+Macos = " "
+Manjaro = " "
+Mariner = " "
+MidnightBSD = " "
+Mint = " "
+NetBSD = " "
+NixOS = " "
+Nobara = " "
+OpenBSD = "󰈺 "
+openSUSE = " "
+OracleLinux = "󰌷 "
+Pop = " "
+Raspbian = " "
+Redhat = " "
+RedHatEnterprise = " "
+RockyLinux = " "
+Redox = "󰀘 "
+Solus = "󰠳 "
+SUSE = " "
+Ubuntu = " "
+Unknown = " "
+Void = " "
+Windows = "󰍲 "
+Zorin = " "

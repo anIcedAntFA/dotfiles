@@ -181,8 +181,9 @@ Private and per-machine values never live in the repo — they're **template
 variables** filled from data you supply once. The flow:
 
 1. On `chezmoi init`, [`home/.chezmoi.toml.tmpl`](../home/.chezmoi.toml.tmpl)
-   prompts for `email`, `name`, work git host/port, `ghq` roots, and whether to
-   auto-install packages.
+   prompts for `email`, `name`, work git host/port, `ghq` roots, `hostAlias`
+   (the short label the shell prompt shows instead of the real hostname — see
+   [starship.md](starship.md)), and whether to auto-install packages.
 2. Your answers are written to `~/.config/chezmoi/chezmoi.toml` — **gitignored,
    never committed**.
 3. Any `*.tmpl` source file can reference them: `{{ .email }}`, `{{ .workGitHost }}`.
