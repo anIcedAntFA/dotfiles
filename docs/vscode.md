@@ -126,6 +126,73 @@ apply the intent:
 
 Move lines between the groups freely; it changes nothing at install time.
 
+## Performance — diagnosing typing/scroll jank
+
+Jank across _everything_ (scroll, click, typing, caret) reads like "the update
+added animations," but that's usually the wrong suspect. Bisect before touching
+settings — the culprit is almost always the extension host, not rendering:
+
+1. **Rule out animations + GPU.** Open a clean window on a tiny file with the
+   extension host out of the picture:
+
+   ```sh
+   code --disable-extensions -n /path/to/small-file      # animations still on
+   code --disable-extensions --disable-gpu -n /path/to/small-file
+   ```
+
+   Toggle **Developer: Toggle Rendering FPS** and scroll/type. If both feel
+   smooth, animations (`cursorSmoothCaretAnimation`, `workbench.reduceMotion`)
+   and the Wayland/GPU path are _not_ the cause — they're active here yet smooth.
+2. **Split workspace vs extension.** Reopen the _real_ heavy repo with
+   `--disable-extensions`. Smooth ⇒ an extension is to blame, not raw file count.
+3. **Name the extension.** **Developer: Show Running Extensions** → record
+   (⏺), type ~10s, stop. Read the **Profile** column (CPU _during_ typing) — not
+   **Activation** (one-time startup cost; a big Activation number like Markdown
+   Preview Enhanced's is a red herring).
+
+On this machine the profile fingered, in order:
+
+| Extension           | CPU / 10s typing | Fix                                                                  |
+| ------------------- | ---------------- | -------------------------------------------------------------------- |
+| GitLens             | ~3116 ms         | `currentLine`/`codeLens`/`hovers` off (recompute on each caret move) |
+| Copilot Chat        | ~2205 ms         | `github.copilot.nextEditSuggestions.enabled: false`                  |
+| Import Cost (`wix`) | ~135 ms + errors | Disable (Workspace) — it's on-demand and errors on aliased monorepos |
+
+The GitLens and Copilot knobs are general (any large repo), so they live in
+tracked user `settings.json`. Import Cost is already in the on-demand group
+(see below) — just Disable (Workspace) where it misbehaves.
+
+### Rendering path — XWayland vs native Wayland
+
+If jank persists **even in a tiny repo** with extensions disabled, the extension
+host is exonerated — suspect the _rendering path_. VS Code bundles an Electron
+older than 38.2, so it defaults to **XWayland** even in a Wayland session. Setting
+`XDG_SESSION_TYPE=wayland` does **not** change this. Under XWayland the compositor
+software-scales the window: blurry text and caret/scroll jank, worst on
+fractionally-scaled (`home`'s 4K@1.25) or rotated outputs.
+
+Confirm which path it's on — **Help → About** shows nothing useful, so check the
+window's backend instead:
+
+```sh
+# In a niri session with VS Code open — an XWayland window shows in the X tree:
+xwininfo -root -tree 2>/dev/null | rg -i code    # a hit ⇒ XWayland
+niri msg windows | rg -i code                    # inspect the app-id
+```
+
+The fix is Ozone. It's applied centrally by
+[`ELECTRON_OZONE_PLATFORM_HINT=auto`](../home/dot_config/environment.d/electron.conf)
+(all Electron apps at once). VS Code's own
+[`code-flags.conf`](../home/dot_config/code-flags.conf) carries no active flag: as
+of VS Code 1.131 / Electron 42, fcitx5 reaches VS Code over the Wayland
+`text-input` protocol on its own — Vietnamese composes with no
+`--enable-wayland-ime` (verified via a `program:code frontend:wayland_v2` context
+in `fcitx5-diagnose`). The flag is kept commented as a fallback for older Electron;
+passing it on 42 only draws VS Code's harmless "not in the list of known options"
+warning. `environment.d` and the flags file are read **only at session start**, so
+a full logout/login (not `chezmoi apply` alone) is needed for the switch to take
+effect. See [xdg-environment.md](xdg-environment.md) and [fcitx5.md](fcitx5.md).
+
 ## Settings notes
 
 - **`js/ts.*` unified keys.** VS Code merged the per-language `javascript.*` /

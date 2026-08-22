@@ -1,7 +1,8 @@
 [Desktop Entry]
 Name=Teams for Linux
-#Exec=/opt/teams-for-linux/teams-for-linux --ozone-platform=x11 %U
-Exec=env XDG_CURRENT_DESKTOP=GNOME /opt/teams-for-linux/teams-for-linux --enable-features=UseOzonePlatform --ozone-platform=wayland %U
+# Ozone/Wayland comes from ELECTRON_OZONE_PLATFORM_HINT=auto (environment.d/electron.conf);
+# this override only adds --enable-wayland-ime so fcitx5 reaches Teams over Wayland text-input.
+Exec=env XDG_CURRENT_DESKTOP=GNOME /opt/teams-for-linux/teams-for-linux --enable-wayland-ime %U
 Terminal=false
 Type=Application
 Icon=teams-for-linux

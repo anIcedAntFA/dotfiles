@@ -2,6 +2,14 @@
   "gitlens.advanced.messages": {
     "suppressGitMissingWarning": true
   },
+  // Performance: GitLens was the #1 CPU consumer while typing/moving the caret
+  // (~3.1s CPU over a 10s "Developer: Show Running Extensions" profile on a large
+  // monorepo). These three features recompute on every caret move, so they cost
+  // per-keystroke jank; the sidebar, Commit Graph and file history are untouched.
+  // See docs/vscode.md § Performance.
+  "gitlens.currentLine.enabled": false,
+  "gitlens.codeLens.enabled": false,
+  "gitlens.hovers.enabled": false,
   "git.enableSmartCommit": true,
   "editor.cursorSmoothCaretAnimation": "on",
   "editor.suggest.preview": true,
@@ -99,7 +107,10 @@
   // settings outranks a plain default set at *workspace* scope.
   "editor.formatOnSave": true,
   "editor.fontSize": 18,
-  "github.copilot.nextEditSuggestions.enabled": true,
+  // Performance: Next Edit Suggestions re-runs on every keystroke and was the #2
+  // CPU consumer while typing (Copilot Chat ~2.2s over a 10s profile). Plain
+  // inline (ghost-text) completions stay on. See docs/vscode.md § Performance.
+  "github.copilot.nextEditSuggestions.enabled": false,
   "github.copilot.editor.enableAutoCompletions": true,
   "biome.suggestInstallingGlobally": false,
   "debug.console.lineHeight": -1,
@@ -186,6 +197,10 @@
   "docker.extension.enableComposeLanguageServer": false,
   "makefile.configureOnOpen": false,
   "js/ts.updateImportsOnFileMove.enabled": "always",
+  // Opt into the native (Go) TypeScript server, aka tsgo / "TypeScript 7"
+  // (typescriptteam.native-preview). Experimental but light in profiling and
+  // faster on large monorepos than the JS-based server.
+  "js/ts.experimental.useTsgo": true,
   // Custom CSS/JS Loader (be5invis.vscode-custom-css): drives per-color-scheme
   // editor font weight, which VS Code can't do natively. ${userHome} keeps it portable
   // across machines. After install/updates, run "Enable Custom CSS and JS" from

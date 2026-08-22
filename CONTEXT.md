@@ -177,6 +177,41 @@ generic sense — always qualify which.
 _Avoid_: reading `user-templates.toml` as a chezmoi/`.tmpl` thing or as machine
 branching; conflating a Noctalia template with the per-app **Theme** it produces.
 
+## Wayland rendering & input
+
+**Native Wayland** vs **XWayland** (the _rendering path_):
+Whether an app draws directly on the Wayland compositor (**native**) or through the
+X11 compatibility layer (**XWayland**). Setting `XDG_SESSION_TYPE=wayland` does **not**
+by itself make an app native — Chromium/Electron apps fall back to XWayland unless
+given an Ozone hint. XWayland means software scaling: blur and caret/scroll jank on
+fractionally-scaled or rotated outputs. The usual root cause of "VS Code feels laggy".
+_Avoid_: assuming a Wayland session implies every app renders natively.
+
+**Ozone** (the Chromium/Electron platform selector):
+Chromium's backend-abstraction layer that picks X11 vs Wayland. Selected with
+`--ozone-platform-hint=auto` (per-app flag) or `ELECTRON_OZONE_PLATFORM_HINT=auto`
+(env). Only **Electron** reads the env var; plain Chromium and **Google Chrome do
+not** — Chrome must be steered via its `.desktop` override.
+_Avoid_: expecting the Electron env var to affect Chrome, or a flags file to affect
+`google-chrome`.
+
+**Desktop entry override**:
+A copy of a system `/usr/share/applications/<name>.desktop` placed under
+`~/.local/share/applications/` with the **same basename**, which shadows the system
+one. Its only job here is to rewrite `Exec=` (force Ozone/Wayland, add IME). Distinct
+from the auto-generated `mimeinfo.cache` / `userapp-*.desktop` files that also land in
+that dir but are cache, not config, and stay untracked.
+_Avoid_: calling an override a "new app"; tracking the auto-generated neighbours.
+
+**IM module** vs **Wayland text-input** (the two IME transports):
+Two ways an app reaches fcitx. `GTK_IM_MODULE` / `QT_IM_MODULE` / `XMODIFIERS` route
+input for **X11 / XWayland** apps; **native Wayland** apps use the compositor's
+`text-input` protocol instead (and so don't need — and warn about — `GTK_IM_MODULE`).
+Electron speaks `text-input` only on new-enough versions: current Electron (42, VS
+Code 1.131) does it by default; older Electron needs the `--enable-wayland-ime` flag.
+_Avoid_: assuming one transport covers every app; assuming every Electron app needs
+`--enable-wayland-ime` (it's version-dependent — VS Code no longer does).
+
 ## Packages
 
 Two orthogonal axes describe an installed package; the snapshot files in

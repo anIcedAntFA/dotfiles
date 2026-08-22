@@ -1,7 +1,10 @@
 [Desktop Entry]
 Name=Slack
 Comment=Slack Desktop
-Exec=env XDG_CURRENT_DESKTOP=GNOME slack --enable-features=UseOzonePlatform --ozone-platform=wayland %U
+# Ozone/Wayland comes from ELECTRON_OZONE_PLATFORM_HINT=auto (environment.d/electron.conf);
+# this override only forces the desktop hint (Slack gates some tray/theme behaviour on it)
+# and --enable-wayland-ime so fcitx5 reaches Slack over Wayland text-input.
+Exec=env XDG_CURRENT_DESKTOP=GNOME slack --enable-wayland-ime %U
 Terminal=false
 Type=Application
 Icon=slack
