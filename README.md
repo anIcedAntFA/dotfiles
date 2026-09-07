@@ -146,6 +146,7 @@ Each tool has a focused guide covering **what it is, why, and how to set it up**
 | [ghq.md](docs/ghq.md)                                           | Organized repo cloning + fuzzy jumping                                                     |
 | [ssh.md](docs/ssh.md)                                           | SSH keys per host (personal + work auth)                                                   |
 | [git.md](docs/git.md)                                           | Git identities, `includeIf`, SSH commit signing                                            |
+| [claude-code.md](docs/claude-code.md)                           | Personal + company Teams accounts, one machine (`CLAUDE_CONFIG_DIR`)                       |
 | [gopass.md](docs/gopass.md)                                     | Terminal password manager (GPG + git)                                                      |
 | [certs.md](docs/certs.md)                                       | Corporate CA certs — trust store restore                                                   |
 | [vpn.md](docs/vpn.md)                                           | Corporate VPN (GlobalProtect / `gpclient`)                                                 |
