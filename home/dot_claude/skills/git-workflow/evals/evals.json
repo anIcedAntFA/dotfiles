@@ -1,0 +1,75 @@
+{
+  "skill_name": "git-workflow",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "commit these changes",
+      "expected_output": "Analyzes diff, proposes gitmoji commit message, asks for confirmation before staging",
+      "expectations": [
+        "Runs git status and git diff before proposing anything",
+        "Proposes a commit message using the emoji type(scope): subject format",
+        "Asks for confirmation (yes / edit / cancel) before staging files",
+        "Does not run git add . or git add -A",
+        "Does not commit without user confirmation"
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "I changed 8 files across auth and billing, commit everything as one commit",
+      "expected_output": "Identifies mixed scopes, proposes splitting into 2+ commits, does not blindly commit everything together",
+      "expectations": [
+        "Detects that files span multiple unrelated scopes (auth and billing)",
+        "Recommends splitting into at least 2 commits rather than one",
+        "Proposes separate commit messages for each group",
+        "Explains the reason for splitting (mixed scope)",
+        "Does not proceed with a single combined commit without flagging the issue"
+      ]
+    },
+    {
+      "id": 3,
+      "prompt": "setup lefthook and commitlint for my new project",
+      "expected_output": "Reads hooks-and-tools.md and produces lefthook.yml, commitlint.config.mjs, and install commands",
+      "expectations": [
+        "Reads the hooks-and-tools.md reference file before responding",
+        "Provides a lefthook.yml config covering pre-commit, commit-msg, and pre-push hooks",
+        "Provides a commitlint.config.mjs with the emoji type list",
+        "Includes the install command sequence (bun add, lefthook install)",
+        "Does not invent config from memory without referencing the file"
+      ]
+    },
+    {
+      "id": 4,
+      "prompt": "I accidentally committed an API key in the last commit, what do I do",
+      "expected_output": "Reads security.md, guides through key rotation first then history cleanup",
+      "expectations": [
+        "Reads the security.md reference file before responding",
+        "Instructs to rotate/revoke the key immediately as the first step",
+        "Explains how to remove the secret from git history (BFG or git-filter-repo)",
+        "Mentions that force push is required and warns about coordination with collaborators",
+        "Does not suggest git commit --amend as a safe fix (amend only rewrites local unpushed history)"
+      ]
+    },
+    {
+      "id": 5,
+      "prompt": "I have one file with two unrelated fixes — a CSS typo and a JS bug. How should I commit this?",
+      "expected_output": "Recommends git add -p to stage hunks separately, proposes two commit messages",
+      "expectations": [
+        "Recommends using git add -p (patch mode) for partial file staging",
+        "Proposes two separate commit messages with appropriate types (style + fix)",
+        "Does not suggest committing the file as a whole in one commit",
+        "Shows the correct git add -p command syntax"
+      ]
+    },
+    {
+      "id": 6,
+      "prompt": "check if my branch has any secrets before I push",
+      "expected_output": "Reads security.md, provides gitleaks command and manual grep pattern for staged/history scanning",
+      "expectations": [
+        "Reads the security.md reference file",
+        "Provides a gitleaks command appropriate for scanning (git history or staged)",
+        "Includes the manual grep pattern as a fallback",
+        "Clarifies the difference between scanning staged-only vs full history"
+      ]
+    }
+  ]
+}
