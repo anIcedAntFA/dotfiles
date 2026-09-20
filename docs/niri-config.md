@@ -256,8 +256,6 @@ reboot to guess; `dot-theme-reconcile` traces the theme handoff to
 - routes ghostty → `terminal`, VS Code → `coding`, Zen **and** Chrome → `browser`
   (zen spawns first, so it takes the first column), Slack/Teams/Discord →
   `chatting`, each `open-maximized` as appropriate;
-- floats the `tuxedo` todo TUI at a fixed size (launched with a custom app-id so
-  this rule can catch it — see [tuxedo.md](tuxedo.md));
 - keeps two disabled (`/-`) examples: float Firefox PiP, and block password
   managers out of screen capture.
 

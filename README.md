@@ -168,7 +168,6 @@ Each tool has a focused guide covering **what it is, why, and how to set it up**
 | [mise.md](docs/mise.md)                                         | Runtime / dev-env version management                                                       |
 | [ripgrep.md](docs/ripgrep.md)                                   | Fast recursive search + config (`RIPGREP_CONFIG_PATH`)                                     |
 | [direnv.md](docs/direnv.md)                                     | Per-directory environments (`.envrc`)                                                      |
-| [tuxedo.md](docs/tuxedo.md)                                     | todo.txt task TUI + niri float keybind                                                     |
 
 Bigger design decisions are recorded as [ADRs](docs/adr/).
 
