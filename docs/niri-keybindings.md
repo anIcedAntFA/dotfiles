@@ -41,7 +41,6 @@ interchangeable everywhere.
 | `Mod+X`       | `noctalia msg panel-toggle session`   | Session/power menu         |
 | `Mod+A`       | `noctalia msg settings-toggle`        | Noctalia settings panel    |
 | `Mod+T`       | `spawn ghostty`                       | Open a terminal            |
-| `Mod+Shift+T` | `spawn` tuxedo in ghostty             | Todo.txt TUI (floating)    |
 | `Mod+B`       | `spawn zen-browser`                   | Open the browser (zen)     |
 | `Mod+G`       | `spawn google-chrome-stable`          | Open Google Chrome         |
 | `Mod+E`       | `spawn nautilus`                      | Open the file manager      |

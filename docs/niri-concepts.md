@@ -85,7 +85,7 @@ Every workspace also has a **floating layer** above the tiled strip, for things
 that shouldn't tile (dialogs, a PiP video, a scratch terminal). Toggle a window
 between tiled and floating, and switch focus between the two layers. Window rules
 can open specific apps floating automatically (this config does that for the
-`tuxedo` todo TUI).
+Noctalia settings window).
 
 ## Workspaces are dynamic
 

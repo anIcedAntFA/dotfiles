@@ -407,15 +407,6 @@ window-rule {
 	open-maximized false
 }
 
-// tuxedo (todo.txt TUI) is launched via Mod+Shift+T with a custom ghostty class
-// so it floats instead of tiling. See docs/tuxedo.md.
-window-rule {
-	match app-id="com.tuxedo.todo"
-	open-floating true
-	default-column-width { fixed 1000; }
-	default-window-height { fixed 700; }
-}
-
 // Noctalia v5 settings window (Mod+A) opens floating at a fixed size, per the
 // upstream niri integration page. app-id is dev.noctalia.Noctalia. See adr/0017.
 window-rule {
@@ -458,7 +449,6 @@ binds {
 	// Clipboard history: Noctalia launcher in clipboard mode (cliphist backend). See docs/clipboard.md.
 	Mod+Shift+C hotkey-overlay-title="Clipboard history" { spawn-sh "noctalia msg panel-toggle clipboard"; }
 	Mod+T hotkey-overlay-title="Open a Terminal: ghostty" { spawn "ghostty"; }
-	Mod+Shift+T hotkey-overlay-title="Todo: tuxedo" { spawn-sh "ghostty --class=com.tuxedo.todo -e tuxedo ~/todo.txt"; }
 	Mod+B hotkey-overlay-title="Open a Browser: zen" { spawn "zen-browser"; }
 	// Mod+G (not Mod+Shift+B) for Chrome; Mod+Shift+Z (not Mod+Z) for Zed --
 	// Mod+Z is fcitx5's input-method TriggerKey (Super+Z), see docs/fcitx5.md.
