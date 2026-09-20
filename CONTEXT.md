@@ -306,7 +306,13 @@ _Avoid_: "foreign" as a synonym for AUR — a hand-built local package is foreig
 `aur.txt` = `pacman -Qqm` (everything foreign). They overlap on every explicit
 foreign app — that's why e.g. `zen-browser-bin` appears in both; it is by design,
 not drift. Reference records only: nothing in the repo replays them.
+A snapshot is a **record of intent, not a reproducible query**: the explicit flag is
+mutable, so a reinstall or a meta-package can demote a tool you chose by name to a
+mere dependency, after which `-Qqe` stops listing it. A listed name missing from
+`-Qqe` is therefore as likely to be a demoted flag as a stale entry.
 _Avoid_: treating a name's presence in both files as a bug.
+_Avoid_: regenerating a snapshot from `-Qqe`/`-Qqm` wholesale — it silently drops
+every demoted-but-still-wanted tool.
 
 **Official repo** vs **AUR**:
 `core`/`extra`/`multilib` are **official repos** — binary, signed, maintained by
