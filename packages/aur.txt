@@ -2,7 +2,6 @@ banana-cursor-bin
 bibata-cursor-theme-bin
 bruno-bin
 flyctl
-google-breakpad
 google-chrome
 maplemono-ttf
 papirus-folders-git
@@ -10,8 +9,6 @@ pgadmin4-bin
 rate-mirrors-bin
 slack-desktop-wayland
 teams-for-linux-bin
-tuxedo
 visual-studio-code-bin
-waterfox-bin
 witr
 zen-browser-bin
