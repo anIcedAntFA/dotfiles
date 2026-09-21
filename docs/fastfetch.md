@@ -85,9 +85,60 @@ rendered config: `chezmoi execute-template < …/config.jsonc.tmpl | fastfetch -
 
 ## Modules
 
-Lean by design — identity, system, terminal/shell, hardware, display — grouped
-with `break` separators. Enable more (uptime, `colors` palette, `datetime`) by
-adding them to the `modules` array; browse options with `fastfetch --list-modules`.
+Four groups, each drawn with a colored header, a left rail and a `╰─` foot:
+
+| Group        | Rows                                                       |
+| ------------ | ---------------------------------------------------------- |
+| **System**   | OS · Kernel · Packages · Uptime                            |
+| **Desktop**  | WM (niri) · Shell (Noctalia) · Login · Theme · Display     |
+| **Hardware** | CPU · GPU · Memory · Swap · Disk · Battery _(laptop only)_ |
+| **Dev**      | Terminal stack · Font · Editor · Runtime                   |
+
+Group colors are **ANSI names** (`{#blue}`, `{#bold_green}`…), not hex, so they
+follow Ghostty's `theme = light:latte,dark:dracula` switch for free — the same
+reasoning as [starship](starship.md). Valid codes are `{#<name>}`, `{#bold_<name>}`
+and `{#}` for reset; there is **no `{#reset}`** (fastfetch errors out on it).
+
+Browse more modules with `fastfetch --list-modules`.
+
+### The layout rule: no absolute cursor escapes
+
+The right-hand side of every group is **deliberately open** — no right border, no
+closed box. That is not a style choice, it is what keeps the layout from breaking.
+
+Aligning a right border requires knowing where the value ends, and the only way to
+express that in fastfetch is an **absolute cursor move** — `\u001b[46C` (right N
+columns) or `\u001b[46G` (go to column N). The moment a value outgrows the column
+those assume, the cursor is already past it and the escape pushes the border
+outside the box, or drags it backwards over text. A 56-character CPU name is
+enough to do it.
+
+The same trap hides in **`display.key.width`**: it is implemented as `\u001b[NG`,
+so a key longer than the width makes the value overwrite the key —
+`Packages` renders as `Packag1026 (pacman · yay)`. It is not used here.
+
+So: key columns are aligned by **padding the key strings with plain spaces**, and
+nothing else positions anything. To check a change kept this property:
+
+```sh
+fastfetch --logo none | cat -v | rg '\^\[\[[0-9]*[GCD]'   # must print nothing
+```
+
+(The logo files themselves are exempt — their escapes are colors, not motion.)
+
+### Cost
+
+`ff` runs on every shell start, so each row is checked for cost. Total ≈ **25 ms**.
+Cheaper substitutes were chosen deliberately:
+
+| Wanted            | Obvious way          | Cost   | Used instead                                 |
+| ----------------- | -------------------- | ------ | -------------------------------------------- |
+| wrangler version  | `wrangler --version` | 477 ms | `sed` on mise's `wrangler/package.json`      |
+| mise version      | `mise --version`     | 208 ms | dropped — the runtimes it manages are shown  |
+| repo vs AUR count | `pacman -Qm`         | 134 ms | static `(pacman · yay)` label                |
+| ghostty version   | `ghostty --version`  | 30 ms  | `$TERM_PROGRAM_VERSION` (ghostty exports it) |
+
+Anything added here should be measured the same way before it goes in.
 
 ## References
 
