@@ -8,12 +8,168 @@
 # are interpreted here at runtime with `printf %b` (command-raw skips fastfetch's
 # own $1-$9 color processing, so the color lives in the files).
 #
+# FIXED CANVAS — why this script pads.
+# fastfetch sizes the logo column from its widest line, then starts the module
+# block after it. Logos of different widths therefore SHIFT the whole banner
+# sideways between launches (arch-classic at 38 cols vs arch-neon at 20 put the
+# modules 18 columns apart). So every logo is padded here to one fixed width per
+# subset, and the banner never moves no matter which file is drawn.
+#
+# The padding lives in this script and NOT as trailing spaces in the .txt files
+# on purpose: `.editorconfig` sets `trim_trailing_whitespace = true` for `[*]`,
+# so any editor would silently eat file-side padding and re-break the alignment.
+# Enforcing it here means a new piece of art cannot get the canvas wrong.
+#
+# Width is the binding constraint; HEIGHT is only a ceiling. A logo shorter than
+# the module block just ends early (nothing shifts), but one TALLER than it makes
+# the whole banner taller — keep art at or under 31 lines.
+#
 # Add a logo: drop a *.txt into logos/pc or logos/laptop. See docs/fastfetch.md.
+#
+# Usage: random-logo [pc|laptop] [name]
+# A second argument PINS one logo instead of shuffling — `random-logo pc yay`.
+# Rendering still goes through this script rather than `cat`, because a mask is
+# not printable on its own: it has to be resolved against the current palette.
 
 sub="${1:-pc}"
+want="${2:-}"
 base="${XDG_CONFIG_HOME:-$HOME/.config}/fastfetch/logos"
 dir="$base/$sub"
-[ -d "$dir" ] || dir="$base/pc"
+[ -d "$dir" ] || {
+	dir="$base/pc"
+	sub="pc"
+}
 
-logo=$(find "$dir" -maxdepth 1 -type f -name '*.txt' 2>/dev/null | shuf -n 1)
-[ -n "$logo" ] && printf '%b' "$(cat "$logo")"
+# Canvas width per subset (visible columns, ANSI escapes not counted).
+case "$sub" in
+laptop) width=16 ;;
+*) width=40 ;;
+esac
+
+if [ -n "$want" ]; then
+	logo="$dir/${want%.txt}.txt"
+else
+	logo=$(find "$dir" -maxdepth 1 -type f -name '*.txt' 2>/dev/null | shuf -n 1)
+fi
+[ -n "$logo" ] && [ -f "$logo" ] || exit 0
+
+# Dark/light mode, for MASK logos (below). darkman is the single WRITER and
+# scheduler of this key (ADR 0019) — this is only ever a read, ~4 ms. Same key
+# `auto-sync-theme.fish` reads, which keeps this Tier A in ADR 0021's taxonomy:
+# the config follows the mode itself, with no darkman hook to install.
+mode=light
+case "$(dconf read /org/gnome/desktop/interface/color-scheme 2>/dev/null)" in
+*dark*) mode=dark ;;
+esac
+
+# TWO LOGO FORMATS — see ADR 0024.
+#
+# 1. MASK (preferred). Two palette header lines then a grid of one character per
+#    PIXEL, each letter naming a colour region:
+#
+#        #light O=#4c4f69 B=#8d939f W=#f7f2e4
+#        #dark  O=#f8f8f2 B=#8d939f W=#f7f2e4
+#        ...OOO...
+#        ..OBBBO..
+#
+#    Two mask rows render into ONE terminal row as a half block, so pixels come
+#    out square instead of 1x2, and the art gets twice the vertical resolution.
+#    `.` is transparent and NEVER paints a background — the terminal's
+#    background-image has to show through it, so the glyph is chosen per cell:
+#    both halves solid -> U+2580 with fg+bg, top only -> U+2580 fg, bottom only
+#    -> U+2584 fg. Colours are truecolor (38;2;R;G;B) because 38;5;N cannot
+#    express a MineScheme hex exactly.
+#
+# 2. RAW (legacy). No `#light` header: the file carries its own \e escapes and is
+#    passed through untouched. arch-*.txt and wordmark-k96.txt are still this.
+#
+# Both are then padded out to `width` VISIBLE columns. A mask line is measured by
+# its column count; a raw line by stripping the escapes from a copy, never from
+# the line that is printed. Every emitted line is reset FIRST so the pad spaces
+# can never inherit a background colour and bleed a bar across the canvas.
+printf '%b' "$(cat "$logo")" | awk -v w="$width" -v mode="$mode" '
+function hex(s,   i, n) {
+	n = 0
+	s = tolower(s)
+	for (i = 1; i <= length(s); i++)
+		n = n * 16 + index("0123456789abcdef", substr(s, i, 1)) - 1
+	return n
+}
+function rgb(h) {
+	h = substr(h, 2)
+	return hex(substr(h, 1, 2)) ";" hex(substr(h, 3, 2)) ";" hex(substr(h, 5, 2))
+}
+function fg(c) {
+	return FG[c]
+}
+function bg(c) {
+	return BG[c]
+}
+function pad(line, vis) {
+	if (vis < w)
+		printf "%s%*s\n", line, w - vis, ""
+	else
+		print line
+}
+/^#(light|dark)[ \t]/ {
+	ismask = 1
+	# Resolve each colour region to its two SGR strings ONCE here rather than per
+	# cell — a 40x36 mask is 720 cells, so inline hex conversion would repeat the
+	# same handful of lookups ~1400 times for no gain.
+	if (substr($1, 2) == mode)
+		for (i = 2; i <= NF; i++) {
+			split($i, kv, "=")
+			FG[kv[1]] = "\033[38;2;" rgb(kv[2]) "m"
+			BG[kv[1]] = "\033[48;2;" rgb(kv[2]) "m"
+		}
+	next
+}
+ismask {
+	rows[++n] = $0
+	next
+}
+{
+	vis = $0
+	gsub(/\033\[[0-9;]*m/, "", vis)
+	pad($0, length(vis))
+}
+END {
+	if (!ismask)
+		exit
+	for (r = 1; r <= n; r += 2) {
+		top = rows[r]
+		bot = (r + 1 <= n) ? rows[r + 1] : ""
+		cols = length(top)
+		if (length(bot) > cols)
+			cols = length(bot)
+		line = ""
+		cur = ""
+		for (c = 1; c <= cols; c++) {
+			t = substr(top, c, 1)
+			b = substr(bot, c, 1)
+			if (t == "")
+				t = "."
+			if (b == "")
+				b = "."
+			if (t == "." && b == ".") {
+				sgr = "\033[0m"
+				px = " "
+			} else if (b == ".") {
+				sgr = "\033[0m" fg(t)
+				px = "▀"
+			} else if (t == ".") {
+				sgr = "\033[0m" fg(b)
+				px = "▄"
+			} else {
+				sgr = fg(t) bg(b)
+				px = "▀"
+			}
+			if (sgr != cur) {
+				line = line sgr
+				cur = sgr
+			}
+			line = line px
+		}
+		pad(line "\033[0m", cols)
+	}
+}'

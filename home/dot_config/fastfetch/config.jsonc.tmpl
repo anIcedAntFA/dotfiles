@@ -8,16 +8,52 @@
   // ==========================================================================
   // Renders to ~/.config/fastfetch/config.jsonc on `chezmoi apply`.
   //
-  // Logo: a RANDOM pre-colored Arch ASCII logo each launch, from a per-machine
-  // subset. fastfetch renders once (no animation), so the random pick is the
-  // "variety". The subset ("pc" vs "laptop") is chosen from the `machine` chezmoi
-  // var and passed to the random-logo script; the script + the ASCII files carry
-  // the color (command-raw skips fastfetch's own $1-$9 coloring).
+  // Logo: a RANDOM pre-colored ASCII logo each launch, from a per-machine subset.
+  // fastfetch renders once (no animation), so the random pick is the "variety".
+  // The subset ("pc" vs "laptop") is chosen from the `machine` chezmoi var and
+  // passed to the random-logo script; the script + the ASCII files carry the color
+  // (command-raw skips fastfetch's own $1-$9 coloring), and the script pads every
+  // logo to a fixed width so the module block never shifts between launches.
   // See docs/fastfetch.md. Per-machine mechanism: docs/adr/0006-*.
+  //
+  // LAYOUT RULE — no absolute cursor escapes.
+  // Four groups drawn with an opening header, a left rail, and a `╰─` foot. The
+  // right side is deliberately OPEN: nothing is positioned with `\u001b[NG`,
+  // `\u001b[NC` or `\u001b[ND`, and `display.key.width` is NOT used (it emits
+  // `\u001b[NG` too). Absolute column moves break as soon as a value outgrows the
+  // column they assume — the key gets overwritten or the border lands outside the
+  // box. Key columns are aligned by padding the key strings with plain spaces, so
+  // a long CPU/GPU/disk string can never disturb anything. See docs/fastfetch.md.
+  //
+  // KEY WIDTH — every label below is padded to exactly 13 columns, across ALL
+  // four groups, so the values line up in one straight column down the whole
+  // banner. 13 is set by the longest label, `Desktop shell`. Adding a longer
+  // label means repadding every key here, not just that group's — a per-group
+  // width would break the value column into visible steps.
+  //
+  // ICONS — exactly ONE per row, in the key, with no exceptions. Where
+  // fastfetch's generic `{icon}` is vague, `keyIcon` overrides it. The Theme row
+  // used to carry a second icon in its VALUE; see the comment there for why that
+  // argument did not survive.
+  //
+  // COST — this is a command you TYPE (`ff`), not a shell-start banner: nothing
+  // in fish/ghostty/niri runs it automatically. So the budget is "feels instant"
+  // (~150 ms), not the old ~25 ms. Cheap is still preferred where it costs
+  // nothing: `wrangler --version` (477 ms) is read from its package.json instead,
+  // `pacman -Qm` for an AUR split (134 ms) is a static label, `mise --version`
+  // (208 ms) is dropped, and `ghostty --version` (30 ms) is $TERM_PROGRAM_VERSION.
+  // The kernel check below is a directory test, not `pacman -Q` (1 ms vs 8 ms).
 
   "logo": {
     "type": "command-raw",
     "source": "$HOME/.config/fastfetch/random-logo {{ $sub }}",
+    // Pin ONE logo instead of the rotation — useful for a screenshot, or when
+    // you are iterating on a piece of art:
+    //   "source": "$HOME/.config/fastfetch/random-logo {{ $sub }} yay",
+    // Note it still goes through the script. A mask logo (logos/pc/yay.txt) is
+    // NOT printable on its own — it is a grid of colour-region letters that has
+    // to be resolved against the light/dark palette first — so `"type":
+    // "file-raw"` with a path renders the letters literally. See ADR 0024.
     "padding": { "top": 1, "left": 2 },
   },
 
@@ -27,45 +63,229 @@
 
   "modules": [
     // --- Identity ---------------------------------------------------------
-    "title", // user@host
+    "title",
+    {
+      "type": "custom",
+      "format": "{#blue}──────────────────────────────────────────",
+    },
     "break",
 
     // --- System -----------------------------------------------------------
-    "os", // EndeavourOS x86_64
-    "kernel", // Linux x.y-arch
-    "wm", // niri (Wayland)
-    "lm", // login/display manager
     {
       "type": "custom",
-      "key": "Desktop shell",
-      "format": "Noctalia (Wayland)",
+      "format": "{#blue}╭─ {#bold_blue}System{#blue} ────────────────────────────────",
     },
-    "packages", // pacman count
-    "break",
-
-    // --- Terminal & shell -------------------------------------------------
-    "terminal", // ghostty
-    "shell", // fish
-    "font",
-    "editor",
-    "break",
-
-    // --- Hardware ---------------------------------------------------------
-    "cpu",
-    "gpu",
-    "memory",
-    "physicalmemory",
     {
-      "type": "disk",
-      "folders": "/", // root partition only
+      "type": "os",
+      "key": "{#blue}│  {icon}  OS           ",
+      "format": "{pretty-name} {arch}",
     },
-{{- if $isLaptop }}
-    "battery", // laptop only
-{{- end }}
+    {
+      // Running kernel, plus a reboot flag when it no longer matches the one on
+      // disk. pacman DELETES the old /usr/lib/modules/<release> on a kernel
+      // upgrade — that missing directory is exactly why the running kernel can no
+      // longer load modules, so a `-d` test is the whole check: 1 ms, no pacman
+      // (`pacman -Q linux` is 8 ms and would also have to guess the flavour).
+      // The sibling `pkgbase` file names it, so linux / -lts / -zen all just work.
+      // Silent when current: the flag only shows up when there is something to do.
+      "type": "command",
+      "key": "{#blue}│  {icon}  Kernel       ",
+      "keyIcon": "\uf013",  // U+F013  Kernel
+      "text": "r=$(uname -r); if [ -d \"/usr/lib/modules/$r\" ]; then printf '%s' \"$r\"; else printf '%s  \udb81\udc59 reboot → %s' \"$r\" \"$(ls -1 /usr/lib/modules 2>/dev/null | head -1)\"; fi",
+      "format": "{}",
+    },
+    {
+      // Static "· yay" label on purpose: splitting repo vs AUR needs `pacman -Qm`,
+      // which costs 134 ms — nine times the whole of fastfetch.
+      "type": "packages",
+      "key": "{#blue}│  {icon}  Packages     ",
+      "format": "{all} (pacman · yay)",
+    },
+    { "type": "custom", "format": "{#blue}╰─" },
+
+    // --- Desktop ----------------------------------------------------------
+    {
+      "type": "custom",
+      "format": "{#green}╭─ {#bold_green}Desktop{#green} ───────────────────────────────",
+    },
+    {
+      "type": "wm",
+      "key": "{#green}│  {icon}  WM           ",
+      "keyIcon": "\udb81\udddf",  // U+F05DF  WM
+    },
+    {
+      // No DE is running (niri + Noctalia), so fastfetch's `de` module is empty.
+      // Labelled `Desktop shell`, not `Shell`, because the Dev group below has a
+      // `Login shell` row — two different things that are both "the shell"
+      // (CONTEXT.md). With both on screen, neither can rely on its group header
+      // for disambiguation, so both use the full glossary term. This is also what
+      // sets the 13-column key width for the whole banner.
+      "type": "command",
+      "key": "{#green}│  {icon}  Desktop shell",
+      "keyIcon": "\udb80\udf08",  // U+F0308  Desktop shell
+      "text": "noctalia --version 2>/dev/null | sed 's/^noctalia/Noctalia/'",
+      "format": "{}",
+    },
+    {
+      // `lm` only detects the daemon (greetd); the greeter it launches is ours.
+      "type": "lm",
+      "key": "{#green}│  {icon}  Login        ",
+      "keyIcon": "\udb80\udf06",  // U+F0306  Login
+      "format": "{pretty-name} + tuigreet",
+    },
+    {
+      // darkman owns the light/dark mode (ADR 0019); Ghostty maps it to
+      // `theme = light:latte,dark:dracula`. 3 ms.
+      // This row used to carry a sun/moon glyph (U+F0599 / U+F0594) in its VALUE,
+      // argued for as STATE rather than identity. Dropped: the value already ends
+      // in the words `· light` / `· dark`, so the glyph restated the one thing it
+      // could have conveyed. Being state earns a row nothing if the text beside it
+      // already says so — the icon rule above is now exceptionless.
+      "type": "command",
+      "key": "{#green}│  {icon}  Theme        ",
+      "keyIcon": "\ue22b",  // U+E22B  Theme
+      "text": "[ \"$(darkman get 2>/dev/null)\" = light ] && echo 'Catppuccin Latte · light' || echo 'Dracula · dark'",
+      "format": "{}",
+    },
     {
       "type": "display",
-      "format": "{width}x{height} @ {refresh-rate} Hz",
+      "key": "{#green}│  {icon}  Display      ",
+      "compactType": "original-with-refresh-rate",
     },
+    { "type": "custom", "format": "{#green}╰─" },
+
+    // --- Hardware ---------------------------------------------------------
+    {
+      "type": "custom",
+      "format": "{#yellow}╭─ {#bold_yellow}Hardware{#yellow} ──────────────────────────────",
+    },
+    {
+      "type": "cpu",
+      "key": "{#yellow}│  {icon}  CPU          ",
+      "format": "{name} ({core-types}) @ {freq-max}",
+    },
+    {
+      // Hybrid graphics emit one row PER adapter, so a desktop with a discrete
+      // card also lists the CPU's iGPU — a second row that never changes and
+      // never matters. `hideType` drops it, but only where a discrete card is
+      // guaranteed: on a laptop with integrated graphics only, hiding it would
+      // silently delete the GPU row altogether. Hence the same `$isLaptop` split
+      // the battery row below already uses.
+      "type": "gpu",
+      "key": "{#yellow}│  {icon}  GPU          ",
+{{- if not $isLaptop }}
+      "hideType": "integrated",
+{{- end }}
+      "format": "{vendor} {name}",
+    },
+    {
+      "type": "memory",
+      "key": "{#yellow}│  {icon}  Memory       ",
+    },
+    {
+      "type": "swap",
+      "key": "{#yellow}│  {icon}  Swap         ",
+    },
+    {
+      "type": "disk",
+      "key": "{#yellow}│  {icon}  Disk         ",
+      "folders": "/",
+      "format": "{size-used} / {size-total} ({size-percentage}) {filesystem}",
+    },
+{{- if $isLaptop }}
+    {
+      "type": "battery",
+      "key": "{#yellow}│  {icon}  Battery      ",
+    },
+{{- end }}
+    { "type": "custom", "format": "{#yellow}╰─" },
+
+    // --- Dev --------------------------------------------------------------
+    {
+      "type": "custom",
+      "format": "{#magenta}╭─ {#bold_magenta}Dev{#magenta} ───────────────────────────────────",
+    },
+    // ONE ROW PER CATEGORY, and the label has to be the tool's ACTUAL category.
+    // An earlier version packed these into four rows to save space and ended up
+    // filing `git` under "Editor" and `wrangler` under "Runtime" — labels that
+    // were simply false. A later version dropped the labels entirely and left
+    // bare icons, which was unreadable. Both failures had the same cause: the row
+    // label was being asked to do something other than name the thing.
+    //
+    // `Runtime` is the one row with several tools, and that is not packing: node,
+    // go and bun genuinely ARE all language runtimes. Group only where the
+    // category is truly shared.
+    {
+      "type": "command",
+      "key": "{#magenta}│  {icon}  Terminal     ",
+      "keyIcon": "\ue795",  // U+E795  Terminal
+      "text": "printf '%s %s' \"$(printf '%s' \"${TERM_PROGRAM:-terminal}\" | sed 's/^./\\U&/')\" \"${TERM_PROGRAM_VERSION%%-*}\"",
+      "format": "{}",
+    },
+    {
+      // fish — the interactive command shell. `Login shell` is the glossary term
+      // (CONTEXT.md); see the `Desktop shell` row above for why both are spelled
+      // out in full.
+      "type": "command",
+      "key": "{#magenta}│  {icon}  Login shell  ",
+      "keyIcon": "\udb80\ude3a",  // U+F023A  Login shell
+      "text": "printf 'fish %s' \"$(fish --version | sed 's/.*version //')\"",
+      "format": "{}",
+    },
+    {
+      // starship calls itself a cross-shell prompt; `Prompt` is the short form
+      // that fits the 13-column key, and sitting directly under `Login shell`
+      // leaves no doubt which prompt is meant.
+      "type": "command",
+      "key": "{#magenta}│  {icon}  Prompt       ",
+      "keyIcon": "\udb82\udc98",  // U+F0898  Prompt
+      "text": "printf 'starship %s' \"$(starship --version | head -1 | sed 's/starship //')\"",
+      "format": "{}",
+    },
+    {
+      // Silently empty unless fastfetch recognises the terminal: it walks the
+      // parent process tree, so running `ff` from inside another tool reports
+      // "Unknown terminal: <that tool>" and this row vanishes. Screenshots for
+      // the README/blog have to come from a real Ghostty window.
+      "type": "terminalfont",
+      "key": "{#magenta}│  {icon}  Font         ",
+      "keyIcon": "\udb80\udd06",  // U+F0106  Font
+      "format": "{name} {size}",
+    },
+    {
+      "type": "command",
+      "key": "{#magenta}│  {icon}  Editor       ",
+      "keyIcon": "\udb85\uddae",  // U+F15AE  Editor
+      "text": "printf 'Zed %s' \"$(zeditor --version | sed 's/^Zed //; s/ –.*//')\"",
+      "format": "{}",
+    },
+    {
+      "type": "command",
+      "key": "{#magenta}│  {icon}  VCS          ",
+      "keyIcon": "\uf1d3",  // U+F1D3  VCS
+      "text": "printf 'git %s' \"$(git --version | sed 's/git version //')\"",
+      "format": "{}",
+    },
+    {
+      "type": "command",
+      "key": "{#magenta}│  {icon}  Runtime      ",
+      "keyIcon": "\udb83\udf4d",  // U+F0F4D  Runtime
+      "text": "printf 'node %s · go %s · bun %s' \"$(node --version | tr -d v)\" \"$(go version | cut -d' ' -f3 | cut -c3-)\" \"$(bun --version)\"",
+      "format": "{}",
+    },
+    {
+      // wrangler is a deploy CLI, not a runtime. Its version is read from the
+      // package.json mise installed, not from `wrangler --version` (a Node CLI —
+      // 477 ms).
+      "type": "command",
+      "key": "{#magenta}│  {icon}  Deploy       ",
+      "keyIcon": "\ue794",  // U+E794  Deploy
+      "text": "printf 'wrangler %s' \"$(sed -n 's/.*\"version\": *\"\\([^\"]*\\)\".*/\\1/p' \"${MISE_DATA_DIR:-$HOME/.local/share/mise}/installs/wrangler/latest/lib/node_modules/wrangler/package.json\" 2>/dev/null | head -1)\"",
+      "format": "{}",
+    },
+    { "type": "custom", "format": "{#magenta}╰─" },
+
     "break",
+    "colors",
   ],
 }

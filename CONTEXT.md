@@ -235,6 +235,36 @@ generic sense — always qualify which.
 _Avoid_: reading `user-templates.toml` as a chezmoi/`.tmpl` thing or as machine
 branching; conflating a Noctalia template with the per-app **Theme** it produces.
 
+**Canvas** vs **art** (the banner logo):
+The **canvas** is the fixed rectangle every fastfetch logo is padded out to — one
+size per machine subset — so the module block starts at the same column no matter
+which logo was drawn. The **art** is the figure itself, which may be smaller; it
+never sets the layout. Width is the binding constraint, height only a ceiling.
+_Avoid_: calling a logo's own extent "the canvas"; assuming a wider logo is
+allowed to push the modules right.
+
+**Mask** (a logo's authored form):
+The committed artefact for a hand-drawn logo: a grid of one character per pixel,
+each letter naming a **colour region** (outline, fur, belly, beak…) rather than a
+colour. The mask is the thing a human edits and reviews in a diff — the coloured
+escape sequences are generated from it at render time and are never authored
+directly. Redrawing means editing the mask.
+_Avoid_: treating the rendered escape output as the source; "ASCII art" for the
+mask (it is a colour-region map, not the picture).
+
+**Subject colour** vs **ring colour**:
+A **subject colour** belongs to the thing depicted — a penguin's black, a
+grizzly's brown, a beak's orange — and is therefore **the same in both modes**. A
+**ring colour** is the outline separating a figure from the ground; its job is
+contrast, not likeness, so it is **drawn from MineScheme per mode** (Latte in
+light, Dracula in dark). This is the seam between
+[ADR 0023](docs/adr/0023-starship-ansi-colours-over-hex-palette.md) (a logo colour
+is fixed) and [ADR 0021](docs/adr/0021-tiered-app-theming-minescheme-identity.md)
+(MineScheme is the identity) — they apply to different parts of the same drawing.
+_Avoid_: the bare word **identity** for a subject colour — `CONTEXT.md` already
+uses it for MineScheme (above) and for personal/work git config (below); inverting
+a subject colour to gain contrast (that is the ring's job).
+
 ## Wayland rendering & input
 
 **Native Wayland** vs **XWayland** (the _rendering path_):
@@ -306,7 +336,13 @@ _Avoid_: "foreign" as a synonym for AUR — a hand-built local package is foreig
 `aur.txt` = `pacman -Qqm` (everything foreign). They overlap on every explicit
 foreign app — that's why e.g. `zen-browser-bin` appears in both; it is by design,
 not drift. Reference records only: nothing in the repo replays them.
+A snapshot is a **record of intent, not a reproducible query**: the explicit flag is
+mutable, so a reinstall or a meta-package can demote a tool you chose by name to a
+mere dependency, after which `-Qqe` stops listing it. A listed name missing from
+`-Qqe` is therefore as likely to be a demoted flag as a stale entry.
 _Avoid_: treating a name's presence in both files as a bug.
+_Avoid_: regenerating a snapshot from `-Qqe`/`-Qqm` wholesale — it silently drops
+every demoted-but-still-wanted tool.
 
 **Official repo** vs **AUR**:
 `core`/`extra`/`multilib` are **official repos** — binary, signed, maintained by

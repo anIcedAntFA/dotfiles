@@ -81,7 +81,6 @@ Or let chezmoi do it on `chezmoi apply` — answer **yes** to the
 | [`hyperfine`](https://github.com/sharkdp/hyperfine)                                                | Command benchmarking.                                     |
 | [`tldr`](https://tldr.sh/)                                                                         | Simplified man pages.                                     |
 | [`superfile`](https://superfile.dev/)                                                              | Terminal file manager.                                    |
-| [`tuxedo`](https://github.com/webstonehq/tuxedo)                                                   | todo.txt task TUI — see [tuxedo.md](tuxedo.md).           |
 | [`dos2unix`](https://waterlan.home.xs4all.nl/dos2unix.html)                                        | Line-ending conversion.                                   |
 | [`plocate`](https://plocate.sesse.net/)                                                            | Fast `locate`.                                            |
 
@@ -110,11 +109,11 @@ Or let chezmoi do it on `chezmoi apply` — answer **yes** to the
 
 ## Browsers & communication
 
-| Package                                                                                                                                                                                         | Why                             |
-| ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------- |
-| [`firefox`](https://www.mozilla.org/firefox/) · [`google-chrome`](https://www.google.com/chrome/) · [`waterfox-bin`](https://www.waterfox.net/) · [`zen-browser-bin`](https://zen-browser.app/) | Browsers (testing + daily use). |
-| [`slack-desktop-wayland`](https://slack.com/) · [`teams-for-linux-bin`](https://github.com/IsmaelMartinez/teams-for-linux)                                                                      | Work chat.                      |
-| [`discord`](https://discord.com/)                                                                                                                                                               | Community chat.                 |
+| Package                                                                                                                                           | Why                             |
+| ------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------- |
+| [`firefox`](https://www.mozilla.org/firefox/) · [`google-chrome`](https://www.google.com/chrome/) · [`zen-browser-bin`](https://zen-browser.app/) | Browsers (testing + daily use). |
+| [`slack-desktop-wayland`](https://slack.com/) · [`teams-for-linux-bin`](https://github.com/IsmaelMartinez/teams-for-linux)                        | Work chat.                      |
+| [`discord`](https://discord.com/)                                                                                                                 | Community chat.                 |
 
 ## Input method (Vietnamese)
 
