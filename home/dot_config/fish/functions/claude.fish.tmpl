@@ -1,0 +1,12 @@
+function claude --description "Claude Code — auto-select account by directory (work inside the company ghq root)"
+    # Mirror the git `includeIf` boundary: inside the company ghq root, run the
+    # work (Teams) account from ~/.claude.work; everywhere else use the personal
+    # default (~/.claude). One boundary — {{ .ghqCompanyRoot }} — drives both the
+    # git identity and the Claude account, so moving the company root moves both.
+    # Force a choice with `claude-work` / `claude-personal`. See docs/claude-code.md.
+    set -l company_root (string replace -r '^~' $HOME -- '{{ .ghqCompanyRoot }}')
+    if string match -q -- "$company_root/*" "$PWD/"
+        set -lx CLAUDE_CONFIG_DIR $HOME/.claude.work
+    end
+    command claude $argv
+end
