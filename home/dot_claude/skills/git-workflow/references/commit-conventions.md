@@ -1,6 +1,8 @@
 # Commit Conventions Reference
 
-Complete rules for Conventional Commits with gitmoji in this project.
+Detailed rules for the **default convention**: Conventional Commits with
+gitmoji. A repo's enforced convention (its commit-msg check) overrides any rule
+here it contradicts — see step 1 of `SKILL.md`.
 
 ---
 
@@ -20,26 +22,29 @@ emoji type(scope): subject
 
 ---
 
-## Types (Priority Order)
+## Types
 
-When a commit includes multiple concerns, pick the highest-priority type.
+The type and emoji table is in `SKILL.md` (step 3), listed in priority order: a
+commit that could take two types takes the one higher in the table.
 
-| #  | Type          | Emoji | Description                     | Example                                              |
-| -- | ------------- | ----- | ------------------------------- | ---------------------------------------------------- |
-| 1  | `init`        | 🎉    | Project kickoff                 | `🎉 init(all): scaffold project structure`           |
-| 2  | `feat`        | ✨    | New user-facing feature         | `✨ feat(cart): add quantity selector`               |
-| 3  | `fix`         | 🐛    | Bug fix                         | `🐛 fix(auth): prevent session timeout on refresh`   |
-| 4  | `hotfix`      | 🚑️    | Critical production fix         | `🚑️ hotfix(api): patch null pointer in payment flow` |
-| 5  | `refactor`    | ♻️     | Restructure, no behavior change | `♻️ refactor: extract validation into shared utils`   |
-| 6  | `perf`        | ⚡️    | Performance improvement         | `⚡️ perf(db): add index on users.email`              |
-| 7  | `test`        | ✅    | Tests only                      | `✅ test(api): add integration tests for /orders`    |
-| 8  | `docs`        | 📝    | Documentation only              | `📝 docs: update API authentication guide`           |
-| 9  | `update-deps` | ⬆️     | Dependency upgrades             | `⬆️ update-deps: upgrade react from 18.2 to 19.0`     |
-| 10 | `configs`     | 🔧    | Config file changes             | `🔧 configs(biome): enable sorted imports rule`      |
-| 11 | `chore`       | 🔨    | Maintenance, tooling            | `🔨 chore: clean up unused scripts`                  |
-| 12 | `style`       | 💄    | CSS/visual, formatting only     | `💄 style: fix indentation in config files`          |
-| 13 | `breaking`    | 💥    | Breaking changes                | `💥 breaking(api): require auth for all endpoints`   |
-| 14 | `deploy`      | 🚀    | Deployment                      | `🚀 deploy(cloudflare): deploy production`           |
+One example per type:
+
+```text
+🎉 init: scaffold project structure
+✨ feat(cart): add quantity selector
+🐛 fix(auth): prevent session timeout on refresh
+🚑️ hotfix(api): patch null pointer in payment flow
+♻️ refactor: extract validation into shared utils
+⚡️ perf(db): add index on users.email
+✅ test(api): add integration tests for /orders
+📝 docs: update API authentication guide
+⬆️ update-deps: upgrade react from 18.2 to 19.0
+🔧 configs(biome): enable sorted imports rule
+🔨 chore: clean up unused scripts
+💄 style: fix indentation in config files
+💥 breaking(api): require auth for all endpoints
+🚀 deploy(cloudflare): deploy production
+```
 
 ---
 
@@ -54,8 +59,9 @@ The scope narrows down which area of the codebase was affected.
 - Keep consistent — don't alternate between `auth` and `authentication`
 - Omit when changes span many unrelated areas
 
-**Common scopes:** `api`, `auth`, `ui`, `db`, `cli`, `config`, `deps`, `core`,
-`resume`, `seo`, `cf`, `pwa`, `rss`, `css`, `content`
+**Which scopes exist** is a per-repo fact: list the ones already in use with
+`git log --format=%s -200 | rg -o '\(([^)]+)\)' -r '$1' | sort | uniq -c | sort -rn`
+and reuse a spelling from that list before inventing one.
 
 **When to omit:**
 

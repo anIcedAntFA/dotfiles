@@ -31,15 +31,17 @@ git diff --cached -U0 | grep -nE \
 
 ## Gitleaks
 
-Gitleaks runs automatically at **pre-push** via lefthook. It scans the entire
-git history, not just staged files.
+Gitleaks runs automatically at **pre-push** via lefthook. It scans the commits
+about to be pushed (`origin/main..HEAD`) — nothing is staged at push time, so
+`--staged` would scan nothing there.
 
 **Manual run:**
 
 ```bash
 gitleaks git --verbose                    # scan full history
-gitleaks git --pre-commit --staged        # scan staged only
-gitleaks detect --source .                # scan working directory
+gitleaks git --pre-commit --staged        # scan staged only (pre-commit, not pre-push)
+gitleaks git --log-opts="origin/main..HEAD" # scan commits not yet pushed
+gitleaks dir .                            # scan the working tree, untracked files included
 ```
 
 **Configuration** (`.gitleaks.toml`):

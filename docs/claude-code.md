@@ -177,7 +177,8 @@ the rest.
 > manager symlinks a skill into every agent's dir (`~/.agents` is its shared
 > home); it is kept for what no plugin offers. The one hand-authored skill —
 > [`git-workflow`](#whats-tracked-and-what-isnt) — is vendored into this repo and
-> applied globally (it encodes this repo's own commit conventions). The
+> applied globally (it carries a personal default commit convention, and defers
+> to whatever commit-msg check the repo it runs in enforces). The
 > token-**proxy** layer is owned by [RTK](rtk.md), so no second proxy is
 > installed alongside it. If Codex (or any second agent) is adopted, relocate
 > `git-workflow` to `~/.agents/skills` and symlink it in, matching the manager's
@@ -265,8 +266,9 @@ exported by the wrapper and inherited by the statusline subprocess.
   [search rule and guard](#search-rule-and-guard-hook), written to be
   account-neutral so the work dir can point at the same files;
 - `home/dot_claude/skills/git-workflow/` → `~/.claude/skills/git-workflow` — the
-  one hand-authored, repo-agnostic skill (it encodes this repo's own commit
-  conventions), so it is vendored and available in every project. Everything else
+  one hand-authored, repo-agnostic skill: it reads each repo's commit-msg check
+  and falls back to a personal default convention, so it is vendored and
+  available in every project. Everything else
   under `skills/` is installed, not authored (see below).
 
 **Never tracked** (machine-local `$HOME`, or trivially reinstalled): both

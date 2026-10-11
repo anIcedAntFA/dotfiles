@@ -1,201 +1,172 @@
 ---
 name: git-workflow
 description: >
-  Analyze git changes and generate Conventional Commit messages with gitmoji
-  emoji prefixes. Handles intelligent staging, splitting multi-concern changes
-  into atomic commits, and executing the commit. Also covers git hook setup
-  (lefthook), secret scanning (gitleaks), and commitlint/cz-git configuration.
-
-  Trigger whenever user says "commit", "git commit", "stage and commit", "gc",
-  "push changes", or asks about commit message format. Also trigger when user
-  wants to setup git hooks, scan for secrets, configure commitlint or cz-git,
-  or asks about any git workflow conventions — even if they don't use these
-  exact words. If the user mentions lefthook, gitleaks, commitlint, cz-git,
-  gitmoji, or conventional commits, use this skill.
+  Commit git changes as atomic commits with gitmoji + Conventional Commit
+  messages that pass the repo's own commit-msg check. Also sets up commit hooks
+  (lefthook, commit-msg lint) and handles secret scanning or a leaked secret.
+  Use when the user asks to commit, asks how to word or split a commit, sets up
+  git hooks, or scans for secrets.
 ---
 
 # Git Workflow
 
-Two modes: **Commit** (daily, ~90% of use) and **Setup** (one-time config).
-Detect which one the user needs from context and jump straight in.
+Two branches: **Commit** (most runs) and **Setup** (one-time). Pick from the request.
 
----
+## Commit
 
-## Mode 1 — Commit
+### 1. Read the changes and the convention
 
-### Step 1: Gather context
-
-Run in parallel:
+Run together:
 
 ```bash
 git status --short
 git diff HEAD
-git log --oneline -5
+git log --format=%s -20
+ls commitlint.config.* .commitlintrc* .husky/commit-msg 2>/dev/null
+rg -n -A8 '^commit-msg:' lefthook.yml 2>/dev/null
 ```
 
-### Step 2: Analyze and group
+The repo's **enforced convention** is whatever its commit-msg check accepts: the
+`type-enum` list in a commitlint config, or the type alternation in a hook's
+regex. Read the file the commands above turn up. It overrides everything in
+this skill.
 
-Group changed files by concern. For each group:
+Where the repo enforces nothing, follow the convention the last 20 subjects
+share. Where they share none, use the **default convention** in step 3.
 
-- **What** changed (files + nature of change)
-- **Why** it changed (infer from diff content)
-- **Which type** fits (see table below)
+Done when you can state three things: the accepted types, whether a leading
+emoji is required, and the header length limit.
 
-**Split decision:**
+### 2. Group into atomic commits
 
-| Single commit                            | Split into multiple                 |
+Group the changed files by concern. One commit per group; a group is **atomic**
+when it has one type, one scope, and leaves the repo working on its own.
+
+| One commit                               | Split                               |
 | ---------------------------------------- | ----------------------------------- |
-| Same type AND scope                      | Mixed types (feat + fix)            |
-| ≤3 files                                 | Mixed scopes (auth + billing)       |
-| ≤50 lines total diff                     | >10 files across unrelated areas    |
-| Splitting would break intermediate state | Deps mixed with code changes        |
+| Same type and scope                      | Mixed types (feat + fix)            |
+| Splitting would break intermediate state | Mixed scopes (auth + billing)       |
+|                                          | Deps mixed with code changes        |
 |                                          | Formatting mixed with logic changes |
 
-### Step 3: Build commit message
+One file holding two concerns is split by hunk (`git add -p`), not kept whole.
 
-**Format:** `emoji type(scope): subject`
+### 3. Write each message
 
-**Type → Emoji mapping:**
+```text
+emoji type(scope): subject
 
-| Type          | Emoji | When to use                          |
-| ------------- | ----- | ------------------------------------ |
-| `init`        | 🎉    | Project kickoff                      |
-| `feat`        | ✨    | New user-facing feature              |
-| `fix`         | 🐛    | Bug fix                              |
-| `hotfix`      | 🚑️    | Critical production fix              |
-| `docs`        | 📝    | Documentation only                   |
-| `style`       | 💄    | CSS/visual changes, formatting       |
-| `refactor`    | ♻️     | Code restructure, no behavior change |
-| `perf`        | ⚡️    | Performance improvement              |
-| `test`        | ✅    | Add or update tests only             |
-| `update-deps` | ⬆️     | Dependency upgrades                  |
-| `configs`     | 🔧    | Config file changes                  |
-| `chore`       | 🔨    | Maintenance, tooling, other          |
-| `breaking`    | 💥    | Breaking changes                     |
-| `deploy`      | 🚀    | Deployment                           |
-
-Pick the **highest-priority type** that matches. Priority: feat > fix > refactor > perf > test > docs > chore.
-
-**Scope rules:**
-
-- Lowercase, single word or hyphenated: `auth`, `user-profile`, `api`
-- Derive from file paths: all files under `src/auth/` → scope `auth`
-- Omit if changes span many unrelated areas
-- If user specifies a ticket/issue reference, use footer format (see below)
-
-**Subject rules:**
-
-- Imperative mood: "add", "fix", "remove" — not "added", "fixed", "removed"
-- Lowercase first letter
-- No period at end
-- ≤100 chars total header length
-
-**Body** — include when subject alone doesn't explain why:
-
-- Separate from subject with one blank line
-- Each bullet starts with a verb (Add, Fix, Remove, Update, Refactor, etc.)
-- One fact per bullet — no filler
-- Explain **why**, not **what** (the diff shows what)
-
-**Footer** — for issue/ticket references:
-
-- Format: `Closes: #123` or `Refs: ELWB-1234`
-- Only include when user mentions a ticket or the commit clearly closes an issue
-- Multiple issues: one per line
-
-**Never include:**
-
-- AI attribution (no "Co-Authored-By", "Generated by", etc.)
-- The commit author field already tracks who committed
-
-### Step 4: Propose to user
-
-Display the full message in a code block:
-
-```
-✨ feat(auth): add OAuth2 PKCE flow
-
-- Implement authorization code flow for mobile clients
-- Add token exchange using oauth2-client library
-
-Closes: #214
-```
-
-Ask: **"Stage and commit with this message? (yes / edit / cancel)"**
-
-- **yes** → proceed to Step 5
-- **edit** → ask what to change, revise, show again
-- **cancel** → stop
-
-### Step 5: Execute
-
-**Staging rules:**
-
-- Use specific file paths: `git add src/auth/login.ts src/auth/login.test.ts`
-- **Never** use `git add .`, `git add -A`, or `git add *`
-- **Never stage:**
-  - `.env` or any secrets/env files
-  - `bun.lock` (only if commit is specifically a deps update)
-  - `worker-configuration.d.ts` (generated file)
-  - Any file matching `.gitignore` patterns
-
-**Commit using HEREDOC** to preserve multi-line formatting:
-
-```bash
-git commit -m "$(cat <<'EOF'
-✨ feat(scope): subject
-
-- Bullet one
-- Bullet two
+- Body bullet
+- Body bullet
 
 Closes: #123
-EOF
-)"
 ```
 
-After committing, run `git log --oneline -3` and show the result.
+**Default convention** — type and emoji, highest priority first when a group
+could take two:
 
-### Step 6: Multi-commit workflow
+| Type          | Emoji | When                             |
+| ------------- | ----- | -------------------------------- |
+| `init`        | 🎉    | Project kickoff                  |
+| `feat`        | ✨    | New user-facing capability       |
+| `fix`         | 🐛    | Bug fix                          |
+| `hotfix`      | 🚑️    | Critical production fix          |
+| `refactor`    | ♻️     | Restructure, behaviour unchanged |
+| `perf`        | ⚡️    | Performance improvement          |
+| `test`        | ✅    | Tests only                       |
+| `docs`        | 📝    | Documentation only               |
+| `update-deps` | ⬆️     | Dependency upgrades              |
+| `configs`     | 🔧    | Config file changes              |
+| `chore`       | 🔨    | Maintenance, tooling             |
+| `style`       | 💄    | Visual changes, formatting only  |
+| `breaking`    | 💥    | Breaking change                  |
+| `deploy`      | 🚀    | Deployment                       |
 
-When splitting into multiple commits:
+**Under an enforced convention that lacks the default type**, keep the emoji and
+take the nearest accepted type:
 
-1. `git restore --staged .` — unstage everything
-2. Commit in this order: deps first → refactors → features → fixes → docs
-3. For each group:
-   - `git add <specific files>`
-   - `git diff --cached --stat` — verify what's staged
-   - Commit with its own message
-4. Each commit must leave the codebase in a working state
+| Default type  | Use instead                      |
+| ------------- | -------------------------------- |
+| `configs`     | `chore`                          |
+| `update-deps` | `build`, else `chore`            |
+| `init`        | `chore`                          |
+| `hotfix`      | `fix`                            |
+| `breaking`    | the change's real type, with `!` |
+| `deploy`      | `ci`, else `chore`               |
 
-For partial file staging (one file has changes for different commits):
+A commitlint `type-enum` whose entries carry the emoji (`'🔨 chore'`) fixes the
+pair: use an entry verbatim, since `🔧 chore` fails where `🔨 chore` passes. A
+convention with no emoji (a repo whose checked subjects carry none) gets none.
 
-```bash
-git add -p src/api/handler.ts    # stage only relevant hunks
-git commit -m "🐛 fix(api): validate request body"
+- **Scope**: lowercase, one word or hyphenated, taken from the path
+  (`src/auth/` → `auth`) and spelled the way `git log` already spells it. Omit
+  when the group spans unrelated areas.
+- **Subject**: imperative, lowercase first letter, no trailing period. Header
+  within the limit from step 1 (100 by default).
+- **Body**: include when the subject cannot carry the reason. Bullets, each
+  opening with a verb, each stating why rather than repeating the diff. Wrap at
+  100.
+- **Footer**: `Closes: #123` or `Refs: ABC-123`, one per line, only for a
+  ticket the user named or the commit plainly resolves.
+- The message ends at the footer. Authorship lives in the commit's author
+  field, so it carries no attribution trailer of any kind.
 
-git add -p src/api/handler.ts    # stage remaining hunks
-git commit -m "✨ feat(api): add rate limiting headers"
-```
+Detailed rules and worked examples: `references/commit-conventions.md`.
 
----
+### 4. Confirm the plan — only when it has more than one commit
 
-## Mode 2 — Setup
+A single commit goes straight to step 5.
 
-When user asks about setting up git workflow tooling, read the appropriate
-reference file:
+For two or more, show every message in its own code block with the files it
+takes, then ask **"Commit this plan? (yes / edit / cancel)"** and wait. The
+grouping is what the user is approving: a wrong split means rewriting history,
+where a wrong word is one `--amend`.
 
-- **`references/hooks-and-tools.md`** — lefthook, commitlint, cz-git setup
-  and configuration. Read when user asks to setup hooks, configure commit
-  linting, or initialize git workflow for a new project.
+### 5. Commit, one at a time
 
-- **`references/security.md`** — gitleaks configuration, secret scanning,
-  what to do when secrets are found, commit signing, CODEOWNERS.
-  Read when user asks about security scanning or secret management.
+Order: deps → refactors → features → fixes → docs. For each commit:
 
-- **`references/commit-conventions.md`** — detailed rules on types, scopes,
-  breaking changes, body/footer format, good/bad examples.
-  Read when user asks about commit message conventions or wants examples.
+1. Stage by explicit path: `git add path/a path/b`, or `git add -p path` for
+   some hunks. Leave out secrets and env files, anything gitignored, and
+   lockfiles or generated files unless they are what the commit is about.
+2. `git diff --cached --stat` lists exactly this commit's files.
+3. Commit through a heredoc so the body keeps its lines:
 
-- **`references/commit-workflow.md`** — manual staging strategies, hunk-level
-  staging with `git add -p`, interactive workflow without Claude Code.
-  Read when user asks about the manual commit process.
+   ```bash
+   git commit -m "$(cat <<'EOF'
+   ✨ feat(scope): subject
+
+   - Bullet one
+   - Bullet two
+   EOF
+   )"
+   ```
+
+4. The commit **landed** when `git log -1 --format=%s` prints the header you
+   wrote and `git diff --cached --quiet` exits 0.
+
+A rejected commit lands nothing and leaves its files staged, so the next
+`git commit` would swallow them. On a rejection, fix the cause and retry the
+same commit: reword for a commit-msg failure, fix and re-stage the file for a
+lint or format failure. Start the next commit only after this one landed.
+
+After the last one, show `git log --oneline -N` for the N commits made. For a
+single commit made without asking, show its message too, so the user can ask for
+a reword.
+
+## Setup
+
+Read the reference that matches the request:
+
+- **`references/hooks-and-tools.md`** — lefthook plus a commit-msg check, in two
+  variants: commitlint + cz-git for a repo with a `package.json`, and a
+  dependency-free `grep` hook for one without. Read when setting up hooks or
+  commit linting.
+- **`references/security.md`** — gitleaks, what to do when a secret is found
+  before or after a push, commit signing, CODEOWNERS. Read for secret scanning
+  or a leaked secret.
+- **`references/commit-conventions.md`** — scope, subject, body, footer and
+  breaking-change rules with good and bad examples. Read when asked about
+  message conventions.
+- **`references/commit-workflow.md`** — staging, hunk-level `git add -p`,
+  amending, done by hand. Read when the user wants the manual process.

@@ -7,7 +7,7 @@ This is the reference for when working without Claude Code automation.
 
 ## Stage Intentionally
 
-Never blindly stage everything.
+Stage by explicit path or by hunk, so every staged line is one you chose.
 
 ```bash
 git add src/auth/login.ts src/auth/login.test.ts   # specific files

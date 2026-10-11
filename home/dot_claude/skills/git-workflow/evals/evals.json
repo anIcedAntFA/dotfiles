@@ -4,13 +4,14 @@
     {
       "id": 1,
       "prompt": "commit these changes",
-      "expected_output": "Analyzes diff, proposes gitmoji commit message, asks for confirmation before staging",
+      "expected_output": "Reads the diff and the repo's enforced convention, then makes one commit with a gitmoji message and reports it",
       "expectations": [
-        "Runs git status and git diff before proposing anything",
-        "Proposes a commit message using the emoji type(scope): subject format",
-        "Asks for confirmation (yes / edit / cancel) before staging files",
-        "Does not run git add . or git add -A",
-        "Does not commit without user confirmation"
+        "Runs git status and git diff before writing a message",
+        "Looks for the repo's commit-msg check (commitlint config or lefthook commit-msg) before choosing a type",
+        "Uses a type the repo's check accepts, in the emoji type(scope): subject format",
+        "Stages by explicit path, never git add . or git add -A",
+        "For a single-commit change, commits without asking and then shows the message and hash",
+        "Adds no AI attribution trailer"
       ]
     },
     {
@@ -22,19 +23,19 @@
         "Recommends splitting into at least 2 commits rather than one",
         "Proposes separate commit messages for each group",
         "Explains the reason for splitting (mixed scope)",
-        "Does not proceed with a single combined commit without flagging the issue"
+        "Asks for confirmation of the multi-commit plan and waits before committing"
       ]
     },
     {
       "id": 3,
-      "prompt": "setup lefthook and commitlint for my new project",
-      "expected_output": "Reads hooks-and-tools.md and produces lefthook.yml, commitlint.config.mjs, and install commands",
+      "prompt": "setup lefthook and commit message linting for my new project",
+      "expected_output": "Reads hooks-and-tools.md, picks the variant from whether the repo has a package.json, and produces the matching lefthook.yml and commit-msg check",
       "expectations": [
         "Reads the hooks-and-tools.md reference file before responding",
-        "Provides a lefthook.yml config covering pre-commit, commit-msg, and pre-push hooks",
-        "Provides a commitlint.config.mjs with the emoji type list",
-        "Includes the install command sequence (bun add, lefthook install)",
-        "Does not invent config from memory without referencing the file"
+        "Checks whether the repo has a package.json before choosing a variant",
+        "With a package.json: provides commitlint.config.mjs with the emoji type list and the bun install commands",
+        "Without a package.json: provides the grep-based commit-msg hook and adds no JS dependency",
+        "Provides a lefthook.yml covering pre-commit, commit-msg, and pre-push"
       ]
     },
     {
@@ -69,6 +70,28 @@
         "Provides a gitleaks command appropriate for scanning (git history or staged)",
         "Includes the manual grep pattern as a fallback",
         "Clarifies the difference between scanning staged-only vs full history"
+      ]
+    },
+    {
+      "id": 7,
+      "prompt": "commit this config change",
+      "expected_output": "In a repo whose commit-msg hook accepts only standard Conventional Commit types, commits a config-file change as chore rather than configs",
+      "expectations": [
+        "Reads the commit-msg hook's accepted type list before choosing a type",
+        "Does not use the configs type when the hook's type list lacks it",
+        "Uses the nearest accepted type (chore) and keeps the leading emoji",
+        "The commit lands on the first attempt, with no hook rejection"
+      ]
+    },
+    {
+      "id": 8,
+      "prompt": "commit everything, split it up properly",
+      "expected_output": "When a commit in a multi-commit plan is rejected by a hook, fixes and retries that commit before staging the next group",
+      "expectations": [
+        "After each git commit, verifies it landed (git log -1 shows the header just written)",
+        "On a hook rejection, fixes the cause and retries the same commit",
+        "Does not stage the next group while the rejected commit's files are still staged",
+        "Final history has one commit per planned group, with no group merged into another"
       ]
     }
   ]

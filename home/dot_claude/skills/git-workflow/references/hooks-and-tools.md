@@ -1,24 +1,29 @@
 # Hooks & Tools Reference
 
-Setup guide for lefthook, commitlint, and cz-git.
+Setup guide for lefthook and a commit-msg check, in two variants.
+
+**Pick the variant from the repo.** A repo with a `package.json` takes the
+[Node variant](#node-variant-commitlint--cz-git) (commitlint + cz-git). A repo
+without one takes the [dependency-free variant](#dependency-free-variant-grep-hook):
+adding a JS toolchain to lint commit messages is the wrong trade there.
+Either way, the type list the check accepts is the repo's enforced convention —
+write it once, in the check.
 
 ---
 
 ## Architecture Overview
 
 ```
-pre-commit (fast, auto-fix)
-├── biome check       → lint staged files
-├── biome format      → format staged files
-└── validate-branch   → enforce branch naming
+pre-commit (fast, staged files only)
+├── format / lint     → the repo's formatter and linter
+└── gitleaks --staged → block a secret before it is committed
 
 commit-msg (validate message)
-└── commitlint        → enforce conventional commit format
+└── commitlint, or a grep hook → enforce the commit convention
 
 pre-push (slow, thorough)
-├── type-check        → tsc per workspace
-├── biome lint        → full project lint
-└── gitleaks          → secret scanning
+├── type-check / full lint / tests
+└── gitleaks          → scan the commits about to be pushed
 ```
 
 The principle: fast checks that auto-fix go in pre-commit, message validation
@@ -42,7 +47,8 @@ sudo pacman -S lefthook      # Arch
 lefthook install
 ```
 
-**Config** (`lefthook.yml`):
+**Config** (`lefthook.yml`) — a Node repo using biome and bun; swap the
+commands for the repo's own tools:
 
 ```yaml
 pre-commit:
@@ -72,7 +78,7 @@ pre-push:
     biome-lint:
       run: bunx @biomejs/biome check .
     gitleaks:
-      run: "gitleaks git --pre-commit --staged --verbose"
+      run: 'gitleaks git --log-opts="origin/main..HEAD" --redact --verbose'
 ```
 
 **Key options:**
@@ -103,7 +109,48 @@ Use sparingly — hooks exist for good reason.
 
 ---
 
-## Commitlint
+## Dependency-free variant (grep hook)
+
+For a repo with no `package.json`. The whole check is one `commit-msg` command
+in `lefthook.yml`; it needs GNU grep with PCRE (`-P`) and nothing else:
+
+```yaml
+commit-msg:
+  commands:
+    convention:
+      run: |
+        head -1 {1} | grep -qE '^(Merge |Revert |fixup!|squash!)' && exit 0
+        head -1 {1} | grep -qP '^[^\x00-\x7F]+ (init|feat|fix|hotfix|docs|style|refactor|perf|test|update-deps|configs|chore|breaking|deploy|build|ci|revert)(\([A-Za-z0-9._/-]+\))?!?: .+' \
+          || { echo '✗ commit message must be: <emoji> type(scope): subject'; exit 1; }
+```
+
+- The first line exempts messages git writes itself (merge, revert, fixup,
+  squash).
+- `[^\x00-\x7F]+` requires a leading emoji without listing them, which survives
+  multi-codepoint emoji. Use it rather than `[:ascii:]`: hooks run under the C
+  locale, where glibc rejects that class.
+- The alternation is the accepted type list: the default convention plus
+  `build`, `ci` and `revert`, which bots such as dependabot emit. Edit it there
+  and nowhere else.
+- It checks the header's shape only. Subject case, length and body rules are
+  not enforced; add a `grep` per rule if one matters.
+
+Pair it with pre-commit commands for whatever the repo formats and lints with
+(`dprint`, `shellcheck`, `shfmt`, …) and the two gitleaks commands from the
+overview. There is no interactive prompt in this variant.
+
+Test it:
+
+```bash
+printf '✨ feat(x): add y\n' > /tmp/msg && lefthook run commit-msg /tmp/msg   # passes
+printf 'added stuff\n'      > /tmp/msg && lefthook run commit-msg /tmp/msg   # rejected
+```
+
+---
+
+## Node variant (commitlint + cz-git)
+
+### Commitlint
 
 Validates commit message format against conventional commit rules.
 
@@ -198,7 +245,7 @@ export default defineConfig({
 
 ---
 
-## cz-git
+### cz-git
 
 Interactive commit prompt. Used for **manual commits** (not Claude Code).
 
@@ -261,8 +308,12 @@ Both paths go through the same lefthook hooks — validation is identical.
 
 ## New Project Setup Checklist
 
+Lefthook and gitleaks are system-wide binaries in both variants.
+Dependency-free variant: write `lefthook.yml` with the grep hook above, run
+`lefthook install`, then run the two test commands. Node variant:
+
 ```bash
-# 1. Install JS packages (lefthook and gitleaks are system-wide binaries, not devDeps)
+# 1. Install JS packages
 bun add -D @commitlint/cli cz-git commitizen
 
 # 2. Install lefthook hooks into .git/hooks/
@@ -280,5 +331,5 @@ lefthook install
 # 5. Verify
 lefthook run pre-commit        # test pre-commit hooks manually
 echo "test" | bunx commitlint  # test commitlint rejects bad messages
-gitleaks detect --source .     # test gitleaks secret scan
+gitleaks dir .                 # test gitleaks secret scan on the working tree
 ```
