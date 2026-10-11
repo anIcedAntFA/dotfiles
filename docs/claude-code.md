@@ -57,17 +57,22 @@ Claude flag and subcommand passes straight through.
 Everything inside a config dir is per-account, so `~/.claude.work` is a blank
 slate. The chosen split:
 
-| Shared into work                   | Kept personal-only                               |
-| ---------------------------------- | ------------------------------------------------ |
-| `skills/` (symlink)                | `CLAUDE.md` (`@RTK.md`) — RTK is a personal tool |
-| statusline script (same abs. path) | `memory/` — personal auto-memory                 |
-|                                    | `projects/` — session history                    |
-|                                    | `.credentials.json` — the login itself           |
-|                                    | the **RTK hook** (lives in `settings.json`)      |
+| Shared into work                             | Kept personal-only                               |
+| -------------------------------------------- | ------------------------------------------------ |
+| `skills/` (symlink)                          | `CLAUDE.md` (`@RTK.md`) — RTK is a personal tool |
+| statusline script (same abs. path)           | `memory/` — personal auto-memory                 |
+| `SEARCH.md` — the search rule (by `@`import) | `projects/` — session history                    |
+| the **search guard** hook (same abs. path)   | `.credentials.json` — the login itself           |
+|                                              | the **RTK hook** (lives in `settings.json`)      |
 
 `settings.json` is **not** shared: it carries the RTK command-rewrite hook, so the
-work dir gets its own minimal `settings.json` (statusline block only, no hook).
+work dir gets its own minimal `settings.json` (statusline + search guard, no RTK).
 That keeps RTK — and its token proxy — off every company session by construction.
+
+The [search rule and guard](#search-rule-and-guard-hook) do cross, because the
+reason RTK stays out does not apply to them: they proxy nothing and send nothing
+anywhere — they only decide which local search tool runs. The work `CLAUDE.md` is
+its own one-line file importing `SEARCH.md`; it never sees `@RTK.md`.
 
 ## Bootstrap (once, machine-local — not committed)
 
@@ -82,20 +87,45 @@ claude-work            # browser OAuth flow → approve as the company identity
 # 3. Share skills; keep everything else separate
 ln -s ~/.claude/skills ~/.claude.work/skills
 
-# 4. Give the work dir a settings.json with the statusline but NO RTK hook.
-#    Point it at the same absolute script the personal one uses:
-#    "statusLine": { "type": "command",
-#                    "command": "bash /home/<you>/.claude/statusline-command.sh" }
+# 4. Import the shared search rule — and nothing else — as the work CLAUDE.md
+echo '@~/.claude/SEARCH.md' > ~/.claude.work/CLAUDE.md
+```
+
+Step 5: give the work dir a `settings.json` with the statusline and the search
+guard but **no RTK hook**. Both commands point at the same absolute scripts the
+personal account uses (`<you>` = your `$HOME` user):
+
+```jsonc
+{
+  "statusLine": {
+    "type": "command",
+    "command": "bash /home/<you>/.claude/statusline-command.sh"
+  },
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash /home/<you>/.claude/hooks/search-guard.sh"
+          }
+        ]
+      }
+    ]
+  }
+}
 ```
 
 ## Personal account bootstrap (new machine)
 
 `chezmoi apply` drops `~/.claude/statusline-command.sh`, `~/.claude/CLAUDE.md`,
-and `~/.claude/RTK.md` — but **not** `settings.json` (see
+`~/.claude/RTK.md`, `~/.claude/SEARCH.md`, and `~/.claude/hooks/search-guard.sh`
+— but **not** `settings.json` (see
 [What's tracked](#whats-tracked-and-what-isnt) for why). Two manual steps wire up
 the rest.
 
-1. Point `settings.json` at the statusline and re-add the RTK hook — merge into
+1. Point `settings.json` at the statusline and re-add both hooks — merge into
    `~/.claude/settings.json` (`<you>` = your `$HOME` user):
 
    ```jsonc
@@ -108,7 +138,13 @@ the rest.
        "PreToolUse": [
          {
            "matcher": "Bash",
-           "hooks": [{ "type": "command", "command": "rtk hook claude" }]
+           "hooks": [
+             { "type": "command", "command": "rtk hook claude" },
+             {
+               "type": "command",
+               "command": "bash /home/<you>/.claude/hooks/search-guard.sh"
+             }
+           ]
          }
        ]
      }
@@ -125,29 +161,80 @@ the rest.
    | `cloudflare`              | [cloudflare/skills](https://github.com/cloudflare/skills)                                     | (skills only — cloudflare, wrangler, workers…)                                                           |
    | `svelte`                  | [sveltejs/ai-tools](https://github.com/sveltejs/ai-tools)                                     | (none enabled yet — kept as a known marketplace)                                                         |
 
-3. Re-install the cross-agent skills. These come from the `npx skills` manager
-   (state in `~/.agents/.skill-lock.json`), **not** the Claude plugins — the
-   Claude plugin for the same author exposes a _different_ set and does not
-   include these (`caveman`, `grill-with-docs`, …), so a plugin can't replace
-   them:
+3. Re-install the one cross-agent skill. `find-skills` comes from the
+   `npx skills` manager (state in `~/.agents/.skill-lock.json`), not from a Claude
+   plugin:
 
    ```sh
-   # caveman, grill-with-docs, handoff, teach, write-a-skill, improve-codebase-architecture
-   npx skills@latest add mattpocock/skills
+   npx skills@latest add vercel-labs/skills
    ```
 
-   See [mattpocock/skills → Get the skills](https://github.com/mattpocock/skills#1-get-the-skills).
+> **Skills come from three places, on purpose.** Claude _plugins_ carry
+> everything that has one: the `mattpocock-skills` plugin ships `grilling`,
+> `grill-with-docs`, `research`, `domain-modeling`, `handoff` and the rest, so
+> those are **not** installed per project — a project-level copy under
+> `.claude/skills/` only duplicates the plugin and goes stale. The `npx skills`
+> manager symlinks a skill into every agent's dir (`~/.agents` is its shared
+> home); it is kept for what no plugin offers. The one hand-authored skill —
+> [`git-workflow`](#whats-tracked-and-what-isnt) — is vendored into this repo and
+> applied globally (it encodes this repo's own commit conventions). The
+> token-**proxy** layer is owned by [RTK](rtk.md), so no second proxy is
+> installed alongside it. If Codex (or any second agent) is adopted, relocate
+> `git-workflow` to `~/.agents/skills` and symlink it in, matching the manager's
+> own layout.
 
-> **Skills use two install paths, on purpose.** Claude _plugins_ are Claude-only;
-> the `npx skills` manager symlinks a skill into every agent's dir (`~/.agents` is
-> its shared home), which is why cross-agent skills go through it. The one
-> hand-authored skill — [`git-workflow`](#whats-tracked-and-what-isnt) — is
-> vendored into this repo instead (it encodes this repo's own commit
-> conventions). `caveman` is the skill layer only; the token-**proxy** layer is
-> owned by RTK, so [JuliusBrussee/caveman](https://github.com/JuliusBrussee/caveman)'s
-> proxy is deliberately not installed (it would double up on RTK). If Codex (or
-> any second agent) is adopted, relocate `git-workflow` to `~/.agents/skills` and
-> symlink it in, matching the manager's own layout.
+## Search rule and guard hook
+
+Agents search through the shell, and left alone they type `grep -r` and `find`.
+Two pieces, shared by both accounts, move them to [`rg`](ripgrep.md) and
+[`fd`](fd.md):
+
+- **The rule** — [`SEARCH.md`](../home/dot_claude/SEARCH.md), imported from each
+  account's `CLAUDE.md`. It names the tools, and it sets the **escalation
+  ladder**: `rg` → `rg -uu`, `fd -H` → `fd -HI -E .git`, and no "it does not
+  exist" until the unrestricted step comes back empty. `rg` and `fd` skip
+  gitignored files without saying so; the ladder is what makes that safe.
+- **The guard hook** —
+  [`search-guard.sh`](../home/dot_claude/hooks/executable_search-guard.sh), a
+  `PreToolUse` hook on Bash. A rule is advice; the hook is the part that holds.
+
+The guard **refuses** and explains; it never rewrites. Translating `grep` to `rg`
+or `find` to `fd` mechanically is not safe (different regex dialects, no 1:1 for
+`find` expressions), and a refusal leaves the agent knowing which tool it is
+running and what that tool cannot see.
+
+| Command                                         | Guard   | Why                                            |
+| ----------------------------------------------- | ------- | ---------------------------------------------- |
+| `grep -rn foo docs` (`-r`, `-R`, `--recursive`) | refused | that is `rg`'s job                             |
+| `find . -name '*.md'`                           | refused | that is `fd`'s job                             |
+| `cmd \| grep foo`                               | allowed | filtering a stream — nothing is skipped        |
+| `grep foo file.txt`                             | allowed | one named file — nothing is skipped            |
+| `git grep foo`                                  | allowed | different tool, explicit scope (tracked files) |
+| `command find …` · `command grep -r …`          | allowed | the escape hatch                               |
+
+`command …` is for what `fd` and `rg` cannot express (`find -perm`, `-newer`,
+`-delete`; POSIX BRE). It also sidesteps the RTK hook, so it runs the real tool
+and sees every file. `rtk grep …` and `rtk find …` typed by hand are judged as
+`grep` and `find`.
+
+On the personal account the guard sits **next to** the RTK rewrite hook, and for
+`find` that pairing matters. RTK alone turns `find` into `rtk find`, which is not
+`find`: it skips gitignored files and dotfiles and rejects most predicates — the
+agent types a tool that sees everything and silently gets one that does not
+([rtk.md](rtk.md#what-rtk-can-cost-you)). Both hooks run in parallel on the same
+call, and when they disagree Claude Code takes the strictest answer (`deny` >
+`defer` > `ask` > `allow`), so the guard's refusal beats RTK's rewrite. Verified
+in a live session: `find . -maxdepth 0` is refused, not run as `rtk find`.
+
+Test the guard without Claude:
+
+```sh
+echo '{"tool_input":{"command":"find . -name x"}}' | bash ~/.claude/hooks/search-guard.sh
+```
+
+It fails open: no `jq`, or input it cannot parse, lets the command through. It is
+a nudge for a cooperative agent, not a security boundary — a heredoc body or a
+`bash -c '…'` string is not inspected.
 
 ## Knowing which account you're in
 
@@ -170,9 +257,13 @@ exported by the wrapper and inherited by the statusline subprocess.
 - `home/dot_claude/statusline-command.sh` → `~/.claude/statusline-command.sh` — a
   static, self-authored script with no per-machine value (it only reads
   `$CLAUDE_CONFIG_DIR` and matches a generic `*/.claude.work`);
-- `home/dot_claude/CLAUDE.md` (`@RTK.md`) and `RTK.md` — the personal global
-  instructions. Secret-free and portable; the RTK proxy they describe is already
-  tracked under [`dot_config/rtk`](../home/dot_config/rtk);
+- `home/dot_claude/CLAUDE.md` (`@RTK.md`, `@SEARCH.md`) and `RTK.md` — the
+  personal global instructions. Secret-free and portable; the RTK proxy they
+  describe is already tracked under [`dot_config/rtk`](../home/dot_config/rtk);
+- `home/dot_claude/SEARCH.md` and `home/dot_claude/hooks/executable_search-guard.sh`
+  → `~/.claude/SEARCH.md`, `~/.claude/hooks/search-guard.sh` — the
+  [search rule and guard](#search-rule-and-guard-hook), written to be
+  account-neutral so the work dir can point at the same files;
 - `home/dot_claude/skills/git-workflow/` → `~/.claude/skills/git-workflow` — the
   one hand-authored, repo-agnostic skill (it encodes this repo's own commit
   conventions), so it is vendored and available in every project. Everything else
@@ -189,7 +280,7 @@ a theme toggle, enabling a plugin — so tracking it would mean the same
 app-owned-snapshot drift as noctalia
 ([ADR 0012](adr/0012-noctalia-config-tracked-as-app-owned-snapshot.md)):
 re-syncing source from the live file after every UI change. The little worth
-reproducing (the statusline wiring, the RTK hook, the plugin list) is captured as
+reproducing (the statusline wiring, the two hooks, the plugin list) is captured as
 a copy-paste bootstrap above instead.
 
 ## Related
@@ -197,6 +288,8 @@ a copy-paste bootstrap above instead.
 - [git.md](git.md) — the same personal/work identity split for git (`includeIf`)
 - [ghq.md](ghq.md) — where the company root (`ghqCompanyRoot`) comes from
 - [direnv.md](direnv.md) — path-based env, the editor-proof upgrade
+- [rtk.md](rtk.md) — the token proxy behind the personal-only hook
+- [ripgrep.md](ripgrep.md) · [fd.md](fd.md) — the tools the search rule points at
 - [ADR 0023](adr/0023-multi-account-claude-code-via-config-dir.md) — why this design
 - [ADR 0002](adr/0002-private-data-via-templates.md) — private paths via templates
 

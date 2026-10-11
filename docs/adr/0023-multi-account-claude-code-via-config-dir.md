@@ -47,4 +47,10 @@ Choices worth recording:
 - The account signal depends on the statusline inheriting `CLAUDE_CONFIG_DIR` from
   the wrapper; if a future build stops passing it through, export a dedicated
   `CLAUDE_ACCOUNT` instead.
+- **Amended (search rule + guard hook).** The shared set grew by two:
+  `SEARCH.md` (the `rg`/`fd` rule, `@`-imported by a work-only `CLAUDE.md`) and
+  the search guard hook. The boundary's reason is untouched — they proxy nothing
+  and send nothing off the machine — so RTK, `memory/`, history and credentials
+  stay personal-only, and the work `settings.json` is now "statusline + guard, no
+  RTK" rather than hook-free.
 - Full guide: [docs/claude-code.md](../claude-code.md).
