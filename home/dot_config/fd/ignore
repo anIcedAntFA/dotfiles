@@ -1,0 +1,7 @@
+# fd global ignore — https://github.com/sharkdp/fd
+# Read from ~/.config/fd/ignore on every fd call; same syntax as .gitignore.
+# fd has no config file for flags, so this is the only global knob. It mirrors
+# the --glob excludes in ../ripgrep/config: with -H (dotfiles), don't descend
+# into these.
+.git/
+vendor/
