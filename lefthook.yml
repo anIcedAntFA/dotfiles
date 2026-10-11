@@ -40,12 +40,14 @@ pre-commit:
 # messages (merge/revert/fixup/squash) are exempt. The leading `[^\x00-\x7F]+` (PCRE)
 # gate requires a gitmoji without enumerating them (robust to multi-codepoint emoji);
 # it's used instead of `[:ascii:]`, which glibc rejects under the hook's C locale.
+# The type list is the same 14 the other personal repos enforce via commitlint (and
+# the git-workflow skill defaults to), plus build/ci/revert for dependabot and git.
 commit-msg:
   commands:
     convention:
       run: |
         head -1 {1} | grep -qE '^(Merge |Revert |fixup!|squash!)' && exit 0
-        head -1 {1} | grep -qP '^[^\x00-\x7F]+ (feat|fix|docs|style|refactor|perf|test|build|ci|chore|revert)(\([A-Za-z0-9._/-]+\))?!?: .+' \
+        head -1 {1} | grep -qP '^[^\x00-\x7F]+ (init|feat|fix|hotfix|docs|style|refactor|perf|test|update-deps|configs|chore|breaking|deploy|build|ci|revert)(\([A-Za-z0-9._/-]+\))?!?: .+' \
           || { echo '✗ commit message must be: <emoji> type(scope): subject  — e.g. ✨ feat(fish): add abbr'; exit 1; }
 
 # Last gate before bytes reach the public remote: full-history secret scan. Catches
