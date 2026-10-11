@@ -147,7 +147,7 @@ Each tool has a focused guide covering **what it is, why, and how to set it up**
 | [ghq.md](docs/ghq.md)                                           | Organized repo cloning + fuzzy jumping                                                     |
 | [ssh.md](docs/ssh.md)                                           | SSH keys per host (personal + work auth)                                                   |
 | [git.md](docs/git.md)                                           | Git identities, `includeIf`, SSH commit signing                                            |
-| [claude-code.md](docs/claude-code.md)                           | Personal + company Teams accounts, one machine (`CLAUDE_CONFIG_DIR`)                       |
+| [claude-code.md](docs/claude-code.md)                           | Personal + company Teams accounts (`CLAUDE_CONFIG_DIR`), `rg`/`fd` search rule + guard     |
 | [gopass.md](docs/gopass.md)                                     | Terminal password manager (GPG + git)                                                      |
 | [certs.md](docs/certs.md)                                       | Corporate CA certs — trust store restore                                                   |
 | [vpn.md](docs/vpn.md)                                           | Corporate VPN (GlobalProtect / `gpclient`)                                                 |
@@ -167,7 +167,10 @@ Each tool has a focused guide covering **what it is, why, and how to set it up**
 | [clipboard.md](docs/clipboard.md)                               | Clipboard history (cliphist + Noctalia launcher)                                           |
 | [archives.md](docs/archives.md)                                 | Compression / archives (7zz · ouch · PeaZip GUI)                                           |
 | [mise.md](docs/mise.md)                                         | Runtime / dev-env version management                                                       |
-| [ripgrep.md](docs/ripgrep.md)                                   | Fast recursive search + config (`RIPGREP_CONFIG_PATH`)                                     |
+| [ripgrep.md](docs/ripgrep.md)                                   | Fast recursive search + config (`RIPGREP_CONFIG_PATH`), what a search sees                 |
+| ⤷ [fd.md](docs/fd.md)                                           | Find files by name — `find` replacement, global ignore file                                |
+| ⤷ [search-concepts.vi.md](docs/search-concepts.vi.md)           | Theory: grep vs rg, find vs fd, and what a search silently misses (tiếng Việt)             |
+| [rtk.md](docs/rtk.md)                                           | Token proxy for AI agents — rewrite hook, reading `rtk gain`, what compression costs       |
 | [direnv.md](docs/direnv.md)                                     | Per-directory environments (`.envrc`)                                                      |
 
 Bigger design decisions are recorded as [ADRs](docs/adr/).
