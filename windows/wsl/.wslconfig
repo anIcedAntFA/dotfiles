@@ -1,0 +1,15 @@
+# %USERPROFILE%\.wslconfig — global WSL2 VM settings, for every distro.
+# Windows host only (docs/windows.md). Copy to C:\Users\<you>\.wslconfig, then
+# `wsl --shutdown` to apply.
+#
+# https://learn.microsoft.com/en-us/windows/wsl/wsl-config#wslconfig
+
+[wsl2]
+# The VM takes up to half of host RAM by default. Uncomment to cap it.
+# memory=12GB
+
+# Behind the work VPN: if DNS or connections fail inside the guest while they
+# work on Windows, try these three first (Microsoft's enterprise guidance).
+# networkingMode=mirrored
+# dnsTunneling=true
+# autoProxy=true
