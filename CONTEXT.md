@@ -72,6 +72,24 @@ startup apps, and input. The value is a generic form-factor label, never a hostn
 or company name (the real hostname may carry a company tag, so it stays out of the repo).
 _Avoid_: host, box, device (in config we say profile / the `machine` var).
 
+**Host alias**:
+The short label the shell prompt shows in place of the real hostname, chosen per
+machine and kept out of the repo. It tells one machine from another on screen and
+may simply repeat the **machine profile**.
+_Avoid_: hostname (the real one, which may carry a company tag).
+
+**Runtime state** vs **Generated output** vs **App-owned config**:
+Three kinds of file an application writes by itself, each tracked differently.
+**Runtime state** is bookkeeping the app rewrites as it runs (fish's universal
+variables) — never tracked. **Generated output** is rendered from another source
+on some trigger (the per-app files Noctalia writes on a theme change) — never
+tracked, at most _seeded_ once where something would break without the file.
+**App-owned config** is real preference data the app rewrites in its own format
+(fcitx5, btop) — tracked, and it flows from the machine into the repo, not the
+other way.
+_Avoid_: "drift" for a newer app-owned file (the repo is the stale side); tracking
+a snapshot of runtime state or generated output.
+
 ## Desktop
 
 **Desktop shell** vs **Login shell**:
@@ -371,9 +389,23 @@ auto-enables/disables anything.
 ## Identity
 
 **Identity** (personal / work):
-A git author+signing pair selected by directory via `includeIf`. "Personal" is the
-default; "work" applies under the company ghq root.
-_Avoid_: account, profile, user.
+A git author+signing pair selected by directory. "Personal" is the default; "work"
+applies under the **company root**.
+_Avoid_: account (that is the Claude login, below), profile, user.
+
+**Account** (personal / work):
+A Claude Code login together with the config dir that holds its state — history,
+memory, settings. "Personal" is the default; "work" is the company Teams login and
+applies under the **company root**. Tooling may be shared between the two; the
+login, history and memory never are.
+_Avoid_: identity (that is git's), profile; "claude-work" for the account (that
+names the command that forces it).
+
+**Company root**:
+The one directory under which everything is "work". A single boundary selects both
+the work **Identity** and the work **Account**, so they cannot disagree about
+whether a path is company work.
+_Avoid_: work dir, company folder; defining a second boundary per tool.
 
 ## Search
 
