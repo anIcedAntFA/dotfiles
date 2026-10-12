@@ -53,4 +53,16 @@ Choices worth recording:
   and send nothing off the machine — so RTK, `memory/`, history and credentials
   stay personal-only, and the work `settings.json` is now "statusline + guard, no
   RTK" rather than hook-free.
+- **Amended (RTK crosses; shared set managed by chezmoi).** RTK is no longer
+  personal-only. The original rule over-read "proxy": RTK filters command output
+  locally with telemetry off, so it sends nothing the Teams policy covers. Both
+  accounts now run the RTK hook and import `RTK.md`. Accepted cost: company
+  command output shares RTK's local history and plaintext tee logs with personal
+  sessions, on a par with shell history. `settings.json` stays per-account, now
+  only because Claude Code rewrites it (plugins, model, theme). The first work
+  machine also showed the manual bootstrap does not hold — it had the RTK hook
+  but no guard, no `skills` link and no `CLAUDE.md` — so the work `CLAUDE.md` and
+  the `skills` symlink are chezmoi-managed (`home/dot_claude.work/`) on every
+  machine. What the boundary still isolates: the login, `projects/` history and
+  `memory/`.
 - Full guide: [docs/claude-code.md](../claude-code.md).
