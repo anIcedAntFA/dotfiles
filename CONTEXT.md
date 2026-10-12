@@ -374,3 +374,32 @@ auto-enables/disables anything.
 A git author+signing pair selected by directory via `includeIf`. "Personal" is the
 default; "work" applies under the company ghq root.
 _Avoid_: account, profile, user.
+
+## Search
+
+**Search visibility** (default / hidden / unrestricted):
+The set of files a search command actually considers. **Default** skips dotfiles
+and ignored files; **hidden** adds dotfiles; **unrestricted** adds ignored files
+too. Named for the set seen, not the tool — the same tool can sit at different
+levels depending on its config.
+_Avoid_: "everything", "the whole repo" for a search that ran below unrestricted.
+
+**Escalation ladder**:
+The required order of widening **search visibility** before a search may conclude
+that something does not exist. An empty result below unrestricted is "not seen",
+not "absent".
+_Avoid_: fallback, retry.
+
+**Silent narrowing** vs **Signalled truncation**:
+Two ways a result ends up smaller than the truth. **Silent narrowing** drops
+files or matches with nothing in the output saying so (an ignore rule, a
+substituted tool with a different visibility). **Signalled truncation** cuts the
+output but says it did and where the rest is. The first is a defect to design
+out; the second is acceptable.
+_Avoid_: "filtered", "compressed" for either — they hide which of the two it is.
+
+**Rewrite hook** vs **Guard hook**:
+Two kinds of agent command hook. A **rewrite hook** substitutes a different
+command and lets it run; a **guard hook** refuses the command and states why,
+leaving the agent to choose the replacement.
+_Avoid_: "blocker", "proxy", plain "the hook" when both are installed.

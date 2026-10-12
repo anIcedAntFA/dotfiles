@@ -54,8 +54,11 @@ images/      screenshots & wallpapers
 
 - Whitespace: `.editorconfig` (tabs default; spaces for JSON/YAML; 4-space fish).
 - Commits: gitmoji + Conventional Commits, e.g. `✨ feat(niri): …`, `🐛 fix(fish): …`.
-- Searching: prefer `rg` (ripgrep — installed) over `grep` in shell commands;
-  it's `.gitignore`-aware and faster. Don't alias `grep` itself.
+- Searching: `rg` for content, `fd -H` for files — not `grep -r` / `find` (a
+  guard hook refuses those). Both skip gitignored files silently, so widen with
+  `rg -uu` / `fd -HI -E .git` before concluding something is absent. Don't
+  alias `grep`.
+  See [docs/ripgrep.md](docs/ripgrep.md), [docs/fd.md](docs/fd.md).
 
 ## Adding a new config
 
