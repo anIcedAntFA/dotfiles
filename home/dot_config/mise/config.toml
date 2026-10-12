@@ -1,6 +1,6 @@
 [tools]
-bun = "1.3.9"
-go = "1.26.3"
+bun = "1.4.2"
+go = "1.27.1"
 node = "24.13.1"
 pnpm = "10.29.3"
 wrangler = "latest"

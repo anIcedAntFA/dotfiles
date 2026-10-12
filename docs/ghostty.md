@@ -159,7 +159,7 @@ of `themes/latte` and `themes/dracula` carries its own image alongside its palet
 background-image = ~/.config/ghostty/backgrounds/dark.jpg
 background-image-fit = cover           # contain | cover | stretch | none
 background-image-position = center
-background-image-opacity = 0.1         # keep low so text stays legible
+background-image-opacity = 0.15        # keep low so text stays legible
 ```
 
 `theme = light:latte,dark:dracula` then swaps palette **and** image together when

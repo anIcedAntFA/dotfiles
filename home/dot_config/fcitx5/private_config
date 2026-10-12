@@ -12,7 +12,6 @@ ModifierOnlyKeyTimeout=250
 
 [Hotkey/TriggerKeys]
 0=Super+Z
-1=e
 
 [Hotkey/ActivateKeys]
 0=Hangul_Hanja
@@ -45,7 +44,7 @@ ModifierOnlyKeyTimeout=250
 0=Control+Alt+P
 
 [Behavior]
-# Active By Default
+# Activate input method by default
 ActiveByDefault=False
 # Reset state on Focus In
 resetStateWhenFocusIn=No
@@ -61,7 +60,7 @@ showInputMethodInformationWhenFocusIn=False
 CompactInputMethodInformation=True
 # Show first input method information
 ShowFirstInputMethodInformation=True
-# Default page size
+# Default Candidates per page
 DefaultPageSize=5
 # Override XKB Option
 OverrideXkbOption=False
@@ -79,3 +78,4 @@ AllowInputMethodForPassword=False
 ShowPreeditForPassword=False
 # Interval of saving user data in minutes
 AutoSavePeriod=30
+

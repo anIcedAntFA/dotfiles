@@ -1,9 +1,18 @@
 # Patterns here match TARGET paths under $HOME that chezmoi should NOT manage.
 # (The repo README, docs/, packages/, etc. live above the source root — set by
 # .chezmoiroot -> "home" — so they never reach $HOME and need no entry here.)
-#
-# Add entries such as:
-#   .config/fish/fish_variables   # if its runtime churn becomes noisy
+
+# fish's universal-variable store is runtime state, not config: fish rewrites it
+# on upgrade, fisher on plugin changes, the theme sync on every mode flip. A
+# tracked snapshot goes stale and regresses other machines on apply (it carried
+# the jethrokuan/z plugin record long after .chezmoiremove dropped z). Anything
+# that must hold everywhere belongs in config.fish instead.
+.config/fish/fish_variables
+
+# Noctalia regenerates this on every theme change (see zathurarc). zathura treats
+# the missing include as a non-fatal warning, so a fresh machine needs no seed —
+# unlike niri's noctalia.kdl, which is a `create_` file for exactly that reason.
+.config/zathura/noctaliarc
 
 # Noctalia v5 config is tracked on every profile: 00-base.toml (machine-agnostic)
 # + palettes/ ship everywhere, and 10-machine.toml.tmpl branches per `.machine`

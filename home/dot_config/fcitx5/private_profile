@@ -10,7 +10,7 @@ DefaultIM=bamboo
 # Name
 Name=keyboard-us
 # Layout
-Layout=
+# Layout=
 
 [Groups/0/Items/1]
 # Name
@@ -18,5 +18,12 @@ Name=bamboo
 # Layout
 Layout=us
 
+[Groups/0/Items/2]
+# Name
+Name=hangul
+# Layout
+# Layout=
+
 [GroupOrder]
 0=Default
+
