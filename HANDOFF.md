@@ -10,11 +10,13 @@ The repo side is done and committed on `chore/sync-work-machine`; nothing under
 
 ## Next steps
 
-1. Boot Windows, run `powercfg /h off` in an elevated terminal, record the
+1. ~~Boot Windows, run `powercfg /h off` in an elevated terminal, record the
    output of `wsl --status`, `winget --version`, `manage-bde -status C:` and
-   `powercfg /a`, then leave via **Restart** (not Shut down).
-2. Back on Linux, copy the already-built hand-off archive to the NTFS data disk
-   (it was refused once because Fast Startup held the volume).
+   `powercfg /a`, then leave via **Restart** (not Shut down).~~ Done
+   2026-10-12; results are in the checklist in `docs/windows.md`.
+2. ~~Back on Linux, copy the already-built hand-off archive to the NTFS data disk
+   (it was refused once because Fast Startup held the volume).~~ Done
+   2026-10-12; the copy's checksum was verified.
 3. Boot Windows for good and follow [docs/windows.md](docs/windows.md) from
    "Windows host" down, ticking its checklist and correcting the guide where
    reality disagrees.

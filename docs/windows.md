@@ -90,7 +90,14 @@ Run in order. Each step that needs an elevated terminal says so.
 
    ```powershell
    wsl --install archlinux
+   wsl --set-default archlinux
    ```
+
+   The second line matters when another distro is already there (this box
+   shipped with `Ubuntu-22.04` as the default): bare `wsl`, VS Code's WSL
+   extension and `\\wsl.localhost\` all follow the default. Leave the old
+   distro alone until the checklist below is ticked, then drop it with
+   `wsl --unregister <name>` — that deletes its filesystem for good.
 
 2. **Apps:**
 
@@ -186,10 +193,15 @@ Nothing below could be checked from Linux.
 
 - [ ] Account rights: local admin, on-demand elevation, or neither?
 - [ ] `wsl --status` works and `wsl --install archlinux` is allowed by policy.
-- [ ] `manage-bde -status C:` — is BitLocker on, or about to be? If so, stop
-      mounting Windows volumes from Linux.
-- [ ] `powercfg /a` — Fast Startup / hibernation state; may it be turned off?
+      _2026-10-12: works — WSL 2, an `Ubuntu-22.04` distro is already the
+      default. The Arch install is still untried._
+- [x] `manage-bde -status C:` — is BitLocker on, or about to be? If so, stop
+      mounting Windows volumes from Linux. _2026-10-12: off, fully decrypted._
+- [x] `powercfg /a` — Fast Startup / hibernation state; may it be turned off?
+      _2026-10-12: `powercfg /h off` accepted; hibernation and Fast Startup are
+      both unavailable, only S3 standby is left._
 - [ ] `winget --version` works and reaches its source through the proxy.
+      _2026-10-12: v1.29.380. Reaching the source is still untried._
 - [ ] Is a third-party window manager allowed? GlazeWM starts and takes the
       `Win` binds (`Win+L` cannot be rebound; `Win+digit` should be).
 - [ ] WezTerm loads `wezterm.lua` without a config error and opens in the Arch
