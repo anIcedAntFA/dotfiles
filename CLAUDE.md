@@ -21,7 +21,8 @@ The repo is **public** and feeds a blog, so it must stay free of private data.
    `~/.config/`, `private_dot_ssh/` → `~/.ssh/` (0600), `*.tmpl` = templated.
 3. **System files under `etc/` are NOT chezmoi-managed.** They mirror `/etc/*`
    and are applied by hand (`sudo cp`), documented per guide. Keep them at the
-   repo root, never under `home/`.
+   repo root, never under `home/`. The same holds for `windows/` (config for
+   the Windows host around a WSL guest): copied by hand, never under `home/`.
 4. **Run `just check` before committing.** It's what CI runs.
 
 ## Layout
@@ -31,6 +32,7 @@ home/        chezmoi source (dot_config/, private_dot_ssh/, *.tmpl, .chezmoi.tom
 docs/        per-tool guides + adr/ (Architecture Decision Records)
 packages/    pacman-explicit.txt + aur.txt snapshots
 etc/         /etc system files (manual apply)
+windows/     Windows-host config (manual apply) — see docs/windows.md
 images/      screenshots & wallpapers
 ```
 

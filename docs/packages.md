@@ -8,6 +8,10 @@ setup what it is — grouped by purpose, with a short _why_ and a link each.
 - **`packages/pacman-explicit.txt`** — every explicitly installed native package
   (`pacman -Qqe`). The reproducible source of truth.
 - **`packages/aur.txt`** — AUR / foreign packages (`pacman -Qqm`).
+- **`packages/pacman-wsl.txt`** + **`packages/aur-wsl.txt`** — the hand-curated
+  terminal-only subset installed on a WSL guest, and **`packages/winget.json`** —
+  the GUI apps for the Windows host around it (`winget import`). See
+  [windows.md](windows.md).
 - **`packages/vscode-extensions.txt`** — VS Code extension IDs (`code
   --list-extensions`), installed via
   [`run_onchange_install-vscode-extensions.sh.tmpl`](../home/.chezmoiscripts/run_onchange_install-vscode-extensions.sh.tmpl).

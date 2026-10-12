@@ -72,6 +72,20 @@ startup apps, and input. The value is a generic form-factor label, never a hostn
 or company name (the real hostname may carry a company tag, so it stays out of the repo).
 _Avoid_: host, box, device (in config we say profile / the `machine` var).
 
+**Desktop host** vs **WSL guest** vs **Windows host**:
+Where an install of this config runs — a second axis, independent of the **machine
+profile**. A **Desktop host** is Linux booted on the metal: it owns the login,
+the Wayland session and the outputs, so the desktop layer applies. A **WSL guest**
+is Linux running inside Windows on that same box: it keeps the box's profile but
+owns no session and no outputs, so only the terminal layer applies. The **Windows
+host** is the Windows install around a WSL guest — it supplies the desktop the
+guest lacks (terminal emulator, window management, input method, GUI apps). One
+box can be a Desktop host on one boot and a Windows host with a WSL guest on the
+next; its profile is the same in both.
+_Avoid_: adding `wsl` or `windows` as a **machine profile** (a profile names a box,
+not what is booted on it); "headless" for a WSL guest (it has a desktop — the
+Windows host's); "host" alone.
+
 **Host alias**:
 The short label the shell prompt shows in place of the real hostname, chosen per
 machine and kept out of the repo. It tells one machine from another on screen and
