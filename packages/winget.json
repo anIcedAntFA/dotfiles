@@ -14,9 +14,7 @@
         { "PackageIdentifier": "Google.Chrome" },
         { "PackageIdentifier": "SlackTechnologies.Slack" },
         { "PackageIdentifier": "Microsoft.Teams" },
-        { "PackageIdentifier": "Discord.Discord" },
         { "PackageIdentifier": "Bruno.Bruno" },
-        { "PackageIdentifier": "PostgreSQL.pgAdmin" },
         { "PackageIdentifier": "ShareX.ShareX" },
         { "PackageIdentifier": "OBSProject.OBSStudio" },
         { "PackageIdentifier": "SumatraPDF.SumatraPDF" }
