@@ -1,0 +1,4 @@
+# Every text file is LF in the repo and in every checkout, including a Windows
+# one: these files are applied into Linux (chezmoi, /etc, WSL), where a CRLF
+# shebang or config line breaks. Git's binary detection covers images/.
+* text=auto eol=lf

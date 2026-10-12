@@ -1,0 +1,81 @@
+# WSL guest package set — the terminal layer only (see docs/windows.md).
+# Hand-curated subset of pacman-explicit.txt: no kernel, firmware, bootloader,
+# compositor, audio, input method or GUI apps — the Windows host supplies those.
+# Every name here is in Arch's own core/extra, so a stock Arch WSL image can
+# install it with plain pacman:
+#
+#   sudo pacman -S --needed - < <(grep -v '^#' packages/pacman-wsl.txt)
+#
+# AUR packages (need yay, which Arch itself does not ship) are in aur-wsl.txt.
+7zip
+base
+base-devel
+bash-completion
+bat
+bind
+btop
+chezmoi
+curlie
+diffutils
+direnv
+docker
+docker-buildx
+docker-compose
+dos2unix
+duf
+eza
+fastfetch
+fd
+fish
+fisher
+fzf
+gemini-cli
+ghq
+git
+git-cliff
+git-delta
+git-filter-repo
+github-cli
+gitleaks
+glances
+gnupg
+go
+gopass
+hyperfine
+inetutils
+jq
+lazydocker
+less
+man-db
+man-pages
+mise
+nano
+neovim
+openssh
+ouch
+pacman-contrib
+peco
+pinentry
+pkgfile
+plocate
+podman
+podman-compose
+postgresql
+pv
+python
+ripgrep
+rsync
+starship
+sudo
+superfile
+tldr
+tree
+turbo
+unrar
+unzip
+uv
+wget
+which
+wl-clipboard
+zellij
+zoxide

@@ -1,0 +1,4 @@
+# AUR packages for a WSL guest — the terminal-layer subset of aur.txt.
+# Needs yay, bootstrapped by hand on stock Arch (docs/windows.md).
+flyctl
+witr

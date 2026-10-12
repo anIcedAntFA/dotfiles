@@ -19,3 +19,51 @@
 # (monitors, wallpaper, DPI). The per-output wallpaper darkman hook is likewise a
 # `.tmpl` that branches per machine. Nothing here is home-only any more.
 # See docs/adr/0020 (supersedes 0012).
+
+# WSL guest (Linux inside Windows — see CONTEXT.md, docs/windows.md, ADR 0025):
+# the Windows host owns the desktop, so only the terminal layer applies. Detected
+# from the kernel release string, which WSL2 tags with "microsoft"; nothing is
+# prompted, and a Desktop host renders this block empty. `.chezmoi.kernel` only
+# exists on Linux, hence the os check first.
+{{ if and (eq .chezmoi.os "linux") (.chezmoi.kernel.osrelease | lower | contains "microsoft") }}
+# Compositor, desktop shell, theming, input method, portals.
+.config/niri
+.config/noctalia
+.config/darkman
+.config/fcitx5
+.config/nwg-look
+.config/qt5ct
+.config/qt6ct
+.config/xdg-desktop-portal
+.config/environment.d/electron.conf
+.config/environment.d/fcitx5.conf
+.config/environment.d/qt.conf
+.config/environment.d/wayland.conf
+.config/user-dirs.conf
+.config/user-dirs.dirs
+.local/share/darkman
+.local/share/applications
+
+# GUI apps — these run on the Windows host, not in the guest.
+.config/ghostty
+.config/Thunar
+.config/satty
+.config/zathura
+.config/zed
+.config/Code
+.config/code-flags.conf
+
+# Session scripts that drive the above. dot-clip-copy/-paste stay: WSLg bridges
+# the Wayland clipboard to Windows.
+.local/bin/dot-niri-startup
+.local/bin/dot-screenrec
+.local/bin/dot-screenshot
+.local/bin/dot-setup-papirus
+.local/bin/dot-spawn-ghostty
+.local/bin/dot-theme-reconcile
+.local/bin/dot-theme-toggle
+
+# Scripts are ignored by target name (attributes and .tmpl stripped).
+.chezmoiscripts/enable-darkman-service.sh
+.chezmoiscripts/install-vscode-extensions.sh
+{{ end }}
