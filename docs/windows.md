@@ -32,7 +32,7 @@ still `work`.
 | On the Desktop host         | On the Windows host                                         |
 | --------------------------- | ----------------------------------------------------------- |
 | niri                        | GlazeWM — `windows/glazewm/config.yaml`, niri-style keys    |
-| Ghostty                     | Windows Terminal — `windows/terminal/dotfiles.json`         |
+| Ghostty                     | WezTerm (nightly) — `windows/wezterm/wezterm.lua`           |
 | Noctalia launcher           | PowerToys Command Palette                                   |
 | Noctalia clipboard          | `Win+V`                                                     |
 | darkman                     | PowerToys Light Switch                                      |
@@ -104,15 +104,19 @@ Run in order. Each step that needs an elevated terminal says so.
 
 3. **`windows/` files** — copy, do not symlink (symlinks need Developer Mode):
 
-   | From                             | To                                                                           |
-   | -------------------------------- | ---------------------------------------------------------------------------- |
-   | `windows/wsl/.wslconfig`         | `%USERPROFILE%\.wslconfig`                                                   |
-   | `windows/glazewm/config.yaml`    | `%USERPROFILE%\.glzr\glazewm\config.yaml`                                    |
-   | `windows/terminal/dotfiles.json` | `%LOCALAPPDATA%\Microsoft\Windows Terminal\Fragments\dotfiles\dotfiles.json` |
+   | From                                   | To                                           |
+   | -------------------------------------- | -------------------------------------------- |
+   | `windows/wsl/.wslconfig`               | `%USERPROFILE%\.wslconfig`                   |
+   | `windows/glazewm/config.yaml`          | `%USERPROFILE%\.glzr\glazewm\config.yaml`    |
+   | `windows/wezterm/wezterm.lua`          | `%USERPROFILE%\.config\wezterm\wezterm.lua`  |
+   | `home/dot_config/ghostty/backgrounds/` | `%USERPROFILE%\.config\wezterm\backgrounds\` |
 
-   The Terminal file is a _fragment_: it adds an **Arch** profile without
-   touching Terminal's own `settings.json`. Set it as the default profile in
-   Terminal's settings.
+   WezTerm is a port of the Ghostty config: same palettes, background images,
+   light/dark follow and `Alt` keybinds. It opens straight into the Arch guest
+   once that distro exists, and in PowerShell until then. The **nightly** build
+   is used on purpose — the last tagged release is from February 2024. Ghostty
+   has no Windows build; Windows Terminal and Alacritty were passed over because
+   neither does a per-mode background image.
 
 4. **Input:** Settings → Time & language → Language & region → add Vietnamese
    (Telex) and Korean.
@@ -188,7 +192,12 @@ Nothing below could be checked from Linux.
 - [ ] `winget --version` works and reaches its source through the proxy.
 - [ ] Is a third-party window manager allowed? GlazeWM starts and takes the
       `Win` binds (`Win+L` cannot be rebound; `Win+digit` should be).
-- [ ] Windows Terminal picks up the fragment and shows the **Arch** profile.
+- [ ] WezTerm loads `wezterm.lua` without a config error and opens in the Arch
+      guest (domain `WSL:archlinux`).
+- [ ] WezTerm: the background image shows, and palette + image flip when
+      Windows switches light/dark.
+- [ ] WezTerm: `Alt+Space` works as the leader (Windows uses it for the window
+      menu) and the `Alt` binds do not collide with GlazeWM.
 - [ ] Networking inside the guest with the VPN up. If it fails, uncomment the
       three lines in `.wslconfig`.
 - [ ] `gopass ls` decrypts one secret; `git commit -S` signs; `ssh -T` reaches
@@ -199,7 +208,7 @@ Nothing below could be checked from Linux.
       `dot-clip-copy` / `dot-clip-paste`).
 - [ ] fish theme: `auto-sync-theme` is a no-op without dconf, so the guest keeps
       whichever theme was last chosen. Decide whether to pin one.
-- [ ] Fonts: JetBrainsMono Nerd Font renders prompt glyphs in Windows Terminal.
+- [ ] Fonts: JetBrainsMono Nerd Font renders prompt glyphs in WezTerm.
 
 ## References
 
@@ -207,6 +216,6 @@ Nothing below could be checked from Linux.
 - [WSL configuration (`wsl.conf`, `.wslconfig`)](https://learn.microsoft.com/en-us/windows/wsl/wsl-config)
 - [Mount a Linux disk in WSL 2 — limitations](https://learn.microsoft.com/en-us/windows/wsl/wsl2-mount-disk)
 - [GlazeWM](https://github.com/glzr-io/glazewm) · [komorebi licence](https://github.com/LGUG2Z/komorebi/blob/master/LICENSE.md)
-- [Windows Terminal JSON fragment extensions](https://learn.microsoft.com/en-us/windows/terminal/json-fragment-extensions)
+- [WezTerm configuration files](https://wezterm.org/config/files.html) · [WSL domains](https://wezterm.org/config/lua/WslDomain.html)
 - [`winget import`](https://learn.microsoft.com/en-us/windows/package-manager/winget/import)
 - [chezmoi: detect WSL](https://www.chezmoi.io/user-guide/machines/windows/#detect-windows-subsystem-for-linux-wsl)

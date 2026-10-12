@@ -3,7 +3,7 @@
   "Sources": [
     {
       "Packages": [
-        { "PackageIdentifier": "Microsoft.WindowsTerminal" },
+        { "PackageIdentifier": "wez.wezterm.nightly" },
         { "PackageIdentifier": "Microsoft.PowerToys" },
         { "PackageIdentifier": "glzr-io.glazewm" },
         { "PackageIdentifier": "DEVCOM.JetBrainsMonoNerdFont" },
