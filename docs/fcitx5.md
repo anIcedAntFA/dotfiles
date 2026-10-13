@@ -9,7 +9,7 @@ system-wide, switchable with a hotkey.
 ## Install
 
 ```sh
-yay -S --needed fcitx5 fcitx5-bamboo fcitx5-configtool
+yay -S --needed fcitx5 fcitx5-bamboo fcitx5-hangul fcitx5-configtool
 ```
 
 ## Configure the environment
@@ -54,10 +54,16 @@ so it runs on every profile.
 
 ## What's configured
 
-- [`profile`](../home/dot_config/fcitx5/profile) — default group uses the `us`
-  keyboard layout with **bamboo** as the default input method.
+- [`profile`](../home/dot_config/fcitx5/private_profile) — default group uses the
+  `us` keyboard layout with **bamboo** as the default input method and **hangul**
+  as a second one.
 - [`conf/`](../home/dot_config/fcitx5/conf/) — per-addon settings (`bamboo.conf`,
-  `notifications.conf`, `unikey.conf`).
+  `hangul.conf`, `notifications.conf`, `unikey.conf`).
+
+fcitx5 rewrites these files itself at mode 0600, so the source copies carry
+chezmoi's `private_` prefix — otherwise every apply would flip the mode back and
+show as drift. They are app-owned: after changing something in
+`fcitx5-configtool`, pull it into the repo with `chezmoi re-add`.
 
 Switch input methods with `Ctrl+Space` (default). Fine-tune everything with the
 GUI:

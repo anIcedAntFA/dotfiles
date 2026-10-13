@@ -8,7 +8,9 @@ run, a directory listing all land in its context window as tokens.
 runs the real command and prints a **shorter** version of its output — grouped,
 de-duplicated, truncated — so the agent reads less.
 
-It is a **personal-account** tool here. Company sessions never go through it; see
+Both Claude accounts use it. "Proxy" means it stands between the agent and the
+_command_, not the network: it filters output on this machine and sends nothing
+anywhere, which is why company sessions may run through it too — see
 [claude-code.md](claude-code.md#what-crosses-the-boundary-and-what-doesnt).
 
 ## How it works

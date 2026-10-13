@@ -4,15 +4,18 @@
        The lists live at the repo root (packages/), one level above the chezmoi
        source dir (home/), so we reach them via the sourceDir. */ -}}
 {{- $repoRoot := joinPath .chezmoi.sourceDir ".." -}}
-{{- $pacList := joinPath $repoRoot "packages" "pacman-explicit.txt" -}}
-{{- $aurList := joinPath $repoRoot "packages" "aur.txt" -}}
+{{- /* A WSL guest installs only the terminal layer — the Windows host owns the
+       desktop (docs/windows.md). Same kernel-release test as .chezmoiignore. */ -}}
+{{- $wsl := and (eq .chezmoi.os "linux") (.chezmoi.kernel.osrelease | lower | contains "microsoft") -}}
+{{- $pacList := joinPath $repoRoot "packages" (ternary "pacman-wsl.txt" "pacman-explicit.txt" $wsl) -}}
+{{- $aurList := joinPath $repoRoot "packages" (ternary "aur-wsl.txt" "aur.txt" $wsl) -}}
 #!/usr/bin/env bash
 set -euo pipefail
 
 {{ if .installPackages -}}
 # Re-run triggers (do not edit — these change when the package lists change):
-#   pacman-explicit.txt: {{ output "sha256sum" $pacList | trim }}
-#   aur.txt:             {{ output "sha256sum" $aurList | trim }}
+#   native list: {{ output "sha256sum" $pacList | trim }}
+#   AUR list:    {{ output "sha256sum" $aurList | trim }}
 
 pac_list="{{ $pacList }}"
 aur_list="{{ $aurList }}"

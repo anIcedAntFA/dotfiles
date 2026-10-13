@@ -1,4 +1,7 @@
 function auto-sync-theme
+    # No dconf on a WSL guest — the Windows host owns the colour scheme.
+    type -q dconf; or return
+
     set -l raw (dconf read /org/gnome/desktop/interface/color-scheme 2>/dev/null)
 
     if test -z "$raw"

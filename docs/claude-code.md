@@ -57,43 +57,47 @@ Claude flag and subcommand passes straight through.
 Everything inside a config dir is per-account, so `~/.claude.work` is a blank
 slate. The chosen split:
 
-| Shared into work                             | Kept personal-only                               |
-| -------------------------------------------- | ------------------------------------------------ |
-| `skills/` (symlink)                          | `CLAUDE.md` (`@RTK.md`) — RTK is a personal tool |
-| statusline script (same abs. path)           | `memory/` — personal auto-memory                 |
-| `SEARCH.md` — the search rule (by `@`import) | `projects/` — session history                    |
-| the **search guard** hook (same abs. path)   | `.credentials.json` — the login itself           |
-|                                              | the **RTK hook** (lives in `settings.json`)      |
+| Shared into work                                         | Kept per-account                        |
+| -------------------------------------------------------- | --------------------------------------- |
+| `skills/` (symlink)                                      | `.credentials.json` — the login itself  |
+| statusline script (same abs. path)                       | `projects/` — session history           |
+| `RTK.md` + `SEARCH.md` — the rules (by `@`import)        | `memory/` — auto-memory                 |
+| the **RTK** and **search guard** hooks (same abs. paths) | `settings.json` — plugins, model, theme |
 
-`settings.json` is **not** shared: it carries the RTK command-rewrite hook, so the
-work dir gets its own minimal `settings.json` (statusline + search guard, no RTK).
-That keeps RTK — and its token proxy — off every company session by construction.
+What stays apart is what the Teams policy is about: who is logged in, and where
+the conversation history and memory live. Everything shared is local tooling.
 
-The [search rule and guard](#search-rule-and-guard-hook) do cross, because the
-reason RTK stays out does not apply to them: they proxy nothing and send nothing
-anywhere — they only decide which local search tool runs. The work `CLAUDE.md` is
-its own one-line file importing `SEARCH.md`; it never sees `@RTK.md`.
+[RTK](rtk.md) crosses too. It was personal-only at first, on the reading that a
+"token proxy" sits between the session and the network. It does not: it filters
+command output on this machine and its telemetry is off, so it sends nothing the
+policy cares about. The one consequence is that company command output lands in
+RTK's local store (`~/.local/share/rtk/`: `history.db` and the plaintext tee
+logs) next to personal output — on a par with shell history, and accepted.
+
+`settings.json` is **not** shared, but no longer for RTK's sake: Claude Code
+rewrites it per account (enabled plugins, model settings, theme), so each dir
+keeps its own and both are wired to the same hook scripts.
+
+The work `CLAUDE.md` is its own small file importing `~/.claude/RTK.md` and
+`~/.claude/SEARCH.md` by absolute path. chezmoi writes it, and the `skills`
+symlink, into `~/.claude.work` on every apply — the shared set is correct by
+construction rather than by remembering a bootstrap step.
 
 ## Bootstrap (once, machine-local — not committed)
 
 ```sh
-# 1. Apply the dotfiles so the fish wrappers exist
+# 1. Apply the dotfiles: the fish wrappers, plus ~/.claude.work/CLAUDE.md and
+#    the ~/.claude.work/skills symlink
 chezmoi apply
 
-# 2. Create the work dir and log in with the company Teams account
-mkdir -p ~/.claude.work
+# 2. Log in with the company Teams account
 claude-work            # browser OAuth flow → approve as the company identity
-
-# 3. Share skills; keep everything else separate
-ln -s ~/.claude/skills ~/.claude.work/skills
-
-# 4. Import the shared search rule — and nothing else — as the work CLAUDE.md
-echo '@~/.claude/SEARCH.md' > ~/.claude.work/CLAUDE.md
 ```
 
-Step 5: give the work dir a `settings.json` with the statusline and the search
-guard but **no RTK hook**. Both commands point at the same absolute scripts the
-personal account uses (`<you>` = your `$HOME` user):
+Step 3: give the work dir a `settings.json` with the statusline and both hooks.
+The commands point at the same absolute scripts the personal account uses
+(`<you>` = your `$HOME` user). If Claude Code already wrote a `settings.json`
+there, merge these keys into it:
 
 ```jsonc
 {
@@ -106,6 +110,7 @@ personal account uses (`<you>` = your `$HOME` user):
       {
         "matcher": "Bash",
         "hooks": [
+          { "type": "command", "command": "rtk hook claude" },
           {
             "type": "command",
             "command": "bash /home/<you>/.claude/hooks/search-guard.sh"
@@ -218,7 +223,7 @@ running and what that tool cannot see.
 and sees every file. `rtk grep …` and `rtk find …` typed by hand are judged as
 `grep` and `find`.
 
-On the personal account the guard sits **next to** the RTK rewrite hook, and for
+On both accounts the guard sits **next to** the RTK rewrite hook, and for
 `find` that pairing matters. RTK alone turns `find` into `rtk find`, which is not
 `find`: it skips gitignored files and dotfiles and rejects most predicates — the
 agent types a tool that sees everything and silently gets one that does not
@@ -261,6 +266,9 @@ exported by the wrapper and inherited by the statusline subprocess.
 - `home/dot_claude/CLAUDE.md` (`@RTK.md`, `@SEARCH.md`) and `RTK.md` — the
   personal global instructions. Secret-free and portable; the RTK proxy they
   describe is already tracked under [`dot_config/rtk`](../home/dot_config/rtk);
+- `home/dot_claude.work/CLAUDE.md` and `symlink_skills` → `~/.claude.work/CLAUDE.md`,
+  `~/.claude.work/skills` — the work account's share of the above: two absolute
+  `@`imports and a symlink, no secrets, harmless on a machine with no work login;
 - `home/dot_claude/SEARCH.md` and `home/dot_claude/hooks/executable_search-guard.sh`
   → `~/.claude/SEARCH.md`, `~/.claude/hooks/search-guard.sh` — the
   [search rule and guard](#search-rule-and-guard-hook), written to be
@@ -290,7 +298,7 @@ a copy-paste bootstrap above instead.
 - [git.md](git.md) — the same personal/work identity split for git (`includeIf`)
 - [ghq.md](ghq.md) — where the company root (`ghqCompanyRoot`) comes from
 - [direnv.md](direnv.md) — path-based env, the editor-proof upgrade
-- [rtk.md](rtk.md) — the token proxy behind the personal-only hook
+- [rtk.md](rtk.md) — the output filter behind the RTK hook, shared by both accounts
 - [ripgrep.md](ripgrep.md) · [fd.md](fd.md) — the tools the search rule points at
 - [ADR 0023](adr/0023-multi-account-claude-code-via-config-dir.md) — why this design
 - [ADR 0002](adr/0002-private-data-via-templates.md) — private paths via templates

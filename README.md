@@ -123,6 +123,7 @@ dotfiles/
 ├── docs/            per-tool guides + Architecture Decision Records (adr/)
 ├── packages/        reproducible package snapshots
 ├── etc/             system files (/etc/*) — applied manually
+├── windows/         Windows-host config (WM, terminal, .wslconfig) — applied manually
 ├── images/          screenshots & wallpapers
 └── mise.toml, dprint.json, justfile, lefthook.yml, .github/  tooling
 ```
@@ -158,6 +159,7 @@ Each tool has a focused guide covering **what it is, why, and how to set it up**
 | [zram.md](docs/zram.md)                                         | Compressed RAM swap — OOM resilience (why zero-swap kills apps)                            |
 | ⤷ [memory-swap-concepts.vi.md](docs/memory-swap-concepts.vi.md) | Theory: RAM/paging/OOM, zram vs zswap — the _why_ (tiếng Việt)                             |
 | [xdg-environment.md](docs/xdg-environment.md)                   | Env vars & desktop portals — `/etc/environment` vs `environment.d` vs `xdg-desktop-portal` |
+| [windows.md](docs/windows.md)                                   | Windows host + Arch WSL guest: the split, the hand-off, the setup order                    |
 | [theme-sync.md](docs/theme-sync.md)                             | System light/dark sync — darkman + gtk portal, auto schedule + keybind toggle              |
 | [vscode.md](docs/vscode.md)                                     | VS Code — themes, custom.css font weight, format-on-save routing, extensions               |
 | [zed.md](docs/zed.md)                                           | Zed — curated config, per-theme font weight, keymap cheat-sheet, extensions                |

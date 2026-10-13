@@ -26,4 +26,4 @@ selection-foreground = #4c4f69
 background-image = ~/.config/ghostty/backgrounds/light.jpg
 background-image-fit = cover
 background-image-position = center
-background-image-opacity = 0.2
+background-image-opacity = 0.15

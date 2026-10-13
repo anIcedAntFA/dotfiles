@@ -55,6 +55,11 @@ set in `config.fish`, but they do see anything here.
 | [`electron.conf`](../home/dot_config/environment.d/electron.conf) | `ELECTRON_OZONE_PLATFORM_HINT=auto`                    | Makes Electron apps (VS Code, Slack, Teams, Discord) pick the Wayland Ozone backend instead of falling back to XWayland — the fix for blurry/janky rendering on scaled/rotated outputs. Chrome ignores it (not Electron) — see its `.desktop` override. See [vscode.md](vscode.md).                                                              |
 | [`fcitx5.conf`](../home/dot_config/environment.d/fcitx5.conf)     | `QT_IM_MODULE`, `XMODIFIERS`                           | Routes text input through fcitx for X11/XWayland apps. `GTK_IM_MODULE` is deliberately omitted (Wayland GTK apps use `text-input`; setting it triggers fcitx's Wayland-Diagnose warning). Electron apps get Wayland IME via the per-app `--enable-wayland-ime` flag. See [fcitx5.md](fcitx5.md).                                                 |
 
+The file form, `user-dirs.dirs`, is owned by the repo too.
+[`user-dirs.conf`](../home/dot_config/user-dirs.conf) sets `enabled=False` so the
+login-time `xdg-user-dirs-update` leaves it alone — otherwise it resets every
+entry whose folder doesn't exist yet to `$HOME/`, and the two forms disagree.
+
 `XDG_CURRENT_DESKTOP`/`XDG_SESSION_TYPE` are set **again**, redundantly, in
 niri's own `environment { }` block in
 [`config.kdl.tmpl`](../home/dot_config/niri/config.kdl.tmpl) — that one only

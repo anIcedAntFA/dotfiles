@@ -1,12 +1,69 @@
 # Patterns here match TARGET paths under $HOME that chezmoi should NOT manage.
 # (The repo README, docs/, packages/, etc. live above the source root — set by
 # .chezmoiroot -> "home" — so they never reach $HOME and need no entry here.)
-#
-# Add entries such as:
-#   .config/fish/fish_variables   # if its runtime churn becomes noisy
+
+# fish's universal-variable store is runtime state, not config: fish rewrites it
+# on upgrade, fisher on plugin changes, the theme sync on every mode flip. A
+# tracked snapshot goes stale and regresses other machines on apply (it carried
+# the jethrokuan/z plugin record long after .chezmoiremove dropped z). Anything
+# that must hold everywhere belongs in config.fish instead.
+.config/fish/fish_variables
+
+# Noctalia regenerates this on every theme change (see zathurarc). zathura treats
+# the missing include as a non-fatal warning, so a fresh machine needs no seed —
+# unlike niri's noctalia.kdl, which is a `create_` file for exactly that reason.
+.config/zathura/noctaliarc
 
 # Noctalia v5 config is tracked on every profile: 00-base.toml (machine-agnostic)
 # + palettes/ ship everywhere, and 10-machine.toml.tmpl branches per `.machine`
 # (monitors, wallpaper, DPI). The per-output wallpaper darkman hook is likewise a
 # `.tmpl` that branches per machine. Nothing here is home-only any more.
 # See docs/adr/0020 (supersedes 0012).
+
+# WSL guest (Linux inside Windows — see CONTEXT.md, docs/windows.md, ADR 0025):
+# the Windows host owns the desktop, so only the terminal layer applies. Detected
+# from the kernel release string, which WSL2 tags with "microsoft"; nothing is
+# prompted, and a Desktop host renders this block empty. `.chezmoi.kernel` only
+# exists on Linux, hence the os check first.
+{{ if and (eq .chezmoi.os "linux") (.chezmoi.kernel.osrelease | lower | contains "microsoft") }}
+# Compositor, desktop shell, theming, input method, portals.
+.config/niri
+.config/noctalia
+.config/darkman
+.config/fcitx5
+.config/nwg-look
+.config/qt5ct
+.config/qt6ct
+.config/xdg-desktop-portal
+.config/environment.d/electron.conf
+.config/environment.d/fcitx5.conf
+.config/environment.d/qt.conf
+.config/environment.d/wayland.conf
+.config/user-dirs.conf
+.config/user-dirs.dirs
+.local/share/darkman
+.local/share/applications
+
+# GUI apps — these run on the Windows host, not in the guest.
+.config/ghostty
+.config/Thunar
+.config/satty
+.config/zathura
+.config/zed
+.config/Code
+.config/code-flags.conf
+
+# Session scripts that drive the above. dot-clip-copy/-paste stay: WSLg bridges
+# the Wayland clipboard to Windows.
+.local/bin/dot-niri-startup
+.local/bin/dot-screenrec
+.local/bin/dot-screenshot
+.local/bin/dot-setup-papirus
+.local/bin/dot-spawn-ghostty
+.local/bin/dot-theme-reconcile
+.local/bin/dot-theme-toggle
+
+# Scripts are ignored by target name (attributes and .tmpl stripped).
+.chezmoiscripts/enable-darkman-service.sh
+.chezmoiscripts/install-vscode-extensions.sh
+{{ end }}

@@ -1,0 +1,236 @@
+# GlazeWM — tiling window manager for the Windows host (docs/windows.md).
+# Copy to %USERPROFILE%\.glzr\glazewm\config.yaml, then reload (Win+Ctrl+Shift+R).
+#
+# Derived from GlazeWM's own sample config (resources/assets/sample-config.yaml,
+# v3), with the keybindings remapped onto the niri scheme in
+# docs/niri-keybindings.md: Win is Mod, `Ctrl` turns focus into move, digits are
+# workspaces. GlazeWM is an i3-style tree, not a scrolling strip, so the
+# column-specific niri binds (consume/expel, presets, centre) have no equivalent.
+#
+# NOT YET RUN on a real machine — written on Linux. Check on first start:
+#   - Win+L is reserved by Windows (lock) and cannot be rebound, so focus/move
+#     right is on the arrow key only. H/J/K still work.
+#   - Win+digit normally launches taskbar apps; confirm GlazeWM takes it first.
+#   - If Win as Mod fights Windows too much, replace `lwin` with `alt` throughout
+#     (GlazeWM's default) — nothing else in the file depends on it.
+
+general:
+  # No bar is started here; add `shell-exec zebar` if Zebar is adopted.
+  startup_commands: []
+  shutdown_commands: []
+  config_reload_commands: []
+
+  focus_follows_cursor: false
+  toggle_workspace_on_refocus: false
+
+  cursor_jump:
+    enabled: true
+    trigger: "monitor_focus"
+
+  hide_method: "cloak"
+  show_all_in_taskbar: false
+
+gaps:
+  scale_with_dpi: true
+  inner_gap: "8px"
+  outer_gap:
+    top: "8px"
+    right: "8px"
+    bottom: "8px"
+    left: "8px"
+
+window_effects:
+  focused_window:
+    border:
+      enabled: true
+      color: "#8dbcff"
+    hide_title_bar:
+      enabled: false
+    corner_style:
+      enabled: false
+      style: "square"
+    transparency:
+      enabled: false
+      opacity: "95%"
+
+  other_windows:
+    border:
+      enabled: true
+      color: "#a1a1a1"
+    hide_title_bar:
+      enabled: false
+    corner_style:
+      enabled: false
+      style: "square"
+    transparency:
+      enabled: false
+      opacity: "0%"
+
+window_behavior:
+  initial_state: "tiling"
+
+  state_defaults:
+    floating:
+      centered: true
+      shown_on_top: false
+
+    fullscreen:
+      # niri's Mod+F maximises rather than covering the whole output.
+      maximized: true
+      shown_on_top: false
+
+workspaces:
+  - name: "1"
+  - name: "2"
+  - name: "3"
+  - name: "4"
+  - name: "5"
+  - name: "6"
+  - name: "7"
+  - name: "8"
+  - name: "9"
+
+# Ignore rules carried over from the sample config unchanged.
+window_rules:
+  - commands: ["ignore"]
+    match:
+      - window_process: { equals: "zebar" }
+
+      - window_title: { regex: "[Pp]icture.in.[Pp]icture" }
+        window_class: { regex: "Chrome_WidgetWin_1|MozillaDialogClass" }
+
+      - window_process: { equals: "PowerToys" }
+        window_class: { regex: 'HwndWrapper\[PowerToys\.PowerAccent.*?\]' }
+      - window_title: { equals: "Command Palette" }
+        window_class: { equals: "WinUIDesktopWin32WindowClass" }
+      - window_process: { equals: "PowerToys" }
+        window_title: { regex: ".*? - Peek" }
+      - window_process: { equals: "EXCEL" }
+        window_class: { not_regex: "XLMAIN" }
+      - window_process: { equals: "WINWORD" }
+        window_class: { not_regex: "OpusApp" }
+      - window_process: { equals: "POWERPNT" }
+        window_class: { not_regex: "PPTFrameClass" }
+
+binding_modes:
+  # Mod+R enters resize mode; arrows or HJKL resize, Escape/Enter leaves.
+  - name: "resize"
+    keybindings:
+      - commands: ["resize --width -2%"]
+        bindings: ["h", "left"]
+      - commands: ["resize --width +2%"]
+        bindings: ["l", "right"]
+      - commands: ["resize --height +2%"]
+        bindings: ["k", "up"]
+      - commands: ["resize --height -2%"]
+        bindings: ["j", "down"]
+      - commands: ["wm-disable-binding-mode --name resize"]
+        bindings: ["escape", "enter", "lwin+r"]
+
+keybindings:
+  # --- Window lifecycle & apps (niri: Mod+Q, Mod+T) ---
+  - commands: ["close"]
+    bindings: ["lwin+q"]
+  - commands: ["shell-exec wt"]
+    bindings: ["lwin+t"]
+
+  # --- Focus (niri: Mod+arrows / Mod+HJKL) ---
+  - commands: ["focus --direction left"]
+    bindings: ["lwin+h", "lwin+left"]
+  - commands: ["focus --direction right"]
+    bindings: ["lwin+right"]
+  - commands: ["focus --direction up"]
+    bindings: ["lwin+k", "lwin+up"]
+  - commands: ["focus --direction down"]
+    bindings: ["lwin+j", "lwin+down"]
+
+  # --- Move (niri: add Ctrl). Moving past a monitor edge crosses monitors. ---
+  - commands: ["move --direction left"]
+    bindings: ["lwin+ctrl+h", "lwin+ctrl+left"]
+  - commands: ["move --direction right"]
+    bindings: ["lwin+ctrl+right"]
+  - commands: ["move --direction up"]
+    bindings: ["lwin+ctrl+k", "lwin+ctrl+up"]
+  - commands: ["move --direction down"]
+    bindings: ["lwin+ctrl+j", "lwin+ctrl+down"]
+
+  # --- Monitors (niri: Mod+Shift+Ctrl+dir sends the column to a monitor) ---
+  # Closest equivalent: send the whole workspace to the monitor that way.
+  - commands: ["move-workspace --direction left"]
+    bindings: ["lwin+shift+ctrl+left"]
+  - commands: ["move-workspace --direction right"]
+    bindings: ["lwin+shift+ctrl+right"]
+  - commands: ["move-workspace --direction up"]
+    bindings: ["lwin+shift+ctrl+up"]
+  - commands: ["move-workspace --direction down"]
+    bindings: ["lwin+shift+ctrl+down"]
+
+  # --- Workspaces (niri: Mod+U/I or PageDown/PageUp, Mod+1…9, Mod+Shift+1…9) ---
+  - commands: ["focus --next-active-workspace"]
+    bindings: ["lwin+u", "lwin+page_down"]
+  - commands: ["focus --prev-active-workspace"]
+    bindings: ["lwin+i", "lwin+page_up"]
+  - commands: ["focus --recent-workspace"]
+    bindings: ["lwin+tab"]
+
+  - commands: ["focus --workspace 1"]
+    bindings: ["lwin+1"]
+  - commands: ["focus --workspace 2"]
+    bindings: ["lwin+2"]
+  - commands: ["focus --workspace 3"]
+    bindings: ["lwin+3"]
+  - commands: ["focus --workspace 4"]
+    bindings: ["lwin+4"]
+  - commands: ["focus --workspace 5"]
+    bindings: ["lwin+5"]
+  - commands: ["focus --workspace 6"]
+    bindings: ["lwin+6"]
+  - commands: ["focus --workspace 7"]
+    bindings: ["lwin+7"]
+  - commands: ["focus --workspace 8"]
+    bindings: ["lwin+8"]
+  - commands: ["focus --workspace 9"]
+    bindings: ["lwin+9"]
+
+  # Like niri, sending a window away does not follow it.
+  - commands: ["move --workspace 1"]
+    bindings: ["lwin+shift+1"]
+  - commands: ["move --workspace 2"]
+    bindings: ["lwin+shift+2"]
+  - commands: ["move --workspace 3"]
+    bindings: ["lwin+shift+3"]
+  - commands: ["move --workspace 4"]
+    bindings: ["lwin+shift+4"]
+  - commands: ["move --workspace 5"]
+    bindings: ["lwin+shift+5"]
+  - commands: ["move --workspace 6"]
+    bindings: ["lwin+shift+6"]
+  - commands: ["move --workspace 7"]
+    bindings: ["lwin+shift+7"]
+  - commands: ["move --workspace 8"]
+    bindings: ["lwin+shift+8"]
+  - commands: ["move --workspace 9"]
+    bindings: ["lwin+shift+9"]
+
+  # --- Layout (niri: Mod+F, Mod+Shift+F, Mod+V, Mod+Shift+V, Mod+R) ---
+  - commands: ["toggle-fullscreen"]
+    bindings: ["lwin+f", "lwin+shift+f"]
+  - commands: ["toggle-floating --centered"]
+    bindings: ["lwin+v"]
+  - commands: ["wm-cycle-focus"]
+    bindings: ["lwin+shift+v"]
+  - commands: ["wm-enable-binding-mode --name resize"]
+    bindings: ["lwin+r"]
+  # No niri counterpart: which way the next window splits.
+  - commands: ["toggle-tiling-direction"]
+    bindings: ["lwin+w"]
+
+  # --- System (niri: Mod+Escape inhibits shortcuts, Mod+Shift+E quits) ---
+  - commands: ["wm-toggle-pause"]
+    bindings: ["lwin+escape"]
+  - commands: ["wm-exit"]
+    bindings: ["lwin+shift+e"]
+  - commands: ["wm-reload-config"]
+    bindings: ["lwin+ctrl+shift+r"]
+  - commands: ["wm-redraw"]
+    bindings: ["lwin+ctrl+shift+w"]

@@ -142,7 +142,7 @@ recentres.
 
 **Colors live elsewhere.** `focus-ring`, `border`, and `shadow` here set only
 _structure_ (width, softness, offset). Their colours are themed by
-[`noctalia.kdl`](../home/dot_config/niri/noctalia.kdl), which is `include`d last
+[`noctalia.kdl`](../home/dot_config/niri/create_noctalia.kdl), which is `include`d last
 and wins. `border` is `off` because the `focus-ring` is used instead — remove
 `off` to get per-window borders.
 

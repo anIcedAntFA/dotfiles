@@ -40,12 +40,18 @@ secrets:
     gitleaks git . --no-banner --redact
 
 # Validate the niri config — local only, needs niri + chezmoi installed.
-# config.kdl is a chezmoi template, so render it (next to noctalia.kdl, so the
-# `include "./noctalia.kdl"` resolves) before handing it to `niri validate`.
+# config.kdl is a chezmoi template, so render it into a temp dir next to a copy
+# of the noctalia.kdl seed (so the `include "./noctalia.kdl"` resolves) before
+# handing it to `niri validate`. The seed is a `create_` file: chezmoi writes it
+# once on a fresh machine, then Noctalia owns it.
 validate-niri:
-    chezmoi execute-template < home/dot_config/niri/config.kdl.tmpl > home/dot_config/niri/.rendered.kdl
-    niri validate -c home/dot_config/niri/.rendered.kdl
-    rm -f home/dot_config/niri/.rendered.kdl
+    #!/usr/bin/env bash
+    set -euo pipefail
+    tmp=$(mktemp -d)
+    trap 'rm -rf "$tmp"' EXIT
+    cp home/dot_config/niri/create_noctalia.kdl "$tmp/noctalia.kdl"
+    chezmoi execute-template < home/dot_config/niri/config.kdl.tmpl > "$tmp/config.kdl"
+    niri validate -c "$tmp/config.kdl"
 
 # Validate the fastfetch config — local only, needs fastfetch + chezmoi.
 # config.jsonc is a chezmoi template; render it and let fastfetch parse it
