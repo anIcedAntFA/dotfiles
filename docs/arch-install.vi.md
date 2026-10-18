@@ -135,20 +135,39 @@ Rời Windows bằng **Restart**, không dùng Shut down.
 
 _Vì sao:_ `p5` sẽ bị format. chezmoi chỉ giữ config, không giữ dữ liệu.
 
-### 1.1 Checklist
+### 1.1 Backup ESP (luôn làm)
+
+ESP chung với Windows, và cả hai nhánh bên dưới đều sửa nó (xoá thư mục cũ, cài
+systemd-boot). Một bản sao trên USB giúp cứu được Windows Boot Manager nếu lỡ tay:
+
+```sh
+sudo cp -a /boot/efi /run/media/<username>/<USB>/esp-backup   # EndeavourOS mount ESP ở /boot/efi
+```
+
+### 1.2 Còn gì cần giữ trên laptop không?
+
+- **Không, cài fresh:** bỏ qua 1.3–1.5, sang thẳng Bước 2. Những gì sẽ mất và
+  cách bù lại:
+  - SSH key cũ của laptop: tạo key mới ở **bước 10.4**, và gỡ key cũ khỏi
+    GitHub/GitLab ngay ở đó.
+  - Mật khẩu Wi-Fi đã lưu: gõ lại lúc cài (`iwctl`) và lần boot đầu (`nmtui`).
+  - `chezmoi.toml`: `chezmoi init` hỏi lại các giá trị.
+- **Có:** làm 1.3–1.5 trước khi sang Bước 2.
+
+### 1.3 Checklist
 
 | Cần giữ                                         | Ở đâu                                                      |
 | ----------------------------------------------- | ---------------------------------------------------------- |
 | SSH key, GPG key                                | `~/.ssh/`, `~/.gnupg/` → **thêm một bản trên USB**         |
 | Giá trị riêng của chezmoi                       | `~/.config/chezmoi/chezmoi.toml`                           |
-| Repo có commit chưa push / thay đổi chưa commit | `~/workspace/**` (xem lệnh 1.2)                            |
+| Repo có commit chưa push / thay đổi chưa commit | `~/workspace/**` (xem lệnh 1.4)                            |
 | Tài liệu, ảnh, download                         | `~/Documents`, `~/Pictures`, `~/Downloads`…                |
 | Profile trình duyệt                             | `~/.zen/`, `~/.mozilla/`, `~/.config/google-chrome/`       |
 | Dữ liệu app                                     | `~/.local/share/` (lịch sử fish, zoxide, gopass store…)    |
 | Mật khẩu Wi-Fi đã lưu (cần root, chứa mật khẩu) | `/etc/NetworkManager/system-connections/` → **chỉ ra USB** |
 | Bất cứ thứ gì cài ngoài pacman                  | xem [packages.md](packages.md#installed-outside-pacman)    |
 
-### 1.2 Repo chưa push
+### 1.4 Repo chưa push
 
 Login shell là fish, còn vòng lặp dưới viết cho bash, nên chạy qua `bash -c`:
 
@@ -163,7 +182,7 @@ done'
 file thay đổi một dòng. Dòng không bắt đầu bằng `#` nghĩa là có thay đổi, còn
 `ahead` nghĩa là có commit chưa push.
 
-### 1.3 Đẩy sang box `home`
+### 1.5 Đẩy sang box `home`
 
 Box `home` không bật `sshd` thường trực. Bật **tạm thời** (`start`, không
 `enable`) trên box `home`:
@@ -186,14 +205,6 @@ rsync -aHAX --info=progress2 \
   IP (`ip -4 addr` trên box `home`).
 - `~/.ssh`, `~/.gnupg` và thư mục `system-connections` chép **thêm** ra USB:
   bản trên box `home` là bản thứ hai, không phải bản duy nhất.
-
-### 1.4 Backup ESP
-
-ESP chung với Windows. Một bản sao giúp cứu được Windows Boot Manager nếu lỡ tay:
-
-```sh
-sudo cp -a /boot/efi /run/media/<username>/<USB>/esp-backup   # EndeavourOS mount ESP ở /boot/efi
-```
 
 ## Bước 2 — USB Ventoy (làm trên box `home`)
 
@@ -730,7 +741,42 @@ cache của pacman.
 repo `[endeavouros]`. Muốn có màu thì sửa `/etc/pacman.conf` bản Arch, bỏ dấu `#`
 trước `Color`.
 
-### 10.4 Áp config, rồi đi tiếp
+### 10.4 SSH key cho GitHub/GitLab
+
+**Nhánh backup** (bước 1.3–1.5): chép `~/.ssh` từ USB về, rồi sửa quyền
+(`chmod 700 ~/.ssh`, `chmod 600` cho private key). Bỏ qua phần còn lại của mục
+này.
+
+**Nhánh fresh:** tạo key mới cho box này theo [ssh.md](ssh.md):
+
+```sh
+ssh-keygen -t ed25519 -C "<email>"      -f ~/.ssh/github
+ssh-keygen -t ed25519 -C "<work-email>" -f ~/.ssh/gitlab   # chỉ khi laptop cần GitLab công ty
+ssh-keygen -lf ~/.ssh/github.pub                            # fingerprint của key MỚI, để phân biệt
+```
+
+_Vì sao làm trước `chezmoi apply`:_ script
+`run_onchange_after_setup-git-signers` ghi `~/.ssh/allowed_signers` từ các
+`*.pub` đang có, nhưng chỉ **chạy lại khi email đổi**. Apply trước khi có key thì
+file không bao giờ được ghi. Thêm nữa, git config của repo bật `commit.gpgsign`,
+nên thiếu key thì mọi `git commit` đều fail.
+
+Đăng ký key mới, rồi **gỡ key cũ của laptop** ngay trên cùng trang. Private key
+cũ đã mất theo `p5`, nên entry cũ chỉ còn là rác:
+
+- **GitHub** (_Settings → SSH and GPG keys_): thêm `github.pub` **hai lần**, một
+  lần loại _Authentication key_, một lần loại _Signing key_
+  ([git.md](git.md)). Xoá entry cũ của laptop ở **cả hai** danh sách. Nhận ra
+  entry cũ qua tên, ngày "Last used", hoặc fingerprint khác với fingerprint vừa
+  in ở trên.
+- **GitLab** (_Preferences → SSH Keys_): thêm `gitlab.pub` **một lần** với Usage
+  type _Authentication & Signing_. Xoá entry cũ của laptop.
+
+```sh
+ssh -T git@github.com        # "Hi <user>! You've successfully authenticated…"
+```
+
+### 10.5 Áp config, rồi đi tiếp
 
 ```sh
 chezmoi apply
