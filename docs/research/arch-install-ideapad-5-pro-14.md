@@ -664,7 +664,12 @@ Source for everything not otherwise cited:
      by "most boot loaders". ESP at `/efi` with `/boot` on root is supported
      "Only [by] GRUB and rEFInd… Using a Unified kernel image… is also
      possible". `/boot/efi` is "historical and now discouraged".
-     **systemd-boot ⇒ ESP at `/boot`.**
+     **systemd-boot ⇒ ESP at `/boot`**, _unless_ an XBOOTLDR partition holds
+     the kernels: then the ESP goes at `/efi` and XBOOTLDR at `/boot`
+     (`bootctl --esp-path=/efi --boot-path=/boot install`). systemd-boot reads
+     XBOOTLDR through the firmware's file-system drivers, so in practice it must
+     be FAT, and it "must be on the same physical disk as the ESP"
+     ([systemd-boot#Installation using XBOOTLDR](https://wiki.archlinux.org/title/Systemd-boot#Installation_using_XBOOTLDR)).
    - **No swap partition:** "disk based swap can be avoided entirely by
      setting up swap on zram after installing the system". zram-generator
      needs only `/etc/systemd/zram-generator.conf` with `[zram0]`. The default
@@ -731,9 +736,13 @@ Source for everything not otherwise cited:
       ([Limine](https://wiki.archlinux.org/title/Limine)). It has Snapper
       integration for Btrfs.
 
-    _Inference_ for this machine: no dual boot and the ESP at `/boot`, so
-    systemd-boot is the simplest. The EndeavourOS install used GRUB
-    (`grub` is in the snapshot).
+    _Correction (2026-10-18):_ an earlier version of this note inferred "no
+    dual boot and the ESP at `/boot`". The machine dual-boots Windows. The
+    on-machine snapshot shows a 100 MB Windows ESP at `/boot/efi` plus a 1 GiB
+    XBOOTLDR partition (ext4, for GRUB) at `/boot`. systemd-boot still fits,
+    with the ESP at `/efi`, XBOOTLDR reformatted FAT32 at `/boot`, and Windows
+    auto-detected on the shared ESP. That is what
+    [arch-install.vi.md](../arch-install.vi.md) does.
 17. **Microcode.** "mkinitcpio and dracut generate combined initramfs files by
     default. The microcode will be loaded automatically at boot time." The
     `microcode` hook is in the default HOOKS
@@ -752,33 +761,43 @@ Source for everything not otherwise cited:
 
 ## Open questions, to check on the laptop
 
-- [ ] **Which model?** Run `cat /sys/class/dmi/id/product_name` and
+- [x] **Which model?** Run `cat /sys/class/dmi/id/product_name` and
       `cat /sys/class/dmi/id/product_version` on the current EndeavourOS
       install. Expect 82L7 (14ACN6) or 82L3 (14ITL6). Does it have the MX450
-      (`lspci -d ::03xx`)?
-- [ ] **Which Wi-Fi chip?** `lspci -nnk | grep -A3 -i network`. Compare the
+      (`lspci -d ::03xx`)? **Answer (2026-10-17):** `IdeaPad 5 Pro 14ACN6`,
+      Ryzen 7 5800U, with the MX450 (`10de:1f97`, TU117M) at `01:00.0` next to
+      the Cezanne iGPU (`1002:1638`).
+- [x] **Which Wi-Fi chip?** `lspci -nnk | grep -A3 -i network`. Compare the
       `[vendor:device]` ID with the table in §1.2 and note which driver is "in
       use". If it is RTW89 or MT7921, decide whether to pre-stage the ASPM
-      modprobe option.
+      modprobe option. **Answer:** MediaTek MT7921 (`14c3:7961`). The ASPM option
+      is not pre-staged; it is a troubleshooting entry in the install guide.
 - [ ] **Exact BIOS path to Secure Boot** and whether "Allow Microsoft 3rd Party
       UEFI CA" exists (only matters if Ventoy is used with Secure Boot on).
       Check in the [Lenovo BIOS Simulator](https://download.lenovo.com/bsco/index.html)
       or on the machine.
-- [ ] **BIOS version** (`cat /sys/class/dmi/id/bios_version`) against
+- [x] **BIOS version** (`cat /sys/class/dmi/id/bios_version`) against
       GECN39WW / GDCN69WW. The updates are Windows-only, and fwupd does not
       support the device. How to flash without Windows is **unverified**.
-- [ ] **Suspend.** `cat /sys/power/mem_sleep` on the current install. On a
+      **Answer:** `GECN26WW(V1.10)`, behind GECN39WW. Windows is still installed,
+      so the guide flashes it from Windows before the install.
+- [x] **Suspend.** `cat /sys/power/mem_sleep` on the current install. On a
       14ACN6, is the hidden-BIOS S3 change already done? On a 14ITL6, does
-      s2idle resume cleanly?
+      s2idle resume cleanly? **Answer:** only `[s2idle]` is offered, so the S3
+      change has not been done. The guide keeps s2idle.
 - [ ] **Conservation mode file.** On the 7.2 kernel, does
-      `/sys/class/power_supply/BAT*/charge_types` exist, or only the deprecated
-      `conservation_mode`?
+      `/sys/class/power_supply/BAT*/charge_types` exist, or only the
+      deprecated `conservation_mode`?
 - [ ] **Does Arch on Ventoy boot first try** on this laptop, in normal mode,
       with Ventoy 1.1.18? If not, retry after `Ventoy2Disk.sh -u`, on another
       USB port, or with a plain `dd` stick.
 - [ ] **Package list rewrite.** Drop the 13 non-Arch entries from
       `packages/pacman-explicit.txt` and move AUR entries out of it, then
-      re-check `slack-desktop-wayland` in `packages/aur.txt`.
+      re-check `slack-desktop-wayland` in `packages/aur.txt`. _Deferred:_ the
+      install guide filters the list at install time instead (`comm` against
+      `pacman -Slq`, minus `dracut grub os-prober intel-ucode intel-media-driver
+  libva-intel-driver vulkan-intel`). `downgrade` is AUR on plain Arch but
+      missing from `aur.txt`, so the guide installs it by name.
 - [ ] **Unverified in this note:** the exact Intel Wi-Fi model in each variant;
       whether the 11ac Atheros card is QCA6174/ath10k; ITL6 audio, webcam and
       suspend; whether `ideapad_laptop` exposes a keyboard-backlight LED on this
