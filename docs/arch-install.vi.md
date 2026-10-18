@@ -39,7 +39,7 @@ thật **không bao giờ** vào repo.
 
 ---
 
-## Bước 0 — Bên Windows
+## Bước 0 — Windows và firmware
 
 _Vì sao:_ Windows phải nhả ổ NTFS và firmware phải ở bản mới nhất trước khi
 động vào BIOS ([lý thuyết §3.4](boot-disk-network-concepts.vi.md)).
@@ -54,7 +54,51 @@ manage-bde -status C:   # đã kiểm tra: Protection Off, BitLocker không bậ
 powercfg /h off         # tắt hibernate + Fast Startup
 ```
 
-### 0.2 Update BIOS lên GECN39WW
+### 0.2 Dọn chỗ trên ESP (làm trên EndeavourOS)
+
+_Vì sao:_ công cụ flash của Lenovo chép image BIOS vào **ESP** để firmware nạp
+lúc khởi động lại. ESP của máy chỉ 100 MB, đang chứa Windows, EndeavourOS **và**
+rác của Fedora, archcraft. Không dọn thì bộ flash báo _ESP disk space not
+enough_. Đằng nào bước 5.5 cũng xoá đúng hai thư mục rác đó, nên làm sớm ở đây.
+
+Khởi động vào EndeavourOS (ESP được mount ở `/boot/efi`):
+
+```sh
+df -h /boot/efi                                              # còn trống bao nhiêu
+sudo du -sh /boot/efi/EFI/*                                  # thư mục nào chiếm chỗ
+sudo cp -a /boot/efi /run/media/<username>/<USB>/esp-backup  # backup trước (bước 1.1)
+sudo rm -r /boot/efi/EFI/fedora /boot/efi/EFI/archcraft
+sudo efibootmgr                                              # đọc số hiệu entry
+sudo efibootmgr -b 0001 -B                                   # Fedora
+sudo efibootmgr -b 0002 -B                                   # Fedora
+sudo efibootmgr -b 0005 -B                                   # archcraft
+df -h /boot/efi                                              # phải trống thêm
+```
+
+- **Không xoá** `Microsoft` và `BOOT`.
+- Quay lại Windows một lần mà không cần F12:
+  `sudo efibootmgr --bootnext 0003 && sudo reboot` (`0003` là Windows Boot
+  Manager; xem lại số ở output trên). `BootNext` chỉ có hiệu lực cho **một** lần
+  boot.
+- **Vẫn báo thiếu chỗ?** Lenovo không ghi cần trống bao nhiêu. Nếu cài fresh và
+  đã backup ESP, có thể xoá thêm `EFI/endeavouros`: EndeavourOS sẽ không boot
+  được nữa, máy tự vào Windows, và Arch vẫn cài từ USB như bình thường. Nhánh
+  backup thì làm xong bước 1.3–1.5 rồi mới xoá.
+
+Không có EndeavourOS trong tay thì làm từ **cmd (Admin)** trên Windows. Explorer
+không mở được ESP, nhưng `mountvol` gắn nó vào một ổ đĩa:
+
+```bat
+mountvol S: /S
+dir S:\EFI
+rmdir /s /q S:\EFI\fedora
+rmdir /s /q S:\EFI\archcraft
+mountvol S: /D
+```
+
+Cách này để lại NVRAM entry chết của Fedora/archcraft. Xoá chúng ở bước 5.5.
+
+### 0.3 Update BIOS lên GECN39WW
 
 _Vì sao:_ máy đang chạy **GECN26WW** (V1.10). Các bản từ đó tới **GECN39WW**
 (V1.23, 2024-10-30) chủ yếu vá lỗ hổng bảo mật firmware (CVE của AMD và
@@ -127,7 +171,7 @@ ngang. Chờ thêm, rồi mới tính tới
 khởi động lại (sai model, pin yếu…), BIOS chưa bị đụng tới: sửa nguyên nhân rồi
 chạy lại.
 
-### 0.3 Rời Windows
+### 0.4 Rời Windows
 
 Rời Windows bằng **Restart**, không dùng Shut down.
 
@@ -136,6 +180,8 @@ Rời Windows bằng **Restart**, không dùng Shut down.
 _Vì sao:_ `p5` sẽ bị format. chezmoi chỉ giữ config, không giữ dữ liệu.
 
 ### 1.1 Backup ESP (luôn làm)
+
+Đã làm ở bước 0.2 thì bỏ qua.
 
 ESP chung với Windows, và cả hai nhánh bên dưới đều sửa nó (xoá thư mục cũ, cài
 systemd-boot). Một bản sao trên USB giúp cứu được Windows Boot Manager nếu lỡ tay:
@@ -234,7 +280,7 @@ _Vì sao:_ ISO Arch phải được kiểm chữ ký trước khi dùng nó đ�
 _Vì sao:_ ISO Arch không được ký, nên Secure Boot phải tắt ([lý thuyết §3.3](boot-disk-network-concepts.vi.md#33-secure-boot)).
 
 1. Bật máy, bấm liên tục **F2** (hoặc nút Novo → BIOS Setup). Sau khi update
-   BIOS ở bước 0.2, mọi setting đã về mặc định, nên Secure Boot chắc chắn đang bật.
+   BIOS ở bước 0.3, mọi setting đã về mặc định, nên Secure Boot chắc chắn đang bật.
 2. **Security → Secure Boot → Disabled** (đường dẫn có thể khác; Lenovo có
    [BIOS Simulator](https://download.lenovo.com/bsco/index.html) để xem trước).
 3. Ghi nhớ mục **Fast Boot / Quick Boot** nếu có: chưa cần đổi, nhưng nó là thủ
@@ -369,7 +415,7 @@ root đọc được, vì ESP sẽ chứa `random-seed` của systemd-boot.
 ### 5.5 Dọn ESP và NVRAM
 
 ```sh
-ls /mnt/efi/EFI          # mong đợi: BOOT  Microsoft  archcraft  endeavouros  fedora
+ls /mnt/efi/EFI          # đã dọn ở 0.2: BOOT  Microsoft  endeavouros → bỏ qua rm bên dưới
 df -h /mnt/efi           # xem còn trống bao nhiêu
 rm -r /mnt/efi/EFI/fedora /mnt/efi/EFI/archcraft
 efibootmgr               # đọc lại số hiệu, đừng tin snapshot cũ
