@@ -195,8 +195,10 @@ MD045: true
 
 # MD046/code-block-style : Code block style : https://github.com/DavidAnson/markdownlint/blob/v0.33.0/doc/md046.md
 MD046:
-  # Block style
-  style: "consistent"
+  # Block style. "fenced", not "consistent": the repo only uses fenced blocks, and
+  # rumdl's "consistent" counts the 6-space continuation lines of a `- [ ]` task
+  # list as indented code, so a checklist-heavy doc flips it to "indented".
+  style: "fenced"
 
 # MD047/single-trailing-newline : Files should end with a single newline character : https://github.com/DavidAnson/markdownlint/blob/v0.33.0/doc/md047.md
 MD047: true
