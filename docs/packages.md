@@ -21,8 +21,13 @@ setup what it is — grouped by purpose, with a short _why_ and a link each.
   omits the base system, firmware, filesystem tools, Xorg, and dependencies that
   come with a stock install.
 
-The baseline is an [EndeavourOS](https://endeavouros.com/) **"no desktop"**
-install (minimal Arch, no DE) — everything below sits on top of that.
+The baseline is a TTY-only Arch system — everything below sits on top of that.
+Which **base install** produced it is chosen per box: an
+[EndeavourOS](https://endeavouros.com/) **"no desktop"** install (`work`, `home`),
+or plain Arch from the Arch ISO (`laptop`, see
+[arch-install.vi.md](arch-install.vi.md)). The snapshots were taken on
+EndeavourOS, so they carry its own packages (`eos-*`, `endeavouros-*`, `welcome`…)
+plus that box's bootloader and Intel GPU/microcode packages.
 
 ## Installing
 
@@ -37,6 +42,12 @@ yay -S --needed - < packages/aur.txt
 
 Or let chezmoi do it on `chezmoi apply` — answer **yes** to the
 `installPackages` prompt during `chezmoi init` (see the top-level README).
+
+On a **plain Arch** box neither works as-is: the EndeavourOS-only names make the
+whole `yay` transaction fail. Answer **no** to `installPackages` there, and keep
+only what the Arch repos carry, minus the other box's hardware/boot packages —
+the commands, and why each piece is there, are in
+[arch-install.vi.md, bước 10.3](arch-install.vi.md).
 
 ---
 
