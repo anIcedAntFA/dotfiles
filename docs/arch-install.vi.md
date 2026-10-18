@@ -44,18 +44,92 @@ thật **không bao giờ** vào repo.
 _Vì sao:_ Windows phải nhả ổ NTFS và firmware phải ở bản mới nhất trước khi
 động vào BIOS ([lý thuyết §3.4](boot-disk-network-concepts.vi.md)).
 
-1. Mở **PowerShell (Admin)**:
+### 0.1 Tắt Fast Startup
+
+Mở **PowerShell (Admin)** (chuột phải nút Start → _Terminal (Admin)_ hoặc
+_Windows PowerShell (Admin)_):
+
+```powershell
+manage-bde -status C:   # đã kiểm tra: Protection Off, BitLocker không bật
+powercfg /h off         # tắt hibernate + Fast Startup
+```
+
+### 0.2 Update BIOS lên GECN39WW
+
+_Vì sao:_ máy đang chạy **GECN26WW** (V1.10). Các bản từ đó tới **GECN39WW**
+(V1.23, 2024-10-30) chủ yếu vá lỗ hổng bảo mật firmware (CVE của AMD và
+Insyde), cập nhật AMD PI, driver GOP (đồ hoạ lúc boot) và firmware Embedded
+Controller (quạt, sạc). Lenovo chỉ phát hành bản update chạy trên Windows
+(fwupd không hỗ trợ máy này), nên đây là lúc duy nhất tiện làm.
+
+**Hai điều README của Lenovo nói rõ:**
+
+- Update xong, **mọi setting trong BIOS bị reset về mặc định**. Secure Boot sẽ
+  **bật lại**, boot order có thể đổi. Không sao: **Bước 3** chỉnh
+  lại sau.
+- **Không flash ngược** về bản cũ hơn.
+
+**Chuẩn bị:**
+
+1. **Cắm sạc 65 W** và để pin trên ~30%. Mất điện giữa lúc flash có thể làm hỏng
+   bo mạch chủ ("brick").
+2. Đóng mọi app. Tạm dừng Windows Update nếu nó đang tải dở (_Settings →
+   Windows Update → Pause_), để không có lần khởi động lại nào chen vào.
+3. Nếu từng chỉnh gì trong BIOS (F2), ghi lại, vì nó sẽ bị reset.
+4. BitLocker đã tắt nên không phải suspend. Nếu BitLocker _bật_, phải chạy
+   `manage-bde -protectors -disable C:` trước, không thì lần boot sau sẽ đòi
+   recovery key.
+
+**Tải và kiểm tra file:**
+
+1. Vào trang hỗ trợ Lenovo của máy: [pcsupport.lenovo.com](https://pcsupport.lenovo.com) →
+   tìm **IdeaPad 5 Pro 14ACN6** (type 82L7) → _Drivers & Software_ → mục
+   **BIOS/UEFI** → _BIOS Update for Windows 10 (64-bit), 11_ bản **GECN39WW**.
+   File tên `gecn39ww.exe`, khoảng **8 MB**. Link trực tiếp:
+   `https://download.lenovo.com/consumer/mobiles/gecn39ww.exe` (README đi kèm:
+   `…/gecn39ww.txt`).
+2. Kiểm tra chữ ký số. Trong PowerShell, ở thư mục chứa file:
 
    ```powershell
-   manage-bde -status C:   # đã kiểm tra: Protection Off, BitLocker không bật
-   powercfg /h off         # tắt hibernate + Fast Startup
+   Get-AuthenticodeSignature .\gecn39ww.exe | Format-List Status, SignerCertificate
+   # Status phải là Valid, và subject của SignerCertificate là Lenovo
    ```
 
-2. **Update BIOS** từ GECN26WW lên **GECN39WW** (bản mới nhất lúc viết): tải
-   gói BIOS cho 14ACN6 từ trang hỗ trợ Lenovo, **cắm sạc**, chạy `.exe`, để máy
-   tự khởi động lại. Không tắt máy giữa chừng. Lenovo không hỗ trợ update BIOS
-   từ Linux (fwupd không có thiết bị này), nên đây là lúc duy nhất tiện làm.
-3. Rời Windows bằng **Restart**, không dùng Shut down.
+   Hoặc chuột phải file → _Properties_ → tab _Digital Signatures_ → thấy
+   **Lenovo** → _Details_ báo "This digital signature is OK".
+
+   _Vì sao:_ file này ghi thẳng vào chip firmware. Chữ ký số chứng minh nó do
+   Lenovo phát hành và không bị sửa trên đường tải về.
+
+**Flash:**
+
+1. Double-click `gecn39ww.exe`, bấm **Yes** ở hộp UAC.
+2. Theo wizard: đồng ý license, để mặc định thư mục giải nén, rồi bấm
+   **Install**.
+3. Chương trình flash kiểm tra model và version, rồi báo bản hiện tại
+   (GECN26WW) và bản sắp ghi (GECN39WW). Xác nhận để bắt đầu.
+4. Máy **tự khởi động lại** và flash ngoài Windows: màn hình đen hoặc thanh tiến
+   trình, quạt có thể quay mạnh rồi im, máy có thể tự tắt-bật **nhiều lần** (lần
+   đầu cho BIOS, lần sau cho Embedded Controller). Mất vài phút.
+5. **Không** bấm nút nguồn, không rút sạc, không gập nắp cho tới khi Windows
+   hiện lại màn hình đăng nhập.
+
+**Kiểm tra sau khi xong:**
+
+```powershell
+Get-CimInstance Win32_BIOS | Select-Object SMBIOSBIOSVersion, ReleaseDate
+# SMBIOSBIOSVersion: GECN39WW
+```
+
+Nếu máy dừng ở một màn hình lạ, hoặc không lên hình quá ~15 phút: đừng tắt
+ngang. Chờ thêm, rồi mới tính tới
+[Lenovo support](https://pcsupport.lenovo.com). Nếu flash báo lỗi **trước** khi
+khởi động lại (sai model, pin yếu…), BIOS chưa bị đụng tới: sửa nguyên nhân rồi
+chạy lại.
+
+### 0.3 Rời Windows
+
+Rời Windows bằng **Restart**, không dùng Shut down.
 
 ## Bước 1 — Backup trên EndeavourOS cũ
 
@@ -148,7 +222,8 @@ _Vì sao:_ ISO Arch phải được kiểm chữ ký trước khi dùng nó đ�
 
 _Vì sao:_ ISO Arch không được ký, nên Secure Boot phải tắt ([lý thuyết §3.3](boot-disk-network-concepts.vi.md#33-secure-boot)).
 
-1. Bật máy, bấm liên tục **F2** (hoặc nút Novo → BIOS Setup).
+1. Bật máy, bấm liên tục **F2** (hoặc nút Novo → BIOS Setup). Sau khi update
+   BIOS ở bước 0.2, mọi setting đã về mặc định, nên Secure Boot chắc chắn đang bật.
 2. **Security → Secure Boot → Disabled** (đường dẫn có thể khác; Lenovo có
    [BIOS Simulator](https://download.lenovo.com/bsco/index.html) để xem trước).
 3. Ghi nhớ mục **Fast Boot / Quick Boot** nếu có: chưa cần đổi, nhưng nó là thủ
