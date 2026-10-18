@@ -1,7 +1,7 @@
 <h1 align="center">🏠 dotfiles</h1>
 
 <p align="center">
-  A personal EndeavourOS desktop — niri + Noctalia, managed with chezmoi.
+  A personal Arch Linux desktop — niri + Noctalia, managed with chezmoi.
 </p>
 <p align="center">
   <sub>Reproducible on a fresh machine, and safe to share publicly.</sub>
@@ -58,7 +58,7 @@
 
 | Layer               | Choice                                                                              |
 | ------------------- | ----------------------------------------------------------------------------------- |
-| **Distro**          | [EndeavourOS](https://endeavouros.com/) (Arch-based), "no desktop" base             |
+| **Distro**          | Arch: [EndeavourOS](https://endeavouros.com/) "no desktop" or plain Arch, per box   |
 | **AUR helper**      | [yay](https://github.com/Jguer/yay)                                                 |
 | **Compositor**      | [niri](https://github.com/niri-wm/niri) — scrollable tiling, Wayland                |
 | **Desktop shell**   | [Noctalia](https://github.com/noctalia-dev/noctalia-shell) — bar, widgets, launcher |
@@ -75,9 +75,15 @@
 <details>
 <summary>A note on the base install</summary>
 
-I install EndeavourOS in **"no desktop"** mode (minimal Arch, no DE) and build the
-niri + Noctalia environment on top. See [docs/packages.md](docs/packages.md) for
-the full package story.
+Every box starts as a TTY-only Arch system, and the niri + Noctalia environment
+is built on top. How it gets there is chosen per box:
+
+- `work`, `home`: EndeavourOS in **"no desktop"** mode (minimal Arch, no DE).
+- `laptop`: **plain Arch** from the Arch ISO, installed by hand, dual-booting
+  Windows — step by step in [docs/arch-install.vi.md](docs/arch-install.vi.md)
+  (tiếng Việt).
+
+See [docs/packages.md](docs/packages.md) for the full package story.
 
 </details>
 
@@ -107,6 +113,11 @@ yay -S --needed - < packages/pacman-explicit.txt
 yay -S --needed - < packages/aur.txt
 ```
 
+> [!NOTE]
+> The lists were taken on EndeavourOS. On a **plain Arch** box, answer **no** to
+> package auto-install and filter the list first — see
+> [arch-install.vi.md, bước 10.3](docs/arch-install.vi.md).
+
 System files under [`etc/`](etc/) (hosts, greetd) are **not** managed by chezmoi —
 copy them by hand with `sudo` where noted in the guides.
 
@@ -132,48 +143,50 @@ dotfiles/
 
 Each tool has a focused guide covering **what it is, why, and how to set it up**:
 
-| Guide                                                           | About                                                                                      |
-| --------------------------------------------------------------- | ------------------------------------------------------------------------------------------ |
-| [chezmoi.md](docs/chezmoi.md)                                   | Dotfile manager — workflows, templates, add/re-add                                         |
-| [niri.md](docs/niri.md)                                         | The scrollable-tiling compositor + Noctalia shell (hub)                                    |
-| ⤷ [niri-concepts.md](docs/niri-concepts.md)                     | niri's mental model — columns, workspaces, outputs                                         |
-| ⤷ [niri-config.md](docs/niri-config.md)                         | Config walkthrough + one-file-three-machines template                                      |
-| ⤷ [niri-keybindings.md](docs/niri-keybindings.md)               | Full Keybind ↔ Action tables                                                               |
-| [ghostty.md](docs/ghostty.md)                                   | Terminal, keybinds, transparency, cursor shaders                                           |
-| ⤷ [zellij.md](docs/zellij.md)                                   | Multiplexer — sessions, project layouts, the `zj` picker                                   |
-| [fish.md](docs/fish.md)                                         | Shell, plugins, keybindings, secrets pattern                                               |
-| ⤷ [zoxide.md](docs/zoxide.md)                                   | Frecency directory jumping (`z` / `zi`), z→zoxide migration                                |
-| ⤷ [starship.md](docs/starship.md)                               | Prompt layout, the TOML quoting trap, module cost                                          |
-| [fastfetch.md](docs/fastfetch.md)                               | System-info banner — random Arch logo, per-machine                                         |
-| [ghq.md](docs/ghq.md)                                           | Organized repo cloning + fuzzy jumping                                                     |
-| [ssh.md](docs/ssh.md)                                           | SSH keys per host (personal + work auth)                                                   |
-| [git.md](docs/git.md)                                           | Git identities, `includeIf`, SSH commit signing                                            |
-| [claude-code.md](docs/claude-code.md)                           | Personal + company Teams accounts (`CLAUDE_CONFIG_DIR`), `rg`/`fd` search rule + guard     |
-| [gopass.md](docs/gopass.md)                                     | Terminal password manager (GPG + git)                                                      |
-| [certs.md](docs/certs.md)                                       | Corporate CA certs — trust store restore                                                   |
-| [vpn.md](docs/vpn.md)                                           | Corporate VPN (GlobalProtect / `gpclient`)                                                 |
-| [docker.md](docs/docker.md)                                     | Engine setup, rootless usage, daemon config                                                |
-| [firewalld.md](docs/firewalld.md)                               | Exposing a dev server to your LAN                                                          |
-| [greetd.md](docs/greetd.md)                                     | Login manager + tuigreet + quiet boot                                                      |
-| ⤷ [secret-service.md](docs/secret-service.md)                   | Desktop keychain — gnome-keyring/PAM auto-unlock, Secret Service, gopass alternative       |
-| [zram.md](docs/zram.md)                                         | Compressed RAM swap — OOM resilience (why zero-swap kills apps)                            |
-| ⤷ [memory-swap-concepts.vi.md](docs/memory-swap-concepts.vi.md) | Theory: RAM/paging/OOM, zram vs zswap — the _why_ (tiếng Việt)                             |
-| [xdg-environment.md](docs/xdg-environment.md)                   | Env vars & desktop portals — `/etc/environment` vs `environment.d` vs `xdg-desktop-portal` |
-| [windows.md](docs/windows.md)                                   | Windows host + Arch WSL guest: the split, the hand-off, the setup order                    |
-| [theme-sync.md](docs/theme-sync.md)                             | System light/dark sync — darkman + gtk portal, auto schedule + keybind toggle              |
-| [vscode.md](docs/vscode.md)                                     | VS Code — themes, custom.css font weight, format-on-save routing, extensions               |
-| [zed.md](docs/zed.md)                                           | Zed — curated config, per-theme font weight, keymap cheat-sheet, extensions                |
-| [fcitx5.md](docs/fcitx5.md)                                     | Vietnamese input (Bamboo)                                                                  |
-| [screenshot.md](docs/screenshot.md)                             | Screenshot pipeline (grim/slurp/satty)                                                     |
-| [screen-recording.md](docs/screen-recording.md)                 | GPU screen recording (wl-screenrec)                                                        |
-| [clipboard.md](docs/clipboard.md)                               | Clipboard history (cliphist + Noctalia launcher)                                           |
-| [archives.md](docs/archives.md)                                 | Compression / archives (7zz · ouch · PeaZip GUI)                                           |
-| [mise.md](docs/mise.md)                                         | Runtime / dev-env version management                                                       |
-| [ripgrep.md](docs/ripgrep.md)                                   | Fast recursive search + config (`RIPGREP_CONFIG_PATH`), what a search sees                 |
-| ⤷ [fd.md](docs/fd.md)                                           | Find files by name — `find` replacement, global ignore file                                |
-| ⤷ [search-concepts.vi.md](docs/search-concepts.vi.md)           | Theory: grep vs rg, find vs fd, and what a search silently misses (tiếng Việt)             |
-| [rtk.md](docs/rtk.md)                                           | Token proxy for AI agents — rewrite hook, reading `rtk gain`, what compression costs       |
-| [direnv.md](docs/direnv.md)                                     | Per-directory environments (`.envrc`)                                                      |
+| Guide                                                                       | About                                                                                      |
+| --------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------ |
+| [arch-install.vi.md](docs/arch-install.vi.md)                               | Plain Arch on the laptop: LUKS, systemd-boot, dual-boot Windows, LAN (tiếng Việt)          |
+| ⤷ [boot-disk-network-concepts.vi.md](docs/boot-disk-network-concepts.vi.md) | Theory: UEFI, GPT, ESP/XBOOTLDR, LUKS, initramfs, DHCP/DNS/mDNS — the _why_ (tiếng Việt)   |
+| [chezmoi.md](docs/chezmoi.md)                                               | Dotfile manager — workflows, templates, add/re-add                                         |
+| [niri.md](docs/niri.md)                                                     | The scrollable-tiling compositor + Noctalia shell (hub)                                    |
+| ⤷ [niri-concepts.md](docs/niri-concepts.md)                                 | niri's mental model — columns, workspaces, outputs                                         |
+| ⤷ [niri-config.md](docs/niri-config.md)                                     | Config walkthrough + one-file-three-machines template                                      |
+| ⤷ [niri-keybindings.md](docs/niri-keybindings.md)                           | Full Keybind ↔ Action tables                                                               |
+| [ghostty.md](docs/ghostty.md)                                               | Terminal, keybinds, transparency, cursor shaders                                           |
+| ⤷ [zellij.md](docs/zellij.md)                                               | Multiplexer — sessions, project layouts, the `zj` picker                                   |
+| [fish.md](docs/fish.md)                                                     | Shell, plugins, keybindings, secrets pattern                                               |
+| ⤷ [zoxide.md](docs/zoxide.md)                                               | Frecency directory jumping (`z` / `zi`), z→zoxide migration                                |
+| ⤷ [starship.md](docs/starship.md)                                           | Prompt layout, the TOML quoting trap, module cost                                          |
+| [fastfetch.md](docs/fastfetch.md)                                           | System-info banner — random Arch logo, per-machine                                         |
+| [ghq.md](docs/ghq.md)                                                       | Organized repo cloning + fuzzy jumping                                                     |
+| [ssh.md](docs/ssh.md)                                                       | SSH keys per host (personal + work auth)                                                   |
+| [git.md](docs/git.md)                                                       | Git identities, `includeIf`, SSH commit signing                                            |
+| [claude-code.md](docs/claude-code.md)                                       | Personal + company Teams accounts (`CLAUDE_CONFIG_DIR`), `rg`/`fd` search rule + guard     |
+| [gopass.md](docs/gopass.md)                                                 | Terminal password manager (GPG + git)                                                      |
+| [certs.md](docs/certs.md)                                                   | Corporate CA certs — trust store restore                                                   |
+| [vpn.md](docs/vpn.md)                                                       | Corporate VPN (GlobalProtect / `gpclient`)                                                 |
+| [docker.md](docs/docker.md)                                                 | Engine setup, rootless usage, daemon config                                                |
+| [firewalld.md](docs/firewalld.md)                                           | Exposing a dev server to your LAN                                                          |
+| [greetd.md](docs/greetd.md)                                                 | Login manager + tuigreet + quiet boot                                                      |
+| ⤷ [secret-service.md](docs/secret-service.md)                               | Desktop keychain — gnome-keyring/PAM auto-unlock, Secret Service, gopass alternative       |
+| [zram.md](docs/zram.md)                                                     | Compressed RAM swap — OOM resilience (why zero-swap kills apps)                            |
+| ⤷ [memory-swap-concepts.vi.md](docs/memory-swap-concepts.vi.md)             | Theory: RAM/paging/OOM, zram vs zswap — the _why_ (tiếng Việt)                             |
+| [xdg-environment.md](docs/xdg-environment.md)                               | Env vars & desktop portals — `/etc/environment` vs `environment.d` vs `xdg-desktop-portal` |
+| [windows.md](docs/windows.md)                                               | Windows host + Arch WSL guest: the split, the hand-off, the setup order                    |
+| [theme-sync.md](docs/theme-sync.md)                                         | System light/dark sync — darkman + gtk portal, auto schedule + keybind toggle              |
+| [vscode.md](docs/vscode.md)                                                 | VS Code — themes, custom.css font weight, format-on-save routing, extensions               |
+| [zed.md](docs/zed.md)                                                       | Zed — curated config, per-theme font weight, keymap cheat-sheet, extensions                |
+| [fcitx5.md](docs/fcitx5.md)                                                 | Vietnamese input (Bamboo)                                                                  |
+| [screenshot.md](docs/screenshot.md)                                         | Screenshot pipeline (grim/slurp/satty)                                                     |
+| [screen-recording.md](docs/screen-recording.md)                             | GPU screen recording (wl-screenrec)                                                        |
+| [clipboard.md](docs/clipboard.md)                                           | Clipboard history (cliphist + Noctalia launcher)                                           |
+| [archives.md](docs/archives.md)                                             | Compression / archives (7zz · ouch · PeaZip GUI)                                           |
+| [mise.md](docs/mise.md)                                                     | Runtime / dev-env version management                                                       |
+| [ripgrep.md](docs/ripgrep.md)                                               | Fast recursive search + config (`RIPGREP_CONFIG_PATH`), what a search sees                 |
+| ⤷ [fd.md](docs/fd.md)                                                       | Find files by name — `find` replacement, global ignore file                                |
+| ⤷ [search-concepts.vi.md](docs/search-concepts.vi.md)                       | Theory: grep vs rg, find vs fd, and what a search silently misses (tiếng Việt)             |
+| [rtk.md](docs/rtk.md)                                                       | Token proxy for AI agents — rewrite hook, reading `rtk gain`, what compression costs       |
+| [direnv.md](docs/direnv.md)                                                 | Per-directory environments (`.envrc`)                                                      |
 
 Bigger design decisions are recorded as [ADRs](docs/adr/).
 

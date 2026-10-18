@@ -276,7 +276,8 @@ Arch Wiki khuyến nghị chỉ dùng **một trong hai**, không cả hai. Vì 
 _builtin_ (biên dịch thẳng vào kernel, không phải module), không tắt được từ file
 config hay modprobe — công tắc bền duy nhất là **kernel command line**. Trên máy
 GRUB này: thêm `zswap.enabled=0` vào `GRUB_CMDLINE_LINUX_DEFAULT` rồi
-`grub-mkconfig`. Chi tiết thao tác trong [`zram.md`](zram.md).
+`grub-mkconfig`. Trên systemd-boot (laptop): thêm vào dòng `options` của từng
+entry. Chi tiết thao tác trong [`zram.md`](zram.md).
 
 ---
 

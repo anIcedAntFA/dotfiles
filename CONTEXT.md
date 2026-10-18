@@ -86,6 +86,15 @@ _Avoid_: adding `wsl` or `windows` as a **machine profile** (a profile names a b
 not what is booted on it); "headless" for a WSL guest (it has a desktop — the
 Windows host's); "host" alone.
 
+**Base install**:
+What a **Desktop host** was installed from, before this config goes on top:
+EndeavourOS "no desktop" or plain Arch from the Arch ISO. Chosen per box,
+independent of the **machine profile**. Both leave a TTY-only Arch system; they
+differ in what the installer adds on top of Arch (EndeavourOS's own repo and
+tools), so a package list taken on one may not install on the other.
+_Avoid_: "distro" alone (both are Arch); folding the base install into the
+machine profile.
+
 **Host alias**:
 The short label the shell prompt shows in place of the real hostname, chosen per
 machine and kept out of the repo. It tells one machine from another on screen and

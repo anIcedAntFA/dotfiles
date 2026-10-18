@@ -119,6 +119,12 @@ sudoedit /etc/default/grub
 sudo grub-mkconfig -o /boot/grub/grub.cfg
 ```
 
+On **systemd-boot** (the plain-Arch `laptop`), there is nothing to regenerate:
+append `zswap.enabled=0` to the `options` line of every entry in
+`/boot/loader/entries/*.conf` (or `esp/loader/entries/` if kernels live on the
+ESP). The [laptop install guide](arch-install.vi.md#74-systemd-boot) writes it into
+the entries from the start.
+
 After a reboot, `enabled` reads `N` and zram is the sole compressed swap. Pages
 already in zswap stay there until faulted back in — nothing needs clearing.
 

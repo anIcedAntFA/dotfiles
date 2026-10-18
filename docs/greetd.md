@@ -119,6 +119,13 @@ Then regenerate:
 sudo grub-mkconfig -o /boot/grub/grub.cfg
 ```
 
+On **systemd-boot** (the plain-Arch `laptop`, see
+[arch-install.vi.md](arch-install.vi.md#74-systemd-boot)), add the same words to the
+`options` line of each entry in `/boot/loader/entries/*.conf`; the change applies on
+the next boot with no regenerate step. Use only `quiet loglevel=3`:
+`nowatchdog nvme_load=YES` are EndeavourOS's own defaults, not something plain Arch
+needs.
+
 ## Keyring / Secret Service (app credentials)
 
 > The terse how-to is below; the full architecture, the Home-vs-this-box diagnosis,
