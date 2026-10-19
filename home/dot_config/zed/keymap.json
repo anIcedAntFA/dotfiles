@@ -1,18 +1,9 @@
 // Zed keymap — curated gaps + custom on top of `base_keymap: "VSCode"`.
 // Only overrides live here; the FULL binding reference (VS Code defaults + these)
-// is the cheat-sheet in docs/zed.md.
+// is the cheat-sheet in docs/zed.md. Empty for now: the one binding it held,
+// Ctrl+Shift+G → git_panel::ToggleFocus, is a Zed default as of 1.24.
 //
 // Modifier convention: Ctrl / Alt / Shift are app-level (Zed). Super is niri's
 // (window manager) and is deliberately never used here — niri grabs most Super
 // combos before Zed ever sees them. See docs/zed.md.
-[
-  {
-    "context": "Workspace",
-    "bindings": {
-      // Focus the Git panel (source control) — matches VS Code's Ctrl+Shift+G.
-      // Heavy git (commit/rebase/conflicts) is done in the terminal; this is for
-      // reviewing diffs/changes inside the editor.
-      "ctrl-shift-g": "git_panel::ToggleFocus"
-    }
-  }
-]
+[]

@@ -1,13 +1,16 @@
 // Zed settings — curated. Only intentional overrides live here; run
 // `zed: open default settings` from the command palette to see everything else.
 // Managed by chezmoi (home/dot_config/zed/). Companion: keymap.json.
+// One file for every box: a Desktop host, a WSL guest (read there as the Zed
+// remote server's settings) and, copied by hand, %APPDATA%\Zed on the Windows
+// host. See docs/zed.md.
 //
 // `buffer_font_weight` is swapped per color-scheme by darkman, not by Zed —
 // see docs/zed.md and docs/adr/0013-zed-per-theme-font-weight-via-darkman-hook.md.
 {
   // ── Fonts & UI ────────────────────────────────────────────────────────────
   "buffer_font_family": "JetBrainsMono Nerd Font Mono",
-  "buffer_font_size": 18,
+  "buffer_font_size": 20,
   "buffer_line_height": { "custom": 1.5 },
   "tab_size": 2,
   // Light baseline. darkman's set-color-scheme hook rewrites this to 200
@@ -15,15 +18,13 @@
   // per-theme font weight. Keep the key on one line: the hook edits it by sed.
   "buffer_font_weight": 400,
   "ui_font_family": "JetBrainsMono Nerd Font",
-  "ui_font_size": 16,
-  "ui_font_weight": 400,
   "cursor_shape": "block",
   "unnecessary_code_fade": 0.4,
   // Agent panel fonts — match the editor's Nerd Font (cosmetic only; the agent's
   // model/server config is deliberately left untracked, see the AI section).
   "agent_ui_font_family": "JetBrainsMono Nerd Font",
-  "agent_ui_font_size": 16,
-  "agent_buffer_font_size": 16,
+  "agent_ui_font_size": 18,
+  "agent_buffer_font_size": 18,
 
   // ── Theme — follows the system color-scheme (darkman → gtk portal) ─────────
   "theme": {
@@ -35,9 +36,7 @@
 
   // ── Editor behaviour ──────────────────────────────────────────────────────
   "base_keymap": "VSCode",
-  "cli_default_open_behavior": "existing_window",
   "format_on_save": "on",
-  "linked_edits": true, // auto-rename the paired HTML/JSX closing tag
   "completions": {
     "words_min_length": 4
   },
@@ -50,9 +49,7 @@
     "show_value_hints": true,
     "show_type_hints": false,
     "show_parameter_hints": false,
-    "show_other_hints": true,
-    "scroll_debounce_ms": 60,
-    "edit_debounce_ms": 701
+    "show_other_hints": true
   },
   "diagnostics": {
     "inline": {
@@ -73,7 +70,6 @@
   "horizontal_scroll_margin": 4.0,
   "vertical_scroll_margin": 4.0,
   "minimum_split_diff_width": 80.0,
-  "diff_view_style": "unified",
   "expand_excerpt_lines": 6,
   "outline_panel": {
     "indent_size": 14.0,
@@ -85,18 +81,13 @@
     "dock": "left"
   },
   "markdown_preview": {
-    "max_width": 1000.0
+    "max_width": 1000.0,
+    "font_size": 18,
+    "font_family": "JetBrainsMono Nerd Font",
+    "code_font_family": "JetBrainsMono Nerd Font Mono"
   },
-  "markdown_preview_font_size": 18,
-  "markdown_preview_code_font_family": "JetBrainsMono Nerd Font Mono",
-  "markdown_preview_font_family": "JetBrainsMono Nerd Font",
 
-  // ── Git / terminal / workspace ────────────────────────────────────────────
-  "git": {
-    "inline_blame": {
-      "enabled": true // GitLens-style current-line blame (native + git-firefly)
-    }
-  },
+  // ── Terminal / workspace ──────────────────────────────────────────────────
   "terminal": {
     // `git commit`, `jj`, etc. in the integrated terminal open the file back in
     // this Zed instead of vi. `--wait` blocks until the tab is closed.
@@ -104,30 +95,29 @@
       "EDITOR": "zed --wait"
     }
   },
-  // Keep build/vendor dirs out of the file finder and project search. NOTE: this
-  // REPLACES Zed's default list, so the VCS entries below must stay.
+  // Keep build/vendor dirs out of the file finder and project search. "..."
+  // splices in Zed's own default list (VCS dirs, .DS_Store, …) so it stays current.
   "file_scan_exclusions": [
-    "**/.git",
-    "**/.svn",
-    "**/.hg",
-    "**/.DS_Store",
-    "**/Thumbs.db",
     "**/node_modules",
     "**/.next",
     "**/.turbo",
     "**/dist",
-    "**/.cache"
+    "**/.cache",
+    "..."
   ],
 
   // ── AI ────────────────────────────────────────────────────────────────────
-  // Edit predictions default to Zeta (Zed's own model): no monthly cap, works on
-  // every machine signed into a Zed account. On the work machine switch to
-  // Copilot Enterprise by hand → "provider": "copilot" (a `chezmoi apply` will
-  // reset it back to "zed"; see docs/zed.md). Claude is too slow for inline
-  // predictions — it's an Agent, below. API keys live in the system keychain,
-  // never in this file, so it is safe in a public repo.
+  // No inline edit predictions: Zeta needs a paid Zed plan, and Copilot is gone
+  // on the work machine. LSP completions are unaffected. To turn them back on,
+  // set "provider" to "zed" (Zed Pro), "ollama" (local model), "codestral" or
+  // "mercury" (third-party API key) — see docs/zed.md. mode/data collection are
+  // kept so a switch back starts quiet and private. Claude works here as an
+  // Agent (below), not as a prediction provider. API keys live in the system
+  // keychain, never in this file, so it is safe in a public repo.
   "edit_predictions": {
-    "provider": "zed"
+    "provider": "none",
+    "mode": "subtle",
+    "allow_data_collection": "no"
   },
   // Agent panel docked right. Only the dock is tracked — model/server picks
   // (favorite_models, model_parameters, github-copilot-cli, …) are volatile,
