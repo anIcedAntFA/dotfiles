@@ -44,12 +44,13 @@
 .local/share/darkman
 .local/share/applications
 
-# GUI apps — these run on the Windows host, not in the guest.
+# GUI apps — these run on the Windows host, not in the guest. Zed is not here:
+# the guest is its WSL remote server, which reads ~/.config/zed/settings.json
+# (LSP, formatter routing). See docs/zed.md.
 .config/ghostty
 .config/Thunar
 .config/satty
 .config/zathura
-.config/zed
 .config/Code
 .config/code-flags.conf
 
