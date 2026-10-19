@@ -7,7 +7,10 @@ identical. Everything lives under `~/.config/zed/` and is chezmoi-managed from
 | File            | Purpose                                                      |
 | --------------- | ------------------------------------------------------------ |
 | `settings.json` | Curated overrides only (not a dump of defaults) + extensions |
-| `keymap.json`   | Custom key bindings on top of the VS Code base keymap        |
+| `keymap.json`   | Custom key bindings on top of the VS Code base keymap (none) |
+
+On a Windows host the same two files also go to `%APPDATA%\Zed\` by hand — see
+[Windows host + WSL guest](#windows-host--wsl-guest).
 
 Project-scoped settings for a specific repo live in that repo's own `.zed/`
 (committed to its git, not chezmoi) — see [Global vs project](#global-vs-project-settings-zed).
@@ -29,6 +32,29 @@ External formatters must be on `PATH` (mise provides them): **dprint**, **shfmt*
 **fish_indent**. **Biome** is fetched by its extension, so it needs nothing on
 `PATH`. Go needs **gopls** (+ **dlv** for debugging) on `PATH` — `mise` / `just setup`.
 
+### Windows host + WSL guest
+
+Under [ADR 0025](adr/0025-wsl-guest-for-the-terminal-layer-on-windows.md) Zed
+runs natively on Windows and opens repos in the WSL guest through Zed's WSL
+remote. That makes **two** settings files, both fed from the same source:
+
+| Side                  | File                          | Reads it for                  | Applied by       |
+| --------------------- | ----------------------------- | ----------------------------- | ---------------- |
+| Client (Windows host) | `%APPDATA%\Zed\settings.json` | UI, fonts, theme, keymap, AI  | hand copy, below |
+| Server (WSL guest)    | `~/.config/zed/settings.json` | LSP config, formatter routing | `chezmoi apply`  |
+
+Neither side sees the other's file (both read the repo's `.zed/`), so the guest
+is deliberately **not** in the GUI-app block of `.chezmoiignore`. After changing
+the source, copy it to the host from inside the guest:
+
+```sh
+cp home/dot_config/zed/{settings,keymap}.json \
+  "$(wslpath "$(cmd.exe /c 'echo %APPDATA%' 2>/dev/null | tr -d '\r')")/Zed/"
+```
+
+Change settings in the repo, not in Zed's Settings UI on Windows — a UI edit
+lands only in `%APPDATA%` and drifts until someone notices.
+
 ## Per-color-scheme font weight (400 light / 200 dark)
 
 Zed has **no native per-theme font weight** and no CSS injection, so the weight is
@@ -43,6 +69,10 @@ mode shows 400 until the next transition or a manual `Mod+Shift+D` — an accept
 self-healing transient. Full rationale and alternatives:
 [ADR 0013](adr/0013-zed-per-theme-font-weight-via-darkman-hook.md) (the Zed
 counterpart of [ADR 0011](adr/0011-vscode-custom-css-for-font-weight.md)).
+
+**On a Windows host the weight stays 400 in both modes.** There is no darkman
+there, and nothing else rewrites the file — WezTerm follows the Windows mode for
+colours only (its font weight is fixed). Accepted as cosmetic.
 
 > Keep `buffer_font_weight` a single-line integer key — the hook edits it by
 > regex.
@@ -163,15 +193,32 @@ repo's own `.zed/settings.json`.
 
 Two independent layers:
 
-- **Edit predictions** (inline tab completion) — default **Zeta** (Zed's own
-  model: no monthly cap, works on any machine signed into a Zed account). On the
-  work machine switch to Copilot Enterprise by hand:
-  `"edit_predictions": { "provider": "copilot" }`. Note a later `chezmoi apply`
-  resets it to `"zed"` — re-edit, or template it later if that grates. Claude is
-  too slow for this layer.
-- **Agents (ACP)** — `claude-acp` is registered for the personal Claude Agent.
-  Add a Copilot agent from the extension panel on the work machine when needed.
+- **Edit predictions** (inline tab completion) — **off** (`"provider": "none"`).
+  Zed's own model, Zeta, is no longer on the Free plan (Pro / Student / Business
+  only), and Copilot was dropped at work. LSP completions are unaffected. To turn
+  predictions back on, pick a provider in `edit_predictions.provider`:
+
+  | Provider                 | Needs                                             |
+  | ------------------------ | ------------------------------------------------- |
+  | `zed` (Zeta)             | a paid Zed plan                                   |
+  | `ollama`                 | a local Ollama + a code base model (`ollama: {}`) |
+  | `codestral` / `mercury`  | an API key from Mistral / Inception Labs          |
+  | `open_ai_compatible_api` | any OpenAI-completions server (vLLM, llama.cpp)   |
+
+  `mode: "subtle"` (show only while holding `Alt`) and
+  `allow_data_collection: "no"` are already set, so a switch back starts quiet
+  and private. Claude is not a prediction provider — no Anthropic option exists,
+  and it would be too slow for this layer anyway.
+- **Agents (ACP)** — `claude-acp` is registered for the Claude Agent. It owns
+  its own auth: open a Claude Agent thread and `/login` with the Claude account
+  (a Claude Team seat works). That seat does **not** come with an API key, so the
+  Zed Agent, the Inline Assistant and the Git panel's "Generate commit message"
+  have no model to call — use the Claude Agent thread, and commit in the terminal.
   Each agent is its own thread.
+
+There is no `AGENTS.md` in the Zed config dir. Zed's Rules → Skills migration
+writes one there (`%APPDATA%\Zed\AGENTS.md` on Windows) holding the old commit
+prompt, which it then injects into every Zed Agent thread — delete it.
 
 API keys are stored in the **system keychain**, never in `settings.json`, so this
 config is safe in a public repo.
@@ -195,8 +242,8 @@ opens its message back in this Zed.
 
 Base keymap is **VS Code**, so muscle memory carries over. Modifiers: `Ctrl` /
 `Alt` / `Shift` are Zed's; **`Super` is niri's** and is never used here (niri
-grabs it first). `⭑` = custom binding added in `keymap.json`; the rest are VS Code
-base defaults.
+grabs it first). Everything below is a Zed or VS Code base default — `keymap.json`
+is currently empty.
 
 ### Navigation & files
 
@@ -244,7 +291,7 @@ base defaults.
 
 | Keys               | Action                                      |
 | ------------------ | ------------------------------------------- |
-| `Ctrl+Shift+G` ⭑   | Focus the Git panel                         |
+| `Ctrl+Shift+G`     | Focus the Git panel                         |
 | `Ctrl+G` `D`       | Project Diff (all changes)                  |
 | `Ctrl+Y` / `Alt+Y` | Stage hunk & move to next (in Project Diff) |
 | `Ctrl+G` `↑ / ↓`   | Push / pull                                 |
