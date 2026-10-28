@@ -58,13 +58,13 @@ Home column below). Half 2 is what makes it seamless.
 
 ## Which apps actually need this?
 
-Only _some_ apps broke when there was no Secret Service (Zed did; VS Code, Slack, Zen
+Only _some_ apps broke when there was no Secret Service (Zed did; VS Code, Slack, Waterfox
 didn't). That's not random — apps fall into three credential-storage strategies, and
 only one of them hard-depends on the keyring:
 
 | Strategy                                       | Apps here                                                                                 | Where the secret lives                                                  | Needs gnome-keyring?                     |
 | ---------------------------------------------- | ----------------------------------------------------------------------------------------- | ----------------------------------------------------------------------- | ---------------------------------------- |
-| **A. App-private store**                       | Zen (Firefox engine)                                                                      | its own NSS `key4.db` + `logins.json` in the profile                    | ❌ never — self-contained                |
+| **A. App-private store**                       | Waterfox (Firefox engine)                                                                 | its own NSS `key4.db` + `logins.json` in the profile                    | ❌ never — self-contained                |
 | **B. Chromium/Electron `safeStorage`, tiered** | Chrome, VS Code, Slack, teams-for-linux                                                   | picks a backend at runtime: `gnome-libsecret` → `kwallet` → **`basic`** | ❌ works without — falls back to `basic` |
 | **C. Secret-Service-only, no fallback**        | **Zed** (Rust; speaks `org.freedesktop.secrets` over D-Bus directly, no `libsecret` link) | the keyring, or nothing                                                 | ✅ **hard requirement**                  |
 

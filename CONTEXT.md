@@ -153,7 +153,7 @@ Compositor-level named workspace (`terminal`, `coding`, `browser`…), pinned to
 monitor via `open-on-output`. Owns `Super`-prefixed keys. This is where a
 Ghostty _window_ lives.
 A workspace _name_ pins to at most one output, and can host more than one app —
-e.g. `browser` holds both zen and chrome (see
+e.g. `browser` holds both waterfox and chrome (see
 [ADR 0009](docs/adr/0009-zen-browser-not-forced-across-outputs.md), superseded).
 Separately, whether an app actually _lands_ on its pinned workspace depends on
 a window-rule's `open-on-workspace` — pinning the workspace to an output and
@@ -339,7 +339,7 @@ conflate. **Ozone** decides native-Wayland vs XWayland (rendering). **`--enable-
 decides whether fcitx reaches it. **Theme-follow** is whether it repaints on the
 `org.freedesktop.appearance color-scheme` portal broadcast — a native-Wayland app
 gets the broadcast, but whether it _acts_ on a **live** change is app/version
-dependent (Chrome/Zen do; Discord's stock Electron does so reliably only at launch —
+dependent (Chrome does; Waterfox reads the portal, live repaint unverified; Discord's stock Electron does so reliably only at launch —
 see [docs/research/discord-wayland-theme-follow.md](docs/research/discord-wayland-theme-follow.md)).
 _Avoid_: assuming Ozone alone makes an app follow the theme; assuming portal
 broadcast reaching an app means it repaints live.
@@ -366,7 +366,7 @@ _Avoid_: "foreign" as a synonym for AUR — a hand-built local package is foreig
 **`pacman-explicit.txt`** vs **`aur.txt`** (the snapshots):
 `pacman-explicit.txt` = `pacman -Qqe` (everything explicit, native **and** foreign).
 `aur.txt` = `pacman -Qqm` (everything foreign). They overlap on every explicit
-foreign app — that's why e.g. `zen-browser-bin` appears in both; it is by design,
+foreign app — that's why e.g. `waterfox-bin` appears in both; it is by design,
 not drift. Reference records only: nothing in the repo replays them.
 A snapshot is a **record of intent, not a reproducible query**: the explicit flag is
 mutable, so a reinstall or a meta-package can demote a tool you chose by name to a
@@ -420,6 +420,23 @@ The one directory under which everything is "work". A single boundary selects bo
 the work **Identity** and the work **Account**, so they cannot disagree about
 whether a path is company work.
 _Avoid_: work dir, company folder; defining a second boundary per tool.
+
+## Browser
+
+**Policies layer** vs **Profile layer** (where Waterfox config lives):
+Two scopes of browser configuration. The **policies layer** is a system-wide policy
+file that applies to _every_ profile and wins over a profile's own prefs for the
+keys it covers; it is applied by hand like other system files. The **profile
+layer** is the prefs file inside one profile, and chezmoi owns it. Pick the scope
+by blast radius: browser-wide switches (updates, telemetry, forced extensions) in
+policies; per-profile behaviour (tabs, DNS, pickers) in the profile.
+_Avoid_: bare "config" for either; "autoconfig" — a third, unused mechanism.
+
+**Pinned profile**:
+The one named Waterfox profile kept at a fixed path and always launched explicitly,
+so chezmoi can own files inside it. A launch that bypasses the pin opens a
+different, unmanaged profile.
+_Avoid_: "default profile" — its directory name is random and not managed.
 
 ## Search
 
