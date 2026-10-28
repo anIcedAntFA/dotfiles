@@ -175,7 +175,7 @@ output the unpinned names just stack in declaration order.
 
 `spawn-at-startup` launches the shell (`qs -c noctalia-shell`) and terminal on
 every machine, plus `fcitx5` + `xsettingsd`. Machine blocks add the rest: `work`
-gets VS Code, `home` gets Discord — and `zen` plain-spawns only on single-monitor
+gets VS Code, `home` gets Discord — and `waterfox` plain-spawns only on single-monitor
 `laptop` (on `work`/`home` it's gated, see below). Use `spawn` for a plain exec
 (quote each argument separately) and `spawn-sh` when you need a shell (pipes, `~`,
 multiple commands).
@@ -205,12 +205,12 @@ CONTEXT.md glossary.
 
 ```kdl
 spawn-at-startup "dot-spawn-ghostty"  // -> terminal on the login-ready primary (delay + log)
-spawn-at-startup "dot-niri-startup" "DP-3" "zen-browser" "google-chrome-stable" "discord"
+spawn-at-startup "dot-niri-startup" "DP-3" "dot-waterfox" "google-chrome-stable" "discord"
 ```
 
 `dot-niri-startup` polls `niri msg -j outputs` until `<output>` reports a non-null
 logical position, then launches each command in order with a small gap — so list
-order becomes left-to-right column order (zen takes the browser's left column,
+order becomes left-to-right column order (waterfox takes the browser's left column,
 chrome the next). The poll is bounded (~30 s) so an unplugged monitor degrades to
 launching anyway instead of hanging the session. A fixed `sleep` only gambles
 against the display's init time on a given boot (a `sleep 3` on Teams still lost the
@@ -253,10 +253,10 @@ reboot to guess; `dot-theme-reconcile` traces the theme handoff to
 `app-id` with `niri msg windows` (focus the window first). This config:
 
 - rounds every window's corners and dims inactive windows to `opacity 0.8`;
-- routes ghostty → `terminal`, VS Code → `coding`, Zen **and** Chrome → `browser`
-  (zen spawns first, so it takes the first column), Slack/Teams/Discord →
+- routes ghostty → `terminal`, VS Code → `coding`, Waterfox **and** Chrome → `browser`
+  (waterfox spawns first, so it takes the first column), Slack/Teams/Discord →
   `chatting`, each `open-maximized` as appropriate;
-- keeps two disabled (`/-`) examples: float Firefox PiP, and block password
+- keeps two disabled (`/-`) examples: float Waterfox PiP, and block password
   managers out of screen capture.
 
 ### binds

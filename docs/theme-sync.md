@@ -28,7 +28,7 @@ Mod+Shift+D (toggle) ────┘   (writer/      │
                                                                                                    │ broadcasts
                             ┌──────────────────┬─────────────────┬────────────────────────────────┴──┐
                             ▼                  ▼                 ▼                                     ▼
-                      VS Code (autoDetect)  Ghostty / Zed   Chrome · Zen       Discord·Slack·Teams  fish auto-sync-theme
+                      VS Code (autoDetect)  Ghostty / Zed   Chrome · Waterfox  Discord·Slack·Teams  fish auto-sync-theme
                       Dracula ↔ Github Lt.  (portal-aware)  (portal, 0 cfg)    (Electron: needs     Dracula ↔ Catppuccin Latte
                                                                                 Wayland+Ozone)
 
@@ -117,7 +117,7 @@ mode, and we deliberately didn't build one.
   — native portal follow (Dracula ↔ Catppuccin Latte); its per-mode font weight
   rides the `set-color-scheme` hook above. See [zed.md](zed.md).
 - **Portal-aware apps.** Modern Chromium/Electron/Firefox read
-  `org.freedesktop.appearance` from the `Settings=gtk` portal, so Chrome and Zen
+  `org.freedesktop.appearance` from the `Settings=gtk` portal, so Chrome and Waterfox
   follow the toggle with **no per-app setting** — the same mechanism as Ghostty;
   they just read the one gsetting the portal broadcasts. (This is why it feels
   "like gtk" — it is the gtk portal.)
@@ -258,7 +258,7 @@ darkman toggle                                                # flip and watch a
 systemctl --user status darkman.service                       # scheduler alive?
 ```
 
-VS Code, Ghostty, Chrome, Zen, Discord, and Teams should re-theme live on a
+VS Code, Ghostty, Chrome, Waterfox, Discord, and Teams should re-theme live on a
 toggle; the Noctalia bar, btop's next launch, and the per-monitor wallpaper follow
 via darkman's hooks; a fish shell picks up the new theme on its next launch.
 

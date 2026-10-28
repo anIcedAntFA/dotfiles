@@ -45,7 +45,7 @@ dprint — validate it instead (see below).
 ## Autostart
 
 `spawn-at-startup` launches the shell and daily apps everywhere: Noctalia
-(`qs -c noctalia-shell`), Ghostty, Zen browser. Slack and Teams autostart **only
+(`qs -c noctalia-shell`), Ghostty, Waterfox browser. Slack and Teams autostart **only
 on the `work` machine** (see [niri-config.md](niri-config.md#startup)).
 
 ## X11 apps

@@ -12,6 +12,11 @@
 > window-rule can only route _all_ zen windows to one place; that's now acceptable
 > because there is only one browser workspace to route to. The original decision
 > is kept below for history.
+>
+> **Update (2026-10-28):** zen has since been replaced by Waterfox everywhere
+> (see [docs/waterfox.md](../waterfox.md)). Read "zen" below as the browser used at
+> the time; the `--class` finding was about zen only, and Waterfox's Wayland
+> `app-id` is plain `waterfox`.
 
 ---
 

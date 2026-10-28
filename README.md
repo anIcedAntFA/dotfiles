@@ -64,6 +64,7 @@
 | **Desktop shell**   | [Noctalia](https://github.com/noctalia-dev/noctalia-shell) — bar, widgets, launcher |
 | **Login**           | [greetd](https://sr.ht/~kennylevinsen/greetd/) + tuigreet — [guide](docs/greetd.md) |
 | **Terminal**        | [Ghostty](https://ghostty.org/) — [guide](docs/ghostty.md)                          |
+| **Browser**         | [Waterfox](https://www.waterfox.com/) — [guide](docs/waterfox.md)                   |
 | **Multiplexer**     | [zellij](https://zellij.dev/) — sessions + layouts — [guide](docs/zellij.md)        |
 | **Login shell**     | [fish](https://fishshell.com/) — [guide](docs/fish.md)                              |
 | **Prompt**          | [starship](https://starship.rs/) — [guide](docs/starship.md)                        |
@@ -163,6 +164,7 @@ Each tool has a focused guide covering **what it is, why, and how to set it up**
 | [theme-sync.md](docs/theme-sync.md)                             | System light/dark sync — darkman + gtk portal, auto schedule + keybind toggle              |
 | [vscode.md](docs/vscode.md)                                     | VS Code — themes, custom.css font weight, format-on-save routing, extensions               |
 | [zed.md](docs/zed.md)                                           | Zed — curated config, per-theme font weight, keymap cheat-sheet, extensions                |
+| [waterfox.md](docs/waterfox.md)                                 | Waterfox — install, pinned profile, policies, vertical tabs, Zen migration                 |
 | [fcitx5.md](docs/fcitx5.md)                                     | Vietnamese input (Bamboo)                                                                  |
 | [screenshot.md](docs/screenshot.md)                             | Screenshot pipeline (grim/slurp/satty)                                                     |
 | [screen-recording.md](docs/screen-recording.md)                 | GPU screen recording (wl-screenrec)                                                        |
