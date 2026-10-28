@@ -66,6 +66,7 @@ hotkey-overlay {
 environment {
 	XDG_CURRENT_DESKTOP "niri"
 	XDG_SESSION_TYPE "wayland"
+	MOZ_ENABLE_WAYLAND "1"
 }
 
 // Noctalia v5 needs this to let its panels trigger notification actions and
@@ -272,7 +273,7 @@ spawn-at-startup "dot-theme-reconcile"
 // machine-agnostic, so they start everywhere. See docs/fcitx5.md.
 spawn-at-startup "fcitx5"
 spawn-at-startup "xsettingsd"
-// zen is the browser on every box, but on `work` and `home` its "browser"
+// waterfox is the browser on every box, but on `work` and `home` its "browser"
 // workspace lives on the secondary monitor (DP-1 / DP-3) -- so there it's
 // launched by the gated dot-niri-startup batch below, not here. Only
 // single-monitor `laptop` has "browser" on its lone (login-ready) output, so a
@@ -283,7 +284,7 @@ spawn-at-startup "xsettingsd"
 // boot silent-exit race (a short settle delay + stderr/exit log) -- orthogonal to
 // routing, harmless on the lone panel. See ADR 0022.
 spawn-at-startup "dot-spawn-ghostty"
-spawn-at-startup "zen-browser"
+spawn-at-startup "dot-waterfox"
 {{- end }}
 {{- if eq $machine "work" }}
 // Work apps. `zeditor` (Zed) -> coding on HDMI-A-2, the primary output that's
@@ -291,7 +292,7 @@ spawn-at-startup "zen-browser"
 // DP-1, a secondary monitor that enumerates *after* login: launching them now
 // races niri's workspace creation and they collapse onto DP-1's first slot.
 // dot-niri-startup waits until DP-1's named workspaces exist, then launches them
-// in order -- zen first so it takes the browser's left column, chrome second.
+// in order -- waterfox first so it takes the browser's left column, chrome second.
 // See docs/niri-config.md.
 spawn-at-startup "zeditor"
 // ghostty -> "terminal" on HDMI-A-2, the login-ready primary. It plain-spawned here
@@ -301,13 +302,13 @@ spawn-at-startup "zeditor"
 // short settle delay + captures boot stderr/exit to ~/.local/state/ghostty-boot.log.
 // See ADR 0022 + docs/niri-config.md.
 spawn-at-startup "dot-spawn-ghostty"
-spawn-at-startup "dot-niri-startup" "DP-1" "zen-browser" "google-chrome-stable" "slack" "teams-for-linux"
+spawn-at-startup "dot-niri-startup" "DP-1" "dot-waterfox" "google-chrome-stable" "slack" "teams-for-linux"
 {{- end }}
 {{- if eq $machine "home" }}
 // Home mirrors work. `zeditor` (Zed) -> coding on HDMI-A-1, the primary output
 // that's ready at login, so it spawns directly (same as work). browser + chat all
 // land on DP-3, a secondary monitor that enumerates *after* login: dot-niri-startup
-// waits for DP-3's named workspaces, then launches in order -- zen first (browser
+// waits for DP-3's named workspaces, then launches in order -- waterfox first (browser
 // left column), chrome second, then discord (routes to "chatting" regardless of
 // order). See docs/niri-config.md.
 spawn-at-startup "zeditor"
@@ -318,7 +319,7 @@ spawn-at-startup "zeditor"
 // short settle delay + captures boot stderr/exit to ~/.local/state/ghostty-boot.log.
 // See ADR 0022 + docs/niri-config.md.
 spawn-at-startup "dot-spawn-ghostty"
-spawn-at-startup "dot-niri-startup" "DP-3" "zen-browser" "google-chrome-stable" "discord"
+spawn-at-startup "dot-niri-startup" "DP-3" "dot-waterfox" "google-chrome-stable" "discord"
 {{- end }}
 
 // ============================================================================
@@ -368,11 +369,11 @@ window-rule {
 	open-maximized true
 }
 
-// Both browsers share the one "browser" workspace. zen spawns first
+// Both browsers share the one "browser" workspace. waterfox spawns first
 // (spawn-at-startup order above), so it takes the first column and chrome the
 // next. See docs/adr/0009 (superseded) for the old per-output split.
 window-rule {
-	match app-id="zen"
+	match app-id="waterfox"
 	open-on-workspace "browser"
 	open-maximized true
 }
@@ -382,12 +383,6 @@ window-rule {
 	open-on-workspace "browser"
 	open-maximized true
 }
-
-// window-rule {
-//	   match app-id="firefox"
-//	   open-on-workspace "browser"
-//	   open-maximized true
-// }
 
 window-rule {
 	match app-id="slack"
@@ -417,9 +412,9 @@ window-rule {
 }
 
 // --- Examples (disabled with a leading /-) ----------------------------------
-// Open Firefox's picture-in-picture player floating.
+// Open Waterfox's picture-in-picture player floating.
 /-window-rule {
-	match app-id=r#"firefox$"# title="^Picture-in-Picture$"
+	match app-id=r#"waterfox$"# title="^Picture-in-Picture$"
 	open-floating true
 }
 
@@ -449,7 +444,7 @@ binds {
 	// Clipboard history: Noctalia launcher in clipboard mode (cliphist backend). See docs/clipboard.md.
 	Mod+Shift+C hotkey-overlay-title="Clipboard history" { spawn-sh "noctalia msg panel-toggle clipboard"; }
 	Mod+T hotkey-overlay-title="Open a Terminal: ghostty" { spawn "ghostty"; }
-	Mod+B hotkey-overlay-title="Open a Browser: zen" { spawn "zen-browser"; }
+	Mod+B hotkey-overlay-title="Open a Browser: waterfox" { spawn "dot-waterfox"; }
 	// Mod+G (not Mod+Shift+B) for Chrome; Mod+Shift+Z (not Mod+Z) for Zed --
 	// Mod+Z is fcitx5's input-method TriggerKey (Super+Z), see docs/fcitx5.md.
 	Mod+G hotkey-overlay-title="Open a Browser: google-chrome" { spawn "google-chrome-stable"; }

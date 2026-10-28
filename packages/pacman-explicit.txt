@@ -66,7 +66,6 @@ fcitx5-configtool
 fcitx5-hangul
 fd
 ffmpegthumbnailer
-firefox
 firewalld
 fish
 fisher
@@ -226,6 +225,7 @@ uv
 visual-studio-code-bin
 vulkan-intel
 vulkan-tools
+waterfox-bin
 welcome
 wget
 which
@@ -255,6 +255,5 @@ yay
 zathura
 zed
 zellij
-zen-browser-bin
 zoxide
 zram-generator
