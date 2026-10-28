@@ -10,5 +10,5 @@ rate-mirrors-bin
 slack-desktop-wayland
 teams-for-linux-bin
 visual-studio-code-bin
+waterfox-bin
 witr
-zen-browser-bin

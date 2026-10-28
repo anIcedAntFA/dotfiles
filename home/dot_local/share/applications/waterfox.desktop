@@ -1,0 +1,25 @@
+[Desktop Entry]
+# Override of the package's waterfox.desktop. The AUR `waterfox-bin` one is stale
+# (`StartupWMClass=waterfox-default`, `Exec=waterfox-g`), which breaks window
+# matching; the real Wayland app-id is `waterfox` (see docs/waterfox.md). Launch goes
+# through dot-waterfox so every entry point uses the pinned profile.
+Version=1.0
+Type=Application
+Name=Waterfox
+GenericName=Web Browser
+Exec=dot-waterfox %u
+Icon=waterfox
+Terminal=false
+StartupNotify=true
+StartupWMClass=waterfox
+Categories=Network;WebBrowser;
+MimeType=text/html;application/xhtml+xml;x-scheme-handler/http;x-scheme-handler/https;
+Actions=new-window;new-private-window;
+
+[Desktop Action new-window]
+Name=New Window
+Exec=dot-waterfox --new-window %u
+
+[Desktop Action new-private-window]
+Name=New Private Window
+Exec=dot-waterfox --private-window %u

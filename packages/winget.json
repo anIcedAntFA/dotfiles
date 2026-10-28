@@ -10,7 +10,7 @@
         { "PackageIdentifier": "Git.Git" },
         { "PackageIdentifier": "Microsoft.VisualStudioCode" },
         { "PackageIdentifier": "ZedIndustries.Zed" },
-        { "PackageIdentifier": "Zen-Team.Zen-Browser" },
+        { "PackageIdentifier": "Waterfox.Waterfox" },
         { "PackageIdentifier": "Google.Chrome" },
         { "PackageIdentifier": "SlackTechnologies.Slack" },
         { "PackageIdentifier": "Microsoft.Teams" },
