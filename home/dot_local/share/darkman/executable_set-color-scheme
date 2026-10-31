@@ -5,7 +5,7 @@
 # darkman is the single owner of the dark/light MODE. This hook fans that mode out
 # to everything that can't read the gsetting on its own:
 #   - the gnome color-scheme gsetting (the gtk XDG portal then broadcasts it to
-#     VS Code autoDetect, Ghostty, Zed, Chrome, Zen, Discord, Teams...)
+#     VS Code autoDetect, Ghostty, Zed, Chrome, Waterfox, Discord, Teams...)
 #   - Noctalia (via IPC) so its templates re-render the MineScheme palette per mode
 #   - fish (running shells update live via universal vars)
 #   - the Papirus icon variant (Papirus-Dracula / Papirus-Latte)

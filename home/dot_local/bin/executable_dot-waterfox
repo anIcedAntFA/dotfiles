@@ -1,0 +1,9 @@
+#!/bin/sh
+# Launch Waterfox on the pinned profile `~/.waterfox/main`.
+#
+# Why this exists: Waterfox's default profile dir has a random name
+# (`xxxxxxxx.default-release`), so chezmoi can't own files inside it. Pinning the
+# profile to a fixed path lets chezmoi manage `~/.waterfox/main/user.js`. The niri
+# binds/autostart and the `.desktop` override all go through this wrapper so every
+# entry point lands on the same profile. See docs/waterfox.md.
+exec waterfox --profile "$HOME/.waterfox/main" "$@"

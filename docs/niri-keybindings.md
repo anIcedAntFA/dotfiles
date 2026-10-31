@@ -34,18 +34,18 @@ interchangeable everywhere.
 
 ## Applications & launchers
 
-| Keybind       | Action / command                      | What it does               |
-| ------------- | ------------------------------------- | -------------------------- |
-| `Mod+D`       | `noctalia msg panel-toggle launcher`  | App launcher               |
-| `Mod+Shift+C` | `noctalia msg panel-toggle clipboard` | Clipboard history panel    |
-| `Mod+X`       | `noctalia msg panel-toggle session`   | Session/power menu         |
-| `Mod+A`       | `noctalia msg settings-toggle`        | Noctalia settings panel    |
-| `Mod+T`       | `spawn ghostty`                       | Open a terminal            |
-| `Mod+B`       | `spawn zen-browser`                   | Open the browser (zen)     |
-| `Mod+G`       | `spawn google-chrome-stable`          | Open Google Chrome         |
-| `Mod+E`       | `spawn nautilus`                      | Open the file manager      |
-| `Mod+Shift+Z` | `spawn zeditor`                       | Open the Zed editor        |
-| `Super+Alt+L` | `noctalia msg session lock`           | Lock the screen (Noctalia) |
+| Keybind       | Action / command                      | What it does                |
+| ------------- | ------------------------------------- | --------------------------- |
+| `Mod+D`       | `noctalia msg panel-toggle launcher`  | App launcher                |
+| `Mod+Shift+C` | `noctalia msg panel-toggle clipboard` | Clipboard history panel     |
+| `Mod+X`       | `noctalia msg panel-toggle session`   | Session/power menu          |
+| `Mod+A`       | `noctalia msg settings-toggle`        | Noctalia settings panel     |
+| `Mod+T`       | `spawn ghostty`                       | Open a terminal             |
+| `Mod+B`       | `spawn dot-waterfox`                  | Open the browser (waterfox) |
+| `Mod+G`       | `spawn google-chrome-stable`          | Open Google Chrome          |
+| `Mod+E`       | `spawn nautilus`                      | Open the file manager       |
+| `Mod+Shift+Z` | `spawn zeditor`                       | Open the Zed editor         |
+| `Super+Alt+L` | `noctalia msg session lock`           | Lock the screen (Noctalia)  |
 
 ## Screenshots & capture
 

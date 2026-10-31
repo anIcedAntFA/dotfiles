@@ -27,13 +27,13 @@ and SSH — no desktop or systemd session required.
 ```sh
 #QT_QPA_PLATFORMTHEME=qt5ct     # commented out — Qt apps would theme via qt5ct
 #QT_STYLE_OVERRIDE=kvantum      # commented out — force Qt apps onto the Kvantum theme engine
-BROWSER=firefox                 # generic fallback some CLI tools/scripts use to open a URL
+BROWSER=waterfox                 # generic fallback some CLI tools/scripts use to open a URL
 EDITOR=nano                     # default $EDITOR for git commit -e, crontab -e, etc.
 ```
 
 The `QT_*` lines are commented out on purpose — uncomment them if a Qt app
 (e.g. JetBrains Toolbox) ever needs explicit theming. `EDITOR`/`BROWSER` are
-not overridden anywhere in the fish config, so `nano`/`firefox` are what
+not overridden anywhere in the fish config, so `nano`/`waterfox` are what
 actually fires when a CLI tool asks for your editor or browser.
 
 ## `environment.d`
@@ -104,7 +104,7 @@ org.freedesktop.impl.portal.Settings=gtk          # dark/light mode, accent colo
 - **`Settings=gtk`** — `xdg-desktop-portal-gtk` implements the Settings
   interface by reading `gsettings` (`org.gnome.desktop.interface
   color-scheme`). This is the mechanism that lets portal-aware apps (Ghostty,
-  Chrome, Zen, Discord, Teams) ask "am I in dark mode" without a GNOME session
+  Chrome, Waterfox, Discord, Teams) ask "am I in dark mode" without a GNOME session
   running. It is deliberately pinned to `gtk` (not `gnome`, which also implements
   Settings) to keep the darkman→gtk→apps path in [theme-sync.md](theme-sync.md)
   unchanged. Confirm it answers with:
