@@ -133,7 +133,10 @@ Run in order. Each step that needs an elevated terminal says so.
 
 6. **Editors:** VS Code with the _WSL_ extension, or Zed's WSL remote — both open
    folders that live in the guest. Settings: turn on Settings Sync, or copy
-   `home/dot_config/Code/User/settings.json` and `home/dot_config/zed/` across.
+   `home/dot_config/Code/User/settings.json` across. Zed's files go to
+   `%APPDATA%\Zed\` — the one-line copy is in
+   [zed.md](zed.md#windows-host--wsl-guest); the guest's own copy, read by Zed's
+   remote server, comes from `chezmoi apply`.
 
 ## WSL guest
 
