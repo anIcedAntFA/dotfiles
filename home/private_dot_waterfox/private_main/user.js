@@ -7,6 +7,9 @@ user_pref("sidebar.verticalTabs", true);
 user_pref("sidebar.revamp", true);
 user_pref("browser.tabs.verticalTabs.tree.enabled", true);
 
+// --- Ads/trackers: the built-in blocker, not an extension
+user_pref("waterfox.blocker.enabled", true);
+
 // --- Portal file picker (default 2 = auto = off outside Flatpak)
 user_pref("widget.use-xdg-desktop-portal.file-picker", 1);
 
