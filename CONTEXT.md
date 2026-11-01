@@ -433,10 +433,12 @@ policies; per-profile behaviour (tabs, DNS, pickers) in the profile.
 _Avoid_: bare "config" for either; "autoconfig" — a third, unused mechanism.
 
 **Pinned profile**:
-The one named Waterfox profile kept at a fixed path and always launched explicitly,
-so chezmoi can own files inside it. A launch that bypasses the pin opens a
-different, unmanaged profile.
-_Avoid_: "default profile" — its directory name is random and not managed.
+The one named Waterfox profile kept at a fixed path and launched explicitly, so
+chezmoi can own files inside it. A launch that bypasses the pin opens whichever
+profile that machine's browser state marks as default, which is the pinned profile
+only if it was registered there.
+_Avoid_: "default profile" for the pin — that's a per-machine setting, and an
+unregistered default has a random directory name chezmoi can't manage.
 
 ## Search
 
