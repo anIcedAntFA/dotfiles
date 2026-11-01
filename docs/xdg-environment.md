@@ -27,7 +27,7 @@ and SSH — no desktop or systemd session required.
 ```sh
 #QT_QPA_PLATFORMTHEME=qt5ct     # commented out — Qt apps would theme via qt5ct
 #QT_STYLE_OVERRIDE=kvantum      # commented out — force Qt apps onto the Kvantum theme engine
-BROWSER=waterfox                 # generic fallback some CLI tools/scripts use to open a URL
+BROWSER=dot-waterfox               # generic fallback some CLI tools/scripts use to open a URL
 EDITOR=nano                     # default $EDITOR for git commit -e, crontab -e, etc.
 ```
 
