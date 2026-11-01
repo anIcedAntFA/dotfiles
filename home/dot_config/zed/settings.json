@@ -37,6 +37,8 @@
   // ── Editor behaviour ──────────────────────────────────────────────────────
   "base_keymap": "VSCode",
   "format_on_save": "on",
+  "diff_view_style": "split",
+  "cli_default_open_behavior": "existing_window",
   "completions": {
     "words_min_length": 4
   },
@@ -81,8 +83,8 @@
     "dock": "left"
   },
   "markdown_preview": {
-    "max_width": 1000.0,
-    "font_size": 18,
+    "max_width": 1080.0,
+    "font_size": 20,
     "font_family": "JetBrainsMono Nerd Font",
     "code_font_family": "JetBrainsMono Nerd Font Mono"
   },
