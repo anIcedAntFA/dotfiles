@@ -1,0 +1,16 @@
+{
+  "policies": {
+    "AppAutoUpdate": false,
+    "ManualAppUpdateOnly": true,
+    "DisableTelemetry": true,
+    "DisableFirefoxStudies": true,
+    "NoDefaultBookmarks": true,
+    "OverrideFirstRunPage": "",
+    "ExtensionSettings": {
+      "vimium-c@gdh1995.cn": {
+        "installation_mode": "normal_installed",
+        "install_url": "https://addons.mozilla.org/firefox/downloads/latest/vimium-c/latest.xpi"
+      }
+    }
+  }
+}

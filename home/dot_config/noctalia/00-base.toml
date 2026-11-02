@@ -117,7 +117,7 @@ password_style = "random"
 
     [shell.launcher]
     app_grid = true
-    pinned = [ "com.mitchellh.ghostty", "dev.zed.Zed", "zen", "org.gnome.Nautilus", "discord" ]
+    pinned = [ "com.mitchellh.ghostty", "dev.zed.Zed", "waterfox", "org.gnome.Nautilus", "discord" ]
 
     [shell.panel]
     control_center_placement = "floating"
