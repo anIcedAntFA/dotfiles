@@ -33,7 +33,7 @@ wpdir="{{ .chezmoi.homeDir }}/workspace/github.com/anIcedAntFA/dotfiles/images/w
 # laptop: single eDP-1, reuses the DP-3 landscape pair.
 case "$1" in
 dark) edp="${wpdir}/scarlet-tree-dark.png" ;;
-*) edp="${wpdir}/scarlet-tree.png" ;;
+*) edp="${wpdir}/scarlet-tree-light.png" ;;
 esac
 [ -f "${edp}" ] && noctalia msg wallpaper-set eDP-1 "${edp}" >/dev/null 2>&1 || true
 {{- else }}
@@ -44,12 +44,12 @@ esac
 # `niri msg outputs`). The images are the same landscape/portrait set either way.
 case "$1" in
 dark)
-	land="${wpdir}/fantasy-lake2.png"
-	port="${wpdir}/F42-01-night.jpg"
+	land="${wpdir}/fantasy-lake.png"
+	port="${wpdir}/fedora-42-dark.jpg"
 	;;
 *)
-	land="${wpdir}/scarlet-tree.png"
-	port="${wpdir}/F42-01-day.jpg"
+	land="${wpdir}/scarlet-tree-light.png"
+	port="${wpdir}/fedora-42-light.jpg"
 	;;
 esac
 [ -f "${land}" ] && noctalia msg wallpaper-set {{ $land }} "${land}" >/dev/null 2>&1 || true
