@@ -1,8 +1,10 @@
+adw-gimp3-git
 banana-cursor-bin
 bibata-cursor-theme-bin
 bruno-bin
 flyctl
 google-chrome
+jetbrains-toolbox
 maplemono-ttf
 papirus-folders-git
 pgadmin4-bin
@@ -11,4 +13,3 @@ slack-desktop-wayland
 teams-for-linux-bin
 visual-studio-code-bin
 waterfox-bin
-witr
