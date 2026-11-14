@@ -136,6 +136,7 @@ mpv
 mtools
 nano
 nano-syntax-highlighting
+nautilus
 neovim
 netctl
 networkmanager
@@ -206,7 +207,6 @@ sysfsutils
 systemd-sysvcompat
 teams-for-linux-bin
 texinfo
-thunar
 tldr
 tree
 ttf-bitstream-vera
@@ -214,7 +214,6 @@ ttf-dejavu
 ttf-jetbrains-mono-nerd
 ttf-liberation
 ttf-opensans
-tumbler
 turbo
 unrar
 unzip

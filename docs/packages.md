@@ -127,17 +127,17 @@ Or let chezmoi do it on `chezmoi apply` — answer **yes** to the
 
 ## Files, media & theming
 
-| Package                                                                                                           | Why                                       |
-| ----------------------------------------------------------------------------------------------------------------- | ----------------------------------------- |
-| [`thunar`](https://docs.xfce.org/xfce/thunar/start) + `tumbler` + `ffmpegthumbnailer`                             | File manager + thumbnails.                |
-| [`meld`](https://meldmerge.org/)                                                                                  | Visual diff/merge.                        |
-| [`mpv`](https://mpv.io/)                                                                                          | Media player.                             |
-| [`pavucontrol`](https://freedesktop.org/software/pulseaudio/pavucontrol/)                                         | Audio control (PipeWire).                 |
-| [`zathura`](https://pwmt.org/projects/zathura/)                                                                   | Minimal document viewer.                  |
-| [`satty`](https://github.com/gabm/Satty) + [`gpu-screen-recorder`](https://git.dec05eba.com/gpu-screen-recorder/) | Screenshot annotation + screen recording. |
-| `papirus-icon-theme` + `papirus-folders-git`                                                                      | Icons.                                    |
-| `bibata-cursor-theme-bin` / `banana-cursor-bin`                                                                   | Cursors.                                  |
-| `ttf-jetbrains-mono-nerd`, `noto-fonts{,-cjk,-emoji,-extra}`                                                      | Fonts.                                    |
+| Package                                                                                                           | Why                                        |
+| ----------------------------------------------------------------------------------------------------------------- | ------------------------------------------ |
+| [`nautilus`](https://apps.gnome.org/Nautilus/) + `ffmpegthumbnailer`                                              | File manager (`Mod+E`) + video thumbnails. |
+| [`meld`](https://meldmerge.org/)                                                                                  | Visual diff/merge.                         |
+| [`mpv`](https://mpv.io/)                                                                                          | Media player.                              |
+| [`pavucontrol`](https://freedesktop.org/software/pulseaudio/pavucontrol/)                                         | Audio control (PipeWire).                  |
+| [`zathura`](https://pwmt.org/projects/zathura/)                                                                   | Minimal document viewer.                   |
+| [`satty`](https://github.com/gabm/Satty) + [`gpu-screen-recorder`](https://git.dec05eba.com/gpu-screen-recorder/) | Screenshot annotation + screen recording.  |
+| `papirus-icon-theme` + `papirus-folders-git`                                                                      | Icons.                                     |
+| `bibata-cursor-theme-bin` / `banana-cursor-bin`                                                                   | Cursors.                                   |
+| `ttf-jetbrains-mono-nerd`, `noto-fonts{,-cjk,-emoji,-extra}`                                                      | Fonts.                                     |
 
 ## Networking & VPN
 
