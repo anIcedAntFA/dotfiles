@@ -5,9 +5,13 @@ setup what it is — grouped by purpose, with a short _why_ and a link each.
 
 ## How packages are tracked
 
-- **`packages/pacman-explicit.txt`** — every explicitly installed native package
-  (`pacman -Qqe`). The reproducible source of truth.
-- **`packages/aur.txt`** — AUR / foreign packages (`pacman -Qqm`).
+- **`packages/pacman-explicit.txt`** — what every **Desktop host** should have,
+  native and AUR alike, in `pacman -Qqe` form. It records shared intent, so it
+  is curated by hand, never regenerated wholesale (see the snapshot terms in
+  [CONTEXT.md](../CONTEXT.md)).
+- **`packages/aur.txt`** — the AUR / foreign subset of that (`pacman -Qqm` form).
+- **Per-profile extras** — hardware- or box-specific packages, listed
+  [below](#per-profile-extras) instead of in the shared snapshot.
 - **`packages/pacman-wsl.txt`** + **`packages/aur-wsl.txt`** — the hand-curated
   terminal-only subset installed on a WSL guest, and **`packages/winget.json`** —
   the GUI apps for the Windows host around it (`winget import`). See
@@ -42,19 +46,19 @@ Or let chezmoi do it on `chezmoi apply` — answer **yes** to the
 
 ## Wayland desktop (niri + Noctalia)
 
-| Package                                                                               | Why                                                               |
-| ------------------------------------------------------------------------------------- | ----------------------------------------------------------------- |
-| [`niri`](https://github.com/YaLTeR/niri)                                              | Scrollable-tiling Wayland compositor — the core of the desktop.   |
-| [`noctalia-shell`](https://github.com/noctalia-dev/noctalia-shell) / `noctalia-qs`    | Sleek minimal shell (bar, launcher, widgets) built on Quickshell. |
-| [`xwayland-satellite`](https://github.com/Supreeeme/xwayland-satellite)               | Runs X11 apps under niri without a rootful Xwayland.              |
-| [`fuzzel`](https://codeberg.org/dnkl/fuzzel)                                          | Wayland application launcher.                                     |
-| [`swaybg`](https://github.com/swaywm/swaybg)                                          | Wallpaper setter for wlroots compositors.                         |
-| [`swaylock`](https://github.com/swaywm/swaylock)                                      | Screen locker.                                                    |
-| [`wlsunset`](https://sr.ht/~kennylevinsen/wlsunset/)                                  | Day/night color-temperature shifting.                             |
-| [`cliphist`](https://github.com/sentriz/cliphist)                                     | Wayland clipboard history.                                        |
-| [`nwg-look`](https://github.com/nwg-piotr/nwg-look)                                   | GTK theme/settings editor for wlroots.                            |
-| [`xdg-desktop-portal-{gnome,gtk,wlr}`](https://github.com/flatpak/xdg-desktop-portal) | Portals for screenshare, file pickers, etc.                       |
-| [`greetd`](https://sr.ht/~kennylevinsen/greetd/) + `greetd-tuigreet`                  | Minimal login daemon + TUI greeter.                               |
+| Package                                                                            | Why                                                               |
+| ---------------------------------------------------------------------------------- | ----------------------------------------------------------------- |
+| [`niri`](https://github.com/YaLTeR/niri)                                           | Scrollable-tiling Wayland compositor — the core of the desktop.   |
+| [`noctalia-shell`](https://github.com/noctalia-dev/noctalia-shell) / `noctalia-qs` | Sleek minimal shell (bar, launcher, widgets) built on Quickshell. |
+| [`xwayland-satellite`](https://github.com/Supreeeme/xwayland-satellite)            | Runs X11 apps under niri without a rootful Xwayland.              |
+| [`fuzzel`](https://codeberg.org/dnkl/fuzzel)                                       | Wayland application launcher.                                     |
+| [`swaybg`](https://github.com/swaywm/swaybg)                                       | Wallpaper setter for wlroots compositors.                         |
+| [`swaylock`](https://github.com/swaywm/swaylock)                                   | Screen locker.                                                    |
+| [`wlsunset`](https://sr.ht/~kennylevinsen/wlsunset/)                               | Day/night color-temperature shifting.                             |
+| [`cliphist`](https://github.com/sentriz/cliphist)                                  | Wayland clipboard history.                                        |
+| [`nwg-look`](https://github.com/nwg-piotr/nwg-look)                                | GTK theme/settings editor for wlroots.                            |
+| [`xdg-desktop-portal-{gnome,gtk}`](https://github.com/flatpak/xdg-desktop-portal)  | Portals for screenshare, file pickers, etc.                       |
+| [`greetd`](https://sr.ht/~kennylevinsen/greetd/) + `greetd-tuigreet`               | Minimal login daemon + TUI greeter.                               |
 
 ## Terminals & shell
 
@@ -113,11 +117,11 @@ Or let chezmoi do it on `chezmoi apply` — answer **yes** to the
 
 ## Browsers & communication
 
-| Package                                                                                                                    | Why                                                                            |
-| -------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------ |
-| [`waterfox-bin`](https://www.waterfox.com/) · [`google-chrome`](https://www.google.com/chrome/)                            | Browsers: Waterfox daily ([guide](waterfox.md)), Chrome for testing + VPN SSO. |
-| [`slack-desktop-wayland`](https://slack.com/) · [`teams-for-linux-bin`](https://github.com/IsmaelMartinez/teams-for-linux) | Work chat.                                                                     |
-| [`discord`](https://discord.com/)                                                                                          | Community chat.                                                                |
+| Package                                                                                                                    | Why                                                                                                         |
+| -------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------- |
+| [`waterfox-bin`](https://www.waterfox.com/) · [`google-chrome`](https://www.google.com/chrome/) · `firefox`                | Browsers: Waterfox daily ([guide](waterfox.md)), Chrome for testing + VPN SSO, stock Firefox as a fallback. |
+| [`slack-desktop-wayland`](https://slack.com/) · [`teams-for-linux-bin`](https://github.com/IsmaelMartinez/teams-for-linux) | Work chat.                                                                                                  |
+| [`discord`](https://discord.com/)                                                                                          | Community chat.                                                                                             |
 
 ## Input method (Vietnamese)
 
@@ -127,17 +131,17 @@ Or let chezmoi do it on `chezmoi apply` — answer **yes** to the
 
 ## Files, media & theming
 
-| Package                                                                                                           | Why                                       |
-| ----------------------------------------------------------------------------------------------------------------- | ----------------------------------------- |
-| [`thunar`](https://docs.xfce.org/xfce/thunar/start) + `tumbler` + `ffmpegthumbnailer`                             | File manager + thumbnails.                |
-| [`meld`](https://meldmerge.org/)                                                                                  | Visual diff/merge.                        |
-| [`mpv`](https://mpv.io/)                                                                                          | Media player.                             |
-| [`pavucontrol`](https://freedesktop.org/software/pulseaudio/pavucontrol/)                                         | Audio control (PipeWire).                 |
-| [`zathura`](https://pwmt.org/projects/zathura/)                                                                   | Minimal document viewer.                  |
-| [`satty`](https://github.com/gabm/Satty) + [`gpu-screen-recorder`](https://git.dec05eba.com/gpu-screen-recorder/) | Screenshot annotation + screen recording. |
-| `papirus-icon-theme` + `papirus-folders-git`                                                                      | Icons.                                    |
-| `bibata-cursor-theme-bin` / `banana-cursor-bin`                                                                   | Cursors.                                  |
-| `ttf-jetbrains-mono-nerd`, `noto-fonts{,-cjk,-emoji,-extra}`                                                      | Fonts.                                    |
+| Package                                                                                                                              | Why                                                                                        |
+| ------------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------ |
+| [`nautilus`](https://apps.gnome.org/Nautilus/) + `ffmpegthumbnailer`                                                                 | File manager (`Mod+E`) + video thumbnails.                                                 |
+| [`meld`](https://meldmerge.org/)                                                                                                     | Visual diff/merge.                                                                         |
+| [`mpv`](https://mpv.io/)                                                                                                             | Media player.                                                                              |
+| [`pavucontrol`](https://freedesktop.org/software/pulseaudio/pavucontrol/)                                                            | Audio control (PipeWire).                                                                  |
+| [`zathura`](https://pwmt.org/projects/zathura/)                                                                                      | Minimal document viewer.                                                                   |
+| `grim` + `slurp` + [`satty`](https://github.com/gabm/Satty) + [`gpu-screen-recorder`](https://git.dec05eba.com/gpu-screen-recorder/) | Screenshot capture, region select, annotation ([guide](screenshot.md)) + screen recording. |
+| `papirus-icon-theme` + `papirus-folders-git`                                                                                         | Icons.                                                                                     |
+| `bibata-cursor-theme-bin` / `banana-cursor-bin`                                                                                      | Cursors.                                                                                   |
+| `ttf-jetbrains-mono-nerd`, `noto-fonts{,-cjk,-emoji,-extra}`                                                                         | Fonts.                                                                                     |
 
 ## Networking & VPN
 
@@ -154,6 +158,21 @@ Or let chezmoi do it on `chezmoi apply` — answer **yes** to the
 | [`yay`](https://github.com/Jguer/yay)                                           | AUR helper.                    |
 | [`rate-mirrors-bin`](https://github.com/westandskif/rate-mirrors) / `reflector` | Mirror ranking.                |
 | `downgrade`, `pacman-contrib`, `pkgfile`, `rebuild-detector`                    | Package maintenance utilities. |
+
+## Per-profile extras
+
+Packages that only make sense on one **machine profile**. They stay out of the
+shared snapshot, because `run_onchange_install-packages` replays that on every
+Desktop host. Install them by hand on the box that needs them:
+
+| Profile  | Packages                                                                                                                      | Why                                                |
+| -------- | ----------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------- |
+| `home`   | `nvidia-open` `nvidia-utils` `nvidia-settings` `nvidia-hook` `opencl-nvidia` `libva-nvidia-driver` `libxnvctrl` `egl-wayland` | NVIDIA GPU driver stack (Wayland, VA-API, OpenCL). |
+| `laptop` | `brightnessctl`                                                                                                               | Backlight keys on the internal panel.              |
+
+The EndeavourOS installer also leaves `eos-hwtool`, `dialog` and `wireless-regdb`
+marked explicit. They are installer plumbing, not choices, so they're not
+tracked anywhere.
 
 ## Installed outside pacman
 

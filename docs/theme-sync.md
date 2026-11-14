@@ -269,7 +269,7 @@ mode. `theme-mode-get` is the value that used to lag:
 ```sh
 gsettings get org.gnome.desktop.interface color-scheme        # prefer-dark | prefer-light
 noctalia msg theme-mode-get                                   # dark | light  (MUST agree ↑)
-noctalia msg wallpaper-get HDMI-A-1                           # F42-01-night | F42-01-day (MUST match mode)
+noctalia msg wallpaper-get HDMI-A-1                           # fedora-42-dark | fedora-42-light (MUST match mode)
 gsettings get org.gnome.desktop.interface icon-theme          # Papirus-Dracula | Papirus-Latte
 rg -oP '(?<=@define-color accent_bg_color )\S+' ~/.config/gtk-4.0/noctalia.css  # #bd93f9 | #209fb5
 cat ~/.local/state/theme-reconcile.log                        # per-boot trace: mode + wallpaper re-drive

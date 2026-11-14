@@ -5,15 +5,18 @@
 #   mise trust      # once, to allow this config
 #   mise install    # install everything below  (or: just setup)
 #
+# Versions are exact so CI and every checkout run the same formatter and linter.
+# Upgrade on purpose: `mise outdated`, then `mise up --bump`, then `just check`.
+#
 # Daily runtimes (node, go, …) live in ~/.config/mise/config.toml, not here.
 # See docs/adr/0007-node-free-toolchain-via-mise.md and docs/mise.md.
 
 [tools]
-dprint = "latest" # formats md / json / jsonc / yaml / toml (dprint.json)
-"aqua:rvben/rumdl" = "latest" # Markdown linter, reads .markdownlint.yml
-just = "latest" # task runner (justfile)
-lefthook = "latest" # git hooks manager (lefthook.yml)
-gitleaks = "latest" # secret scanning (.gitleaks.toml)
-shfmt = "latest" # shell formatter
-shellcheck = "latest" # shell linter
+dprint = "0.64.3" # formats md / json / jsonc / yaml / toml (dprint.json)
+"aqua:rvben/rumdl" = "0.3.4" # Markdown linter, reads .markdownlint.yml
+just = "1.59.0" # task runner (justfile)
+lefthook = "2.2.2" # git hooks manager (lefthook.yml)
+gitleaks = "8.30.1" # secret scanning (.gitleaks.toml)
+shfmt = "3.14.1" # shell formatter
+shellcheck = "0.11.0" # shell linter
 # fish_indent is not here — it ships with fish itself (a system package).

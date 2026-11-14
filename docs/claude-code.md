@@ -300,7 +300,7 @@ a copy-paste bootstrap above instead.
 - [direnv.md](direnv.md) — path-based env, the editor-proof upgrade
 - [rtk.md](rtk.md) — the output filter behind the RTK hook, shared by both accounts
 - [ripgrep.md](ripgrep.md) · [fd.md](fd.md) — the tools the search rule points at
-- [ADR 0023](adr/0023-multi-account-claude-code-via-config-dir.md) — why this design
+- [ADR 0026](adr/0026-multi-account-claude-code-via-config-dir.md) — why this design
 - [ADR 0002](adr/0002-private-data-via-templates.md) — private paths via templates
 
 ## References

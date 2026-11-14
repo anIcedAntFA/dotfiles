@@ -48,7 +48,6 @@
 # the guest is its WSL remote server, which reads ~/.config/zed/settings.json
 # (LSP, formatter routing). See docs/zed.md.
 .config/ghostty
-.config/Thunar
 .config/satty
 .config/zathura
 .config/Code
