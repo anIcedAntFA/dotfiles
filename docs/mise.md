@@ -22,19 +22,23 @@ mise activate fish | source
 ## Global tools
 
 [`home/dot_config/mise/config.toml`](../home/dot_config/mise/config.toml) pins the
-global runtimes:
+global runtimes to exact versions: **node** (the current LTS line), **pnpm**,
+**yarn**, **bun** and **go**, plus `gopls` and `wrangler` tracking `latest`. The
+file is the source of truth; this guide doesn't repeat the numbers, so it can't
+drift from them.
 
-```toml
-[tools]
-bun = "1.3.9"
-go = "1.26.3"
-node = "24.13.1"
-pnpm = "10.29.3"
-wrangler = "latest"
-yarn = "4.12.0"
+A recent pnpm switches to whatever version a project's `packageManager` field
+names, so bumping the global pnpm across a major leaves pinned work repos alone.
+
+To upgrade, edit the source file (not `~/.config/mise/config.toml`, which
+`mise use -g` would also write to), then:
+
+```sh
+chezmoi apply ~/.config/mise/config.toml
+mise install
 ```
 
-Install them all:
+Install them all on a fresh machine:
 
 ```sh
 mise install
