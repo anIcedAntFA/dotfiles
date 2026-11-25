@@ -31,5 +31,12 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y fish
 
+      # Go for the tools/ modules (`just check-go`). Not in mise.toml: Go is a
+      # daily runtime there (global config), so CI provisions it itself.
+      - uses: actions/setup-go@v6
+        with:
+          go-version: stable
+          cache-dependency-path: tools/*/go.sum
+
       - name: Run all checks
         run: just check

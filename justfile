@@ -21,6 +21,7 @@ fmt:
     dprint fmt
     [ -n "$shell" ] && shfmt -w $shell
     fish_indent -w $(find home -name '*.fish')
+    gofmt -w tools
 
 # Run every check without writing — this is exactly what CI runs
 check:
@@ -33,7 +34,20 @@ check:
     echo "▶ shfmt";       [ -n "$shell" ] && shfmt -d $shell
     echo "▶ fish-fmt";    fish_indent --check $(find home -name '*.fish')
     echo "▶ fish-syntax"; for f in $(find home -name '*.fish'); do fish -n "$f" || exit 1; done
+    echo "▶ go";          just check-go
     just secrets
+
+# gofmt + vet + test every Go module under tools/ (ADR 0027). Each tool is its
+# own module, so the commands run per module directory.
+check-go:
+    #!/usr/bin/env bash
+    set -euo pipefail
+    for mod in tools/*/go.mod; do
+        dir=$(dirname "$mod")
+        unformatted=$(gofmt -l "$dir")
+        [ -z "$unformatted" ] || { echo "❌ gofmt needed: $unformatted" >&2; exit 1; }
+        (cd "$dir" && go vet ./... && go test -race ./...)
+    done
 
 # Scan the repository (working tree + history) for leaked secrets
 secrets:
