@@ -18,7 +18,7 @@ edge_smoothness = 0.4
 transition_duration = 2000
 
     [wallpaper.monitors.eDP-1]
-    path = "{{ $wp }}/scarlet-tree.png"
+    path = "{{ $wp }}/scarlet-tree-light.png"
 {{- else -}}
 {{- $land := "DP-3" }}{{- $port := "HDMI-A-1" }}
 {{- if eq .machine "work" }}{{ $land = "DP-1" }}{{ $port = "HDMI-A-2" }}{{ end }}
@@ -38,10 +38,10 @@ edge_smoothness = 0.39999999105930328
 transition_duration = 2000
 
     [wallpaper.monitors.{{ $land }}]
-    path = "{{ $wp }}/scarlet-tree.png"
+    path = "{{ $wp }}/scarlet-tree-light.png"
 
     [wallpaper.monitors.{{ $port }}]
-    path = "{{ $wp }}/F42-01-day.jpg"
+    path = "{{ $wp }}/fedora-42-light.jpg"
 
 [lockscreen_widgets]
 enabled = false

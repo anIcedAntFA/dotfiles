@@ -1,0 +1,23 @@
+// Zed global tasks — run from the command palette (`task: spawn`, Alt+Shift+T)
+// or by key (keymap.json). Managed by chezmoi (home/dot_config/zed/). On a
+// Windows host, copied to %APPDATA%\Zed by hand like settings.json — see
+// docs/zed.md.
+[
+  // Zed has no built-in word count (docs/zed.md → Word count). dot-wordcount
+  // (built from tools/wordcount on `chezmoi apply`) counts prose only — front
+  // matter, code, URLs and markup are dropped — in the selection if there is
+  // one, else in the saved file. It reads $ZED_SELECTED_TEXT / $ZED_FILE from
+  // the environment; never splice those into "command", where any quote or $
+  // in the selection would be run by the shell.
+  {
+    "label": "Word count",
+    "command": "dot-wordcount",
+    "args": ["-zed"],
+    "reveal": "no_focus",
+    "hide": "never",
+    "use_new_terminal": false,
+    "allow_concurrent_runs": false,
+    "show_command": false,
+    "show_summary": false
+  }
+]

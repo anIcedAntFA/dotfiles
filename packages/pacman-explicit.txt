@@ -1,5 +1,6 @@
 7zip
 accountsservice
+adw-gimp3-git
 adw-gtk-theme
 alacritty
 alsa-firmware
@@ -12,6 +13,7 @@ base
 base-devel
 bash-completion
 bat
+bc
 bibata-cursor-theme-bin
 bind
 blueman
@@ -23,6 +25,7 @@ btrfs-progs
 cantarell-fonts
 chezmoi
 cliphist
+cloudflared
 cryptsetup
 curlie
 darkman
@@ -63,9 +66,10 @@ fastfetch
 fcitx5
 fcitx5-bamboo
 fcitx5-configtool
-fcitx5-hangul
 fd
 ffmpegthumbnailer
+firefox
+firewall-applet
 firewalld
 fish
 fisher
@@ -91,6 +95,7 @@ gopass
 gpu-screen-recorder
 greetd
 greetd-tuigreet
+grim
 grub
 gst-libav
 gst-plugin-pipewire
@@ -107,6 +112,7 @@ intel-ucode
 inxi
 iptables
 iwd
+jetbrains-toolbox
 jfsutils
 jq
 lazydocker
@@ -136,6 +142,7 @@ mpv
 mtools
 nano
 nano-syntax-highlighting
+nautilus
 neovim
 netctl
 networkmanager
@@ -155,7 +162,6 @@ noto-fonts-extra
 nss-mdns
 ntfs-3g
 ntp
-nvidia-hook
 nwg-look
 openssh
 os-prober
@@ -174,8 +180,6 @@ pipewire-jack
 pipewire-pulse
 pkgfile
 plocate
-podman
-podman-compose
 poppler-glib
 postgresql
 power-profiles-daemon
@@ -185,6 +189,8 @@ python-defusedxml
 python-jinja
 python-packaging
 python-pyqt6
+qt5ct
+qt6ct
 rate-mirrors-bin
 rebuild-detector
 reflector
@@ -195,6 +201,7 @@ rtkit
 satty
 sg3_utils
 slack-desktop-wayland
+slurp
 smartmontools
 s-nail
 sof-firmware
@@ -206,7 +213,6 @@ sysfsutils
 systemd-sysvcompat
 teams-for-linux-bin
 texinfo
-thunar
 tldr
 tree
 ttf-bitstream-vera
@@ -214,7 +220,6 @@ ttf-dejavu
 ttf-jetbrains-mono-nerd
 ttf-liberation
 ttf-opensans
-tumbler
 turbo
 unrar
 unzip
@@ -229,14 +234,13 @@ waterfox-bin
 welcome
 wget
 which
+whois
 wireplumber
-witr
 wl-clipboard
 wlsunset
 wpa_supplicant
 xdg-desktop-portal-gnome
 xdg-desktop-portal-gtk
-xdg-desktop-portal-wlr
 xdg-user-dirs
 xdg-utils
 xf86-input-libinput
@@ -248,12 +252,12 @@ xorg-xinit
 xorg-xinput
 xorg-xkill
 xorg-xrandr
-xorg-xwininfo
 xterm
 xwayland-satellite
 yay
 zathura
 zed
 zellij
+zip
 zoxide
 zram-generator

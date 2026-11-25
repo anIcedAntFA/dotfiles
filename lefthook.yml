@@ -31,6 +31,9 @@ pre-commit:
     fish-syntax:
       glob: "*.fish"
       run: 'for f in {staged_files}; do fish -n "$f" || exit 1; done'
+    gofmt:
+      glob: "*.go"
+      run: 'test -z "$(gofmt -l {staged_files})" || { gofmt -l {staged_files}; exit 1; }'
     # Block commits that contain secrets (this is what would have caught the npm token).
     gitleaks:
       run: gitleaks git --staged --no-banner --redact

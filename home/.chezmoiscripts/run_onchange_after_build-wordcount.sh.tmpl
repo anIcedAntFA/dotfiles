@@ -1,0 +1,26 @@
+{{- /* Build tools/wordcount (Go, outside the chezmoi source root) into
+       ~/.local/bin/dot-wordcount — the counter behind the Zed "Word count"
+       task. chezmoi deploys files, not build output, so the binary is compiled
+       here on apply and never committed. Re-runs whenever a file in the tool
+       changes, thanks to the content hashes embedded below. See
+       docs/adr/0027-go-tools-built-on-apply.md and docs/zed.md. */ -}}
+{{- $toolDir := joinPath .chezmoi.sourceDir ".." "tools" "wordcount" -}}
+#!/usr/bin/env bash
+set -euo pipefail
+
+# Re-run trigger (do not edit — changes when the tool's source changes):
+{{- range (glob (joinPath $toolDir "*")) }}
+{{- if not (hasSuffix "_test.go" .) }}
+#   {{ base . }}: {{ output "sha256sum" . | trim | regexFind "^[0-9a-f]+" }}
+{{- end }}
+{{- end }}
+
+if ! command -v go >/dev/null 2>&1; then
+  echo "go not found — install it (pacman -S go) and re-run chezmoi apply. Skipping dot-wordcount."
+  exit 0
+fi
+
+echo "==> Building dot-wordcount…"
+mkdir -p "$HOME/.local/bin"
+cd "{{ $toolDir }}"
+go build -trimpath -ldflags='-s -w' -o "$HOME/.local/bin/dot-wordcount" .

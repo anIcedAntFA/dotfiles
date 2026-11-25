@@ -7,9 +7,10 @@ identical. Everything lives under `~/.config/zed/` and is chezmoi-managed from
 | File            | Purpose                                                      |
 | --------------- | ------------------------------------------------------------ |
 | `settings.json` | Curated overrides only (not a dump of defaults) + extensions |
-| `keymap.json`   | Custom key bindings on top of the VS Code base keymap (none) |
+| `keymap.json`   | Custom key bindings on top of the VS Code base keymap        |
+| `tasks.json`    | Global tasks — [Word count](#word-count)                     |
 
-On a Windows host the same two files also go to `%APPDATA%\Zed\` by hand — see
+On a Windows host the same three files also go to `%APPDATA%\Zed\` by hand — see
 [Windows host + WSL guest](#windows-host--wsl-guest).
 
 Project-scoped settings for a specific repo live in that repo's own `.zed/`
@@ -48,7 +49,7 @@ is deliberately **not** in the GUI-app block of `.chezmoiignore`. After changing
 the source, copy it to the host from inside the guest:
 
 ```sh
-cp home/dot_config/zed/{settings,keymap}.json \
+cp home/dot_config/zed/{settings,keymap,tasks}.json \
   "$(wslpath "$(cmd.exe /c 'echo %APPDATA%' 2>/dev/null | tr -d '\r')")/Zed/"
 ```
 
@@ -238,12 +239,60 @@ Zed's role is reviewing diffs/changes in-editor (`Ctrl+G D`, the Git panel). The
 integrated terminal's `EDITOR` is set to `zed --wait`, so a terminal `git commit`
 opens its message back in this Zed.
 
+## Word count
+
+Zed has **no built-in word count** and no extension can add one: the extension
+API cannot put anything in the status bar. Upstream, the
+`status_bar.word_count_button` PR
+([#60113](https://github.com/zed-industries/zed/pull/60113)) was closed unmerged
+and the feature request lives on in discussion
+[#43217](https://github.com/zed-industries/zed/discussions/43217). Until it
+lands, a global **task** does the job on demand:
+
+- `Alt+Shift+W` (or `task: spawn` → **Word count**) prints, in a terminal tab
+  that opens without stealing focus, e.g. `post.md: 1234 words · ~7 min read`.
+- With a selection it counts just that (`post.md (selection): …`); otherwise the
+  whole file.
+
+The counter is [`tools/wordcount`](../tools/wordcount), a small Go program that
+`chezmoi apply` builds into `~/.local/bin/dot-wordcount`
+([ADR 0027](adr/0027-go-tools-built-on-apply.md)). It parses the Markdown
+(goldmark, CommonMark + GFM) and counts only **prose**, so the number matches
+what a reader reads — `wc -w` on the same file counts far more:
+
+| Dropped                                                                    | Kept as text                                              |
+| -------------------------------------------------------------------------- | --------------------------------------------------------- |
+| front matter (`---` / `+++`), fenced + indented code, `<script>` / `<pre>` | headings, list items, blockquotes, table cells, footnotes |
+| images (alt text too), URLs (links keep their text), HTML comments         | text between HTML / JSX tags (`<Callout>…</Callout>`)     |
+| markup characters, punctuation-only tokens (`—`), HTML entities            | inline code (`` `go test` ``) — part of the sentence      |
+| `.mdx` only: top-level `import` / `export` lines                           |                                                           |
+
+Vietnamese is counted per **syllable** (`sinh viên` = 2), as `wc` and the usual
+press counts do. Reading time assumes 200 words per minute. CJK text without
+spaces is not split into words.
+
+Two caveats:
+
+- **The file is read from disk** — save first (`format_on_save` is on, so
+  `Ctrl+S` then `Alt+Shift+W`). A selection is counted as it stands.
+- The task reads `$ZED_SELECTED_TEXT` / `$ZED_FILE` from the **environment**. Don't
+  rewrite it as `"command": "echo $ZED_SELECTED_TEXT | wc -w"`: Zed splices
+  variables into the command line, so a selection containing a quote, `$(…)` or a
+  backtick would break the command or be run by the shell.
+
+It works on a Desktop host and in a WSL project (the task runs in the guest,
+where `chezmoi apply` built the binary). A Windows-native project has no
+`dot-wordcount`, so the task fails there with "command not found" — accepted.
+
+Test it outside Zed: `dot-wordcount post.md`, or pipe text in
+(`… | dot-wordcount`, add `-mdx` for MDX).
+
 ## Keymap cheat-sheet
 
 Base keymap is **VS Code**, so muscle memory carries over. Modifiers: `Ctrl` /
 `Alt` / `Shift` are Zed's; **`Super` is niri's** and is never used here (niri
-grabs it first). Everything below is a Zed or VS Code base default — `keymap.json`
-is currently empty.
+grabs it first). Everything below is a Zed or VS Code base default, except rows
+marked _custom_ (from `keymap.json`).
 
 ### Navigation & files
 
@@ -286,6 +335,8 @@ is currently empty.
 | `Alt+↑ / Alt+↓` | Move line up / down        |
 | `Ctrl+.`        | Quick fix / code actions   |
 | `F8 / Shift+F8` | Next / previous diagnostic |
+| `Alt+Shift+T`   | Spawn a task (picker)      |
+| `Alt+Shift+W`   | Word count — _custom_      |
 
 ### Git actions
 
