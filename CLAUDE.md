@@ -33,6 +33,7 @@ docs/        per-tool guides + adr/ (Architecture Decision Records)
 packages/    pacman-explicit.txt + aur.txt snapshots
 etc/         /etc system files (manual apply)
 windows/     Windows-host config (manual apply) — see docs/windows.md
+tools/       small Go tools, one module each, built on `chezmoi apply` — ADR 0027
 images/      screenshots & wallpapers
 ```
 
